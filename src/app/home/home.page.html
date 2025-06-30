@@ -1,0 +1,89 @@
+<ion-header class="painelValores">
+  <ion-toolbar class="content-painelValores">
+    <div class="valorTotal">
+      <ion-title class="tt-valorTotal">Valor Total das Dívidas</ion-title>
+      <ion-title class="num-valorTotal">R$ 16.541,49</ion-title>
+    </div>
+  </ion-toolbar>
+  <div class="outrosValores">
+    <div class="valorPago">
+      <h6 class="tt-valorPago">Valor Pago</h6>
+      <h4 class="num-valorPago">R$ 2.000,00</h4>
+    </div>
+
+    <div class="valorPendente">
+      <h6 class="tt-valorPendente">Valor Pendente</h6>
+      <h4 class="num-valorPendente">R$ 14.541,49</h4>
+    </div>
+  </div>
+</ion-header>
+
+<ion-content fullscreen="true" class="content-home" >
+
+  <div class="tabs">
+    <button [class.active]="abaAtual === 'pendentes'" (click)="trocarAba('pendentes')" class="btn-pendentes">Próximas Dívidas</button>
+    <button [class.active]="abaAtual === 'pagos'" (click)="trocarAba('pagos')" class="btn-pagos">Pagos</button>
+  </div>
+
+  <div class="slider">
+    <div class="slide" [class.active]="abaAtual === 'pendentes'">
+      <!-- Atrasados -->
+      <ng-container *ngIf="dividasAtrasadas.length > 0">
+        <section class="card-atrasado">
+          <h2>Atrasado</h2>
+          <div class="item-atrasado" *ngFor="let divida of dividasAtrasadas">
+            <div class="top-divida">
+              <ion-label>
+                {{ divida.nome }} ({{ divida.categoria }})
+              </ion-label>
+              <ion-checkbox class="check" slot="end" [(ngModel)]="divida.foiPago" (ionChange)="alternarStatus(divida.id)" mode="ios"></ion-checkbox>
+            </div>
+            <hr class="linha-divida" />
+            <div class="bottom-divida">
+              <ion-label>
+                <h6>Valor</h6>
+                <h6>R$ {{ divida.valor }} </h6>
+              </ion-label>
+            </div>
+          </div>  
+        </section>
+      </ng-container>
+
+      <!-- Pendentes por Dia -->
+      <ng-container *ngFor="let dia of objectKeys(dividasPorDia)">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>{{ formatarTituloDia(+dia) }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-item *ngFor="let divida of dividasPorDia[+dia]">
+              <ion-label>
+                {{ divida.nome }} ({{ divida.categoria }})<br />
+                <strong>R$ {{ divida.valor }}</strong>
+              </ion-label>
+              <ion-checkbox slot="end" [(ngModel)]="divida.foiPago" (ionChange)="alternarStatus(divida.id)"></ion-checkbox>
+            </ion-item>
+          </ion-card-content>
+        </ion-card>
+      </ng-container>
+    </div>
+
+    <div class="slide" [class.active]="abaAtual === 'pagos'">
+      <ion-card color="success">
+        <ion-card-header>
+          <ion-card-title>Pagos</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-item *ngFor="let divida of dividasPagas">
+            <ion-label>
+              {{ divida.nome }} ({{ divida.categoria }})<br />
+              <strong>R$ {{ divida.valor }}</strong>
+            </ion-label>
+          </ion-item>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+
+</ion-content>
+
