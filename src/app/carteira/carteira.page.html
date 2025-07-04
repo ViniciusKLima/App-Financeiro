@@ -5,29 +5,50 @@
 </ion-header>
 
 <ion-content class="pagina-gerenciar" fullscreen>
-
   <!-- Lista de categorias -->
   <div class="grid-categorias">
+    <div class="categoria-box">
+      <div class="conteudo-categoria">
+        <ion-icon
+          name="wallet-outline"
+        ></ion-icon>
+        <p>Cartões</p>
+      </div>
+    </div>
     <div class="categoria-box" *ngFor="let categoria of categorias">
       <div class="conteudo-categoria">
-        <ion-icon [name]="categoria.icone" [style.color]="categoria.cor"></ion-icon>
-        <p>{{ categoria.nome }}</p>
+        <ion-icon
+          [name]="categoria.icone"
+          [style.color]="categoria.cor"
+        ></ion-icon>
+        <p [style.color]="categoria.cor">{{ categoria.nome }}</p>
       </div>
 
-      <!-- Menu editar/excluir -->
-      <ion-buttons class="menu-categoria">
-        <ion-button fill="clear" size="small" id="menu-{{categoria.id}}">
-          <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+      <!-- Botão de menu visível apenas no modo edição -->
+      <ion-buttons class="menu-categoria" *ngIf="modoEdicao">
+        <ion-button fill="clear" size="small" [id]="'menu-'+categoria.id">
+          <ion-icon name="ellipsis-vertical"></ion-icon>
         </ion-button>
 
-        <ion-popover trigger="menu-{{categoria.id}}" side="bottom" alignment="end" showBackdrop="false">
+        <ion-popover
+          [trigger]="'menu-'+categoria.id"
+          side="bottom"
+          alignment="end"
+          [showBackdrop]="false"
+        >
           <ng-template>
             <ion-list lines="none">
-              <ion-item button (click)="abrirModalCategoria(categoria)">
+              <!-- Editar -->
+              <ion-item button (click)="abrirModalCategoria(categoria, $event)">
                 <ion-icon slot="start" name="create-outline"></ion-icon>
                 Editar
               </ion-item>
-              <ion-item button (click)="excluirCategoria(categoria.id)">
+
+              <!-- Excluir -->
+              <ion-item
+                button
+                (click)="confirmarExclusao(categoria.id, $event)"
+              >
                 <ion-icon slot="start" name="trash-outline"></ion-icon>
                 Excluir
               </ion-item>
@@ -38,11 +59,18 @@
     </div>
   </div>
 
-  <!-- FAB -->
+  <!-- FAB Labels -->
+  <div class="fab-labels" *ngIf="mostrarBotoesFlutuantes">
+    <div class="fab-option" (click)="novaCategoria()">Nova Categoria</div>
+    <div class="fab-option" (click)="editarCategorias()">Editar Categorias</div>
+  </div>
+
+  <!-- FAB Button -->
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="abrirModalCategoria()">
-      <ion-icon name="add"></ion-icon>
+    <ion-fab-button
+      (click)="mostrarBotoesFlutuantes ? finalizarEdicao() : toggleBotoesFlutuantes()"
+    >
+      <ion-icon [name]="iconeFab"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-
 </ion-content>

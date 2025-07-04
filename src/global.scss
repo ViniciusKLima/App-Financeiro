@@ -63,25 +63,18 @@ ion-content{
     --background: #fff !important;
 }
 
-.modal-flutuante-central .modal-wrapper {
-  position: fixed !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  width: 90% !important;
-  max-width: 400px !important;
-  height: auto !important;
-  background: white !important;
-  border-radius: 16px !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
-  z-index: 9999 !important;
-  overflow: hidden !important;
+.custom-modal-bottom-sheet .modal-wrapper {
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  background-color: white;
 }
 
-.modal-flutuante-central ion-backdrop {
-  backdrop-filter: blur(8px);
-  background-color: rgba(0, 0, 0, 0.2);
+// Fundo escuro/transparente
+ion-modal.custom-modal-bottom-sheet .modal-shadow {
+  background: rgba(0, 0, 0, 0.4); // Escurece o fundo
+  backdrop-filter: blur(4px);     // Desfoca o fundo
 }
+
 
 
 

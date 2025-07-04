@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ categoria ? 'Editar Categoria' : 'Nova Categoria' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="fechar()">
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form>
+    <ion-item>
+      <ion-label position="floating">Nome</ion-label>
+      <ion-input [(ngModel)]="novaCategoria.nome" name="nome"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Cor</ion-label>
+      <ion-input type="color" [(ngModel)]="novaCategoria.cor" name="cor"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Ícone</ion-label>
+      <ion-select [(ngModel)]="novaCategoria.icone" name="icone">
+        <ion-select-option value="card-outline">Cartão</ion-select-option>
+        <ion-select-option value="document-text-outline">Boleto</ion-select-option>
+        <ion-select-option value="wallet-outline">Carteira</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-button expand="block" color="success" (click)="salvar()">Salvar</ion-button>
+    <ion-button expand="block" fill="clear" color="medium" (click)="fechar()">Cancelar</ion-button>
+  </form>
+</ion-content>

@@ -28,6 +28,7 @@ ion-header {
   }
 
   .categoria-box {
+    position: relative; // Para posicionar o menu
     width: 190px;
     height: 170px;
     background: white;
@@ -58,17 +59,45 @@ ion-header {
       transform: scale(0.97);
     }
   }
+
+  .menu-categoria {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 10;
+  }
+
+  ion-popover .popover-content {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  ion-list {
+    background: white;
+  }
+
+  ion-item {
+    --background: white;
+    --border-color: transparent;
+    --padding-start: 12px;
+    --padding-end: 12px;
+  }
+
+  ion-item:hover {
+    background-color: #f0f0f0;
+  }
 }
 
 .fab-labels {
-  position: fixed;   // FIXED para ficar sempre visível no canto da tela
+  position: fixed;
   bottom: 70px;
   right: 16px;
   display: flex;
   align-items: end;
   flex-direction: column;
   gap: 10px;
-  z-index: 1001;      // maior que o botão flutuante, mas menor que o modal
+  z-index: 1001;
 
   .fab-option {
     background: #ffffff;
@@ -81,7 +110,7 @@ ion-header {
     transition: transform 0.2s ease;
     display: inline-block;
     white-space: nowrap;
-    width: fit-content; // Faz crescer de acordo com o texto
+    width: fit-content;
     max-width: 95vw;
   }
 
@@ -94,13 +123,12 @@ ion-fab-button {
   --background: var(--cor-principal);
   --color: white;
   --box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
-  z-index: 1000;      // menor que os balões e que o modal
+  z-index: 1000;
 
   ion-icon {
     font-size: 2.3rem;
   }
 }
-
 
 .form-categoria-flutuante {
   position: fixed;
@@ -114,7 +142,7 @@ ion-fab-button {
   border-top-right-radius: 20px;
   box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
   padding: 1rem;
-  z-index: 1100;     // MUITO alto para ficar em cima de tudo
+  z-index: 1100;
   animation: subir 0.3s ease-out;
 }
 
@@ -133,4 +161,3 @@ ion-fab-button {
 .botoes-form {
   margin-top: 1rem;
 }
-
