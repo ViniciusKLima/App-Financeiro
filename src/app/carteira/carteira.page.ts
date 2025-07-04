@@ -19,28 +19,15 @@ export class CarteiraPage {
     },
     {
       id: '2',
-      nome: 'Escritório',
+      nome: 'Cartões',
       icone: 'card-outline',
       cor: '#007BFF',
     },
-    {
-      id: '3',
-      nome: 'Casa',
-      icone: 'home-outline',
-      cor: '#007BFF',
-    },
-    {
-      id: '4',
-      nome: 'Lazer',
-      icone: 'football-outline',
-      cor: '#007BFF',
-    },
-    
   ];
 
   mostrarBotoesFlutuantes = false;
   modoEdicao = false;
-  iconeFab = 'add'; // Controla o ícone do botão FAB
+  iconeFab = 'add'; // Estado inicial do FAB
 
   constructor(
     private modalCtrl: ModalController,
@@ -48,18 +35,23 @@ export class CarteiraPage {
     private popoverCtrl: PopoverController
   ) {}
 
-  // Mostrar ou esconder os balões + controlar o ícone
-  toggleBotoesFlutuantes() {
-    this.mostrarBotoesFlutuantes = !this.mostrarBotoesFlutuantes;
-
-    if (!this.mostrarBotoesFlutuantes && this.modoEdicao) {
-      this.finalizarEdicao(); // Volta ao estado inicial
+  // Lida com o clique no botão FAB
+  acaoFab() {
+    if (this.iconeFab === 'add') {
+      this.mostrarBotoesFlutuantes = true;
+      this.iconeFab = 'close-outline';
+    } else if (this.iconeFab === 'close-outline') {
+      this.mostrarBotoesFlutuantes = false;
+      this.iconeFab = 'add';
+    } else if (this.iconeFab === 'checkmark-outline') {
+      this.finalizarEdicao();
     }
   }
 
   // Ação do botão "Nova Categoria"
   novaCategoria() {
-    this.toggleBotoesFlutuantes();
+    this.mostrarBotoesFlutuantes = false;
+    this.iconeFab = 'add';
     this.abrirModalCategoriaIndividual();
   }
 
@@ -81,7 +73,7 @@ export class CarteiraPage {
     const modal = await this.modalCtrl.create({
       component: CategoriaFormComponent,
       componentProps: { categoria },
-      initialBreakpoint: 0.35,
+      initialBreakpoint: 0.9,
       breakpoints: [0, 0.35, 0.6, 0.9],
       backdropDismiss: true,
       mode: 'ios',
@@ -115,20 +107,16 @@ export class CarteiraPage {
 
   // Abre o modal de edição da categoria
   async abrirModalCategoria(categoria: any, event: any) {
-    const popover = await this.popoverCtrl.getTop(); // Pega o popover aberto
-    if (popover) {
-      await popover.dismiss(); // Fecha o popover
-    }
+    const popover = await this.popoverCtrl.getTop();
+    if (popover) await popover.dismiss();
 
     this.abrirModalCategoriaIndividual(categoria);
   }
 
   // Exclusão com confirmação
   async confirmarExclusao(id: string, event: any) {
-    const popover = await this.popoverCtrl.getTop(); // Pega o popover aberto
-    if (popover) {
-      await popover.dismiss(); // Fecha o popover
-    }
+    const popover = await this.popoverCtrl.getTop();
+    if (popover) await popover.dismiss();
 
     const alert = await this.alertCtrl.create({
       header: 'Tem certeza?',

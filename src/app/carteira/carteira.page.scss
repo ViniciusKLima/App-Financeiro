@@ -16,7 +16,7 @@ ion-header {
 }
 
 .pagina-gerenciar {
-  --background: #f7f7f7;
+  --background: none !important;
   margin: 0 auto;
 
   .grid-categorias {
@@ -29,10 +29,11 @@ ion-header {
 
   .categoria-box {
     position: relative; // Para posicionar o menu
-    width: 190px;
+    width: 40vw;
+    max-width: 200px;
     height: 170px;
     background: white;
-    border-radius: 12px;
+    border-radius: 15px;
     padding: 1.2rem;
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.24);
     display: flex;
@@ -44,13 +45,13 @@ ion-header {
     cursor: pointer;
 
     ion-icon {
-      font-size: 2rem;
+      font-size: 3rem;
       color: var(--cor-principal);
-      margin-bottom: 0.5rem;
     }
 
     p {
       font-size: 1rem;
+      font-weight: 500;
       color: #444;
       margin: 0;
     }
@@ -63,29 +64,66 @@ ion-header {
   .menu-categoria {
     position: absolute;
     top: 8px;
-    right: 8px;
+    right: 0;
     z-index: 10;
-  }
 
-  ion-popover .popover-content {
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    ion-icon {
+      font-size: 1.5rem;
+      color: #888;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
   }
+}
 
-  ion-list {
-    background: white;
+ion-popover {
+  --background: #ffffff;
+  border-radius: 12px;
+  --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  
+}
+
+ion-popover .popover-content ion-list {
+  --background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  border: none !important;
+  width: 9%;
+}
+.list-ios {
+    background: var(--ion-background-color, var(--ion-background-color, #ffffff00));
+    border: none !important;
+}
+
+/* Estiliza o ion-popover no modo iOS */
+ion-popover[mode="ios"] .popover-content {
+  border: none !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+  background: white;
+}
+
+/* Remove a seta (opcional) */
+ion-popover[mode="ios"] .popover-arrow {
+  display: none; /* ou ajuste a cor se quiser manter visível */
+}
+
+ion-popover ion-item.editar {
+  --background: white;
+  --color: #1565c0;
+  border: none !important;
+  
+  ion-icon {
+    color: #1565c0;
   }
+}
 
-  ion-item {
-    --background: white;
-    --border-color: transparent;
-    --padding-start: 12px;
-    --padding-end: 12px;
-  }
+ion-popover ion-item.excluir {
+  --background: white;
+  --color: #d32f2f;
+  border: none !important;
 
-  ion-item:hover {
-    background-color: #f0f0f0;
+  ion-icon {
+    color: #d32f2f;
   }
 }
 

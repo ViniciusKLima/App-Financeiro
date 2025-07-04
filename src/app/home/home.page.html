@@ -50,8 +50,13 @@
             *ngFor="let divida of dividasAtrasadas"
           >
             <div class="top-divida">
-              <ion-label>
-                {{ divida.nome }} ({{ divida.categoria }})
+              <ion-label [style.color]="divida.cor">
+                <ion-icon
+                  [name]="divida.icone"
+                  [style.color]="divida.cor"
+                  style="margin-right: 8px"
+                ></ion-icon>
+                {{ divida.nome }}
               </ion-label>
               <ion-checkbox
                 class="check"
@@ -111,29 +116,42 @@
     </div>
 
     <div class="slide" [class.active]="abaAtual === 'pagos'">
-      <section class="cards-dividas card-pago">
-        <h2 class="h2-pago">Pago</h2>
-        <div *ngIf="dividasPagas.length === 0" class="content-vazio">
+      <ng-container *ngIf="dividasPagas.length === 0">
+        <div class="content-vazio">
           <p class="mensagem-vazio">
             Você ainda não marcou nenhuma dívida como paga...
           </p>
         </div>
-        <div
-          class="itens-dividas item-pago"
-          *ngFor="let divida of dividasPagas"
-        >
-          <div class="top-divida">
-            <ion-label> {{ divida.nome }} ({{ divida.categoria }}) </ion-label>
+      </ng-container>
+
+      <ng-container *ngFor="let dia of objectKeys(dividasPagasPorDia)">
+        <section class="cards-dividas card-pago">
+          <h2 class="h2-pago">{{ formatarTituloDia(+dia) }}</h2>
+
+          <div
+            class="itens-dividas item-pago"
+            *ngFor="let divida of dividasPagasPorDia[+dia]"
+          >
+            <div class="top-divida">
+              <ion-label [style.color]="divida.cor">
+                <ion-icon
+                  [name]="divida.icone"
+                  [style.color]="divida.cor"
+                  style="margin-right: 8px"
+                ></ion-icon>
+                {{ divida.nome }}
+              </ion-label>
+            </div>
+            <hr class="linha-divida" />
+            <div class="bottom-divida">
+              <ion-label>
+                <h6>Valor</h6>
+                <h6>R$ {{ divida.valor }}</h6>
+              </ion-label>
+            </div>
           </div>
-          <hr class="linha-divida" />
-          <div class="bottom-divida">
-            <ion-label>
-              <h6>Valor</h6>
-              <h6>R$ {{ divida.valor }}</h6>
-            </ion-label>
-          </div>
-        </div>
-      </section>
+        </section>
+      </ng-container>
     </div>
   </div>
 </ion-content>

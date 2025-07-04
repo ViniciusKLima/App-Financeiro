@@ -172,6 +172,7 @@ ion-checkbox {
     padding: 1rem;
     color: #585858;
     font-size: 0.9rem;
+    font-weight: 500;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.13);
 
     .top-divida {
@@ -180,6 +181,15 @@ ion-checkbox {
       width: 100%;
       margin-block: 0.6rem;
       padding-inline: 3px;
+
+      ion-label {
+        display: flex;
+        align-items: center;
+      }
+
+      ion-icon {
+        font-size: 1.4rem;
+      }
     }
 
     .linha-divida {

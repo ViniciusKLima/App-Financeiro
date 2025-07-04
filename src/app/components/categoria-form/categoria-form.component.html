@@ -1,36 +1,66 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>{{ categoria ? 'Editar Categoria' : 'Nova Categoria' }}</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="fechar()">
-        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
+    <ion-title>{{
+      categoria ? "Editar Categoria" : "Nova Categoria"
+    }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
   <form>
-    <ion-item>
-      <ion-label position="floating">Nome</ion-label>
-      <ion-input [(ngModel)]="novaCategoria.nome" name="nome"></ion-input>
-    </ion-item>
+    <!-- Campo Nome -->
+    <div class="input-row">
+      <ion-label position="fixed">Nome</ion-label>
+      <ion-input
+        [(ngModel)]="novaCategoria.nome"
+        name="nome"
+        class="input-direita"
+        placeholder="Ex: Trabalho"
+      ></ion-input>
+    </div>
 
-    <ion-item>
-      <ion-label>Cor</ion-label>
-      <ion-input type="color" [(ngModel)]="novaCategoria.cor" name="cor"></ion-input>
-    </ion-item>
+    <!-- Campo Cor -->
+    <div class="input-row">
+      <ion-label position="fixed">Cor</ion-label>
+      <div class="input-cor-wrapper">
+        <ion-input
+          type="color"
+          [(ngModel)]="novaCategoria.cor"
+          name="cor"
+          class="input-direita input-cor"
+          placeholder="#ffffff"
+        ></ion-input>
+      </div>
+    </div>
 
-    <ion-item>
-      <ion-label>Ícone</ion-label>
-      <ion-select [(ngModel)]="novaCategoria.icone" name="icone">
-        <ion-select-option value="card-outline">Cartão</ion-select-option>
-        <ion-select-option value="document-text-outline">Boleto</ion-select-option>
-        <ion-select-option value="wallet-outline">Carteira</ion-select-option>
-      </ion-select>
-    </ion-item>
+    <!-- Label dos Ícones -->
+    <ion-label
+      class="label-icone ion-margin-top ion-margin-start"
+      position="stacked"
+      >Ícone:</ion-label
+    >
 
-    <ion-button expand="block" color="success" (click)="salvar()">Salvar</ion-button>
-    <ion-button expand="block" fill="clear" color="medium" (click)="fechar()">Cancelar</ion-button>
+    <!-- Grade de Ícones -->
+    <div class="icone-grid">
+      <button
+        *ngFor="let icon of iconesDisponiveis"
+        type="button"
+        class="icone-botao"
+        [class.selecionado]="icon === novaCategoria.icone"
+        (click)="selecionarIcone(icon)"
+      >
+        <ion-icon [name]="icon"></ion-icon>
+      </button>
+    </div>
+
+    <!-- Botões -->
+    <ion-button
+      (click)="salvar()"
+      class="btn-salvar ion-margin-top"
+      >Salvar</ion-button
+    >
+    <ion-button expand="block" fill="clear" color="medium" (click)="fechar()"
+      >Cancelar</ion-button
+    >
   </form>
 </ion-content>

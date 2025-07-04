@@ -11,8 +11,9 @@ export class HomePage implements OnInit {
   abaAtual: 'pendentes' | 'pagos' = 'pendentes';
 
   dividasAtrasadas: Divida[] = [];
-  dividasPorDia: { [dia: number]: Divida[] } = {};
   dividasPagas: Divida[] = [];
+  dividasPorDia: { [dia: number]: Divida[] } = {};
+  dividasPagasPorDia: { [dia: number]: Divida[] } = {};
   public objectKeys = Object.keys;
 
   constructor(private dividaService: DividaService) {}
@@ -37,30 +38,49 @@ export class HomePage implements OnInit {
     this.dividasAtrasadas = [];
     this.dividasPagas = [];
     this.dividasPorDia = {};
+    this.dividasPagasPorDia = {};
 
     this.dividaService.getDividas().forEach((divida) => {
       if (!divida.foiPago && divida.dia < hoje) {
         this.dividasAtrasadas.push(divida);
-      } else if (divida.foiPago && divida.dia < hoje) {
+      } else if (divida.foiPago) {
         this.dividasPagas.push(divida);
+
+        if (!this.dividasPagasPorDia[divida.dia]) {
+          this.dividasPagasPorDia[divida.dia] = [];
+        }
+        this.dividasPagasPorDia[divida.dia].push(divida);
       } else {
-        if (!this.dividasPorDia[divida.dia])
+        if (!this.dividasPorDia[divida.dia]) {
           this.dividasPorDia[divida.dia] = [];
+        }
         this.dividasPorDia[divida.dia].push(divida);
       }
     });
 
+    // Ordenar atrasadas e pagas por dia
     this.dividasAtrasadas.sort((a, b) => a.dia - b.dia);
     this.dividasPagas.sort((a, b) => a.dia - b.dia);
 
-    const ordenado: { [dia: number]: Divida[] } = {};
+    // Ordenar dividasPorDia
+    const ordenadoPendentes: { [dia: number]: Divida[] } = {};
     Object.keys(this.dividasPorDia)
       .map((k) => parseInt(k, 10))
       .sort((a, b) => a - b)
       .forEach((dia) => {
-        ordenado[dia] = this.dividasPorDia[dia];
+        ordenadoPendentes[dia] = this.dividasPorDia[dia];
       });
-    this.dividasPorDia = ordenado;
+    this.dividasPorDia = ordenadoPendentes;
+
+    // Ordenar dividasPagasPorDia
+    const ordenadoPagas: { [dia: number]: Divida[] } = {};
+    Object.keys(this.dividasPagasPorDia)
+      .map((k) => parseInt(k, 10))
+      .sort((a, b) => a - b)
+      .forEach((dia) => {
+        ordenadoPagas[dia] = this.dividasPagasPorDia[dia];
+      });
+    this.dividasPagasPorDia = ordenadoPagas;
   }
 
   alternarStatus(id: string) {
