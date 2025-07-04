@@ -38,13 +38,14 @@ export class HomePage implements OnInit {
     this.dividasPagas = [];
     this.dividasPorDia = {};
 
-    this.dividaService.getDividas().forEach(divida => {
+    this.dividaService.getDividas().forEach((divida) => {
       if (!divida.foiPago && divida.dia < hoje) {
         this.dividasAtrasadas.push(divida);
-      } else if (divida.foiPago && divida.dia <= hoje) {
+      } else if (divida.foiPago && divida.dia < hoje) {
         this.dividasPagas.push(divida);
       } else {
-        if (!this.dividasPorDia[divida.dia]) this.dividasPorDia[divida.dia] = [];
+        if (!this.dividasPorDia[divida.dia])
+          this.dividasPorDia[divida.dia] = [];
         this.dividasPorDia[divida.dia].push(divida);
       }
     });
@@ -54,9 +55,9 @@ export class HomePage implements OnInit {
 
     const ordenado: { [dia: number]: Divida[] } = {};
     Object.keys(this.dividasPorDia)
-      .map(k => parseInt(k, 10))
+      .map((k) => parseInt(k, 10))
       .sort((a, b) => a - b)
-      .forEach(dia => {
+      .forEach((dia) => {
         ordenado[dia] = this.dividasPorDia[dia];
       });
     this.dividasPorDia = ordenado;
