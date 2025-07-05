@@ -1,6 +1,7 @@
 .barra-nav {
   background: none !important;
   position: absolute;
+  z-index: 1000;
 }
 
 ion-tab-bar {

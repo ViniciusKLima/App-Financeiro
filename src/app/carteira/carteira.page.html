@@ -1,0 +1,48 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Gerenciar Dívidas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="pagina-gerenciar" fullscreen>
+
+  <!-- Lista de categorias -->
+  <div class="grid-categorias">
+    <div class="categoria-box" *ngFor="let categoria of categorias">
+      <div class="conteudo-categoria">
+        <ion-icon [name]="categoria.icone" [style.color]="categoria.cor"></ion-icon>
+        <p>{{ categoria.nome }}</p>
+      </div>
+
+      <!-- Menu editar/excluir -->
+      <ion-buttons class="menu-categoria">
+        <ion-button fill="clear" size="small" id="menu-{{categoria.id}}">
+          <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+        </ion-button>
+
+        <ion-popover trigger="menu-{{categoria.id}}" side="bottom" alignment="end" showBackdrop="false">
+          <ng-template>
+            <ion-list lines="none">
+              <ion-item button (click)="abrirModalCategoria(categoria)">
+                <ion-icon slot="start" name="create-outline"></ion-icon>
+                Editar
+              </ion-item>
+              <ion-item button (click)="excluirCategoria(categoria.id)">
+                <ion-icon slot="start" name="trash-outline"></ion-icon>
+                Excluir
+              </ion-item>
+            </ion-list>
+          </ng-template>
+        </ion-popover>
+      </ion-buttons>
+    </div>
+  </div>
+
+  <!-- FAB -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="abrirModalCategoria()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+</ion-content>
