@@ -13,7 +13,7 @@ export class CategoriaFormComponent {
   novaCategoria = {
     id: '',
     nome: '',
-    cor: '#129623',
+    cor: '#ffa600',
     icone: 'logo-usd',
   };
 

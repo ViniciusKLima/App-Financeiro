@@ -14,58 +14,60 @@ export class CarteiraPage {
     {
       id: '1',
       nome: 'Boletos',
+      valor: '1532.20',
+      quantDividas: 5,
       icone: 'document-text-outline',
-      cor: '#6F42C1',
+      cor: '#666',
     },
     {
       id: '2',
-      nome: 'Cartões',
+      nome: 'Trabalho',
+      valor: '6244.00',
+      quantDividas: 4,
       icone: 'card-outline',
       cor: '#007BFF',
     },
+    {
+      id: '3',
+      nome: 'Casa',
+      valor: '2065.38',
+      quantDividas: 6,
+      icone: 'home-outline',
+      cor: '#08a708',
+    },
+    {
+      id: '4',
+      nome: 'Carro',
+      valor: '3231.60',
+      quantDividas: 3,
+      icone: 'car-outline',
+      cor: '#ffa600',
+    },
+    {
+      id: '5',
+      nome: 'Lazer',
+      valor: '205.76',
+      quantDividas: 2,
+      icone: 'football-outline',
+      cor: '#6F42C1',
+    },
   ];
-
-  mostrarBotoesFlutuantes = false;
-  modoEdicao = false;
-  iconeFab = 'add'; // Estado inicial do FAB
 
   constructor(
     private modalCtrl: ModalController,
     private alertCtrl: AlertController,
     private popoverCtrl: PopoverController
-  ) {}
+  ) {
+    this.ordenarCategoriasPorValor();
+  }
 
-  // Lida com o clique no botão FAB
-  acaoFab() {
-    if (this.iconeFab === 'add') {
-      this.mostrarBotoesFlutuantes = true;
-      this.iconeFab = 'close-outline';
-    } else if (this.iconeFab === 'close-outline') {
-      this.mostrarBotoesFlutuantes = false;
-      this.iconeFab = 'add';
-    } else if (this.iconeFab === 'checkmark-outline') {
-      this.finalizarEdicao();
-    }
+  ordenarCategoriasPorValor() {
+    this.categorias.sort((a, b) => parseFloat(b.valor) - parseFloat(a.valor));
   }
 
   // Ação do botão "Nova Categoria"
   novaCategoria() {
-    this.mostrarBotoesFlutuantes = false;
-    this.iconeFab = 'add';
     this.abrirModalCategoriaIndividual();
-  }
-
-  // Ação do botão "Editar Categorias"
-  editarCategorias() {
-    this.mostrarBotoesFlutuantes = false;
-    this.modoEdicao = true;
-    this.iconeFab = 'checkmark-outline';
-  }
-
-  // Finaliza modo edição
-  finalizarEdicao() {
-    this.modoEdicao = false;
-    this.iconeFab = 'add';
   }
 
   // Abre o modal para criar/editar categoria
@@ -96,12 +98,14 @@ export class CarteiraPage {
   adicionarNovaCategoria(novaCat: any) {
     novaCat.id = Date.now().toString();
     this.categorias.push(novaCat);
+    this.ordenarCategoriasPorValor(); // <- aqui
   }
 
   atualizarCategoria(catEditada: any) {
     const index = this.categorias.findIndex((c) => c.id === catEditada.id);
     if (index > -1) {
       this.categorias[index] = catEditada;
+      this.ordenarCategoriasPorValor(); // <- aqui
     }
   }
 

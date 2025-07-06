@@ -5,13 +5,23 @@ ion-header {
   justify-content: center;
   align-items: center;
   text-align: center;
-  height: 20vh;
+  height: 15vh;
   box-shadow: none;
   border: none;
 
   ion-title {
+    position: relative;
     font-size: 1.3rem;
     color: var(--cor-principal);
+
+    ion-icon.add-categoria {
+      position: absolute;
+      right: 30px;
+      font-size: 2rem;
+      transform: translateY(-12%);
+      color: var(--cor-principal);
+      cursor: pointer;
+    }
   }
 }
 
@@ -27,44 +37,134 @@ ion-header {
     padding: 1rem;
   }
 
+  .carteira-box {
+    position: relative;
+    width: 80vw;
+    max-width: 400px;
+    height: 50vw;
+    max-height: 260px;
+
+    .capa-carteira {
+      position: absolute;
+      bottom: 0;
+      box-shadow: 8px -6px 12px rgba(0, 0, 0, 0.24);
+      background: linear-gradient(
+        150deg,
+        #4d4d4d 20%,
+        #4d4d4d 40%,
+        #242424 80%
+      );
+      height: 88%;
+      width: 92%;
+      padding: 1rem;
+      border-radius: 18px 15px 0 20px;
+      z-index: 3;
+      display: flex;
+      text-align: center;
+      color: rgb(179, 179, 179);
+      ion-icon {
+        font-size: 1.5rem;
+        margin-right: 0.5rem;
+      }
+      p {
+        padding-top: 2px;
+      }
+    }
+
+    .cartao1 {
+      position: absolute;
+      bottom: 1.5%;
+      left: 4%;
+      z-index: 2;
+      box-shadow: 8px -6px 12px rgba(0, 0, 0, 0.24);
+      background: linear-gradient(
+        150deg,
+        #d434b9 20%,
+        #d448c2 40%,
+        #690864 80%
+      );
+      height: 90%;
+      width: 90%;
+      padding: 1rem;
+      border-radius: 15px;
+    }
+    .cartao2 {
+      position: absolute;
+      bottom: 3.5%;
+      left: 6%;
+      z-index: 1;
+      box-shadow: 8px -6px 12px rgba(0, 0, 0, 0.24);
+      background: linear-gradient(
+        150deg,
+        #17ce36 20%,
+        #28df4f 40%,
+        #046424 80%
+      );
+      height: 90%;
+      width: 90%;
+      padding: 1rem;
+      border-radius: 15px;
+    }
+
+    .fundo-carteira {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      box-shadow: 8px -6px 12px rgba(0, 0, 0, 0.24);
+      background: linear-gradient(
+        150deg,
+        #4d4d4d 20%,
+        #4d4d4d 40%,
+        #242424 80%
+      );
+      height: 100%;
+      width: 92%;
+      padding: 1rem;
+      border-radius: 18px 15px 20px 20px;
+    }
+  }
+
   .categoria-box {
-    position: relative; // Para posicionar o menu
-    width: 40vw;
-    max-width: 200px;
-    height: 170px;
+    position: relative;
+    width: 80vw;
+    max-width: 500px;
+    height: 45vw;
+    max-height: 260px;
     background: white;
-    border-radius: 15px;
-    padding: 1.2rem;
+    border-radius: 20px;
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.24);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
     transition: transform 0.2s;
     cursor: pointer;
 
-    ion-icon {
-      font-size: 3rem;
-      color: var(--cor-principal);
-    }
+    .info-categoria {
+      position: absolute;
+      top: 7%;
+      left: 4.3%;
+      display: flex;
+      align-items: start;
+      justify-content: center;
 
-    p {
-      font-size: 1rem;
-      font-weight: 500;
-      color: #444;
-      margin: 0;
-    }
+      .icon-box {
+        width: 60px;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 0.5rem;
+        border-radius: 10px 5px 5px 5px;
 
-    &:active {
-      transform: scale(0.97);
+        ion-icon {
+          font-size: 1.5rem;
+          color: white;
+        }
+      }
     }
   }
 
   .menu-categoria {
     position: absolute;
-    top: 8px;
-    right: 0;
+    top: 7%;
+    right: 2%;
     z-index: 10;
 
     ion-icon {
@@ -74,13 +174,39 @@ ion-header {
       transition: color 0.2s;
     }
   }
+
+  .valor-categoria {
+    position: absolute;
+    bottom: 7%;
+    left: 4.3%;
+    font-size: 0.6rem;
+
+    .ttValorDividas {
+      margin-bottom: 4px;
+    }
+
+    .valorDividas {
+      font-size: 1.3rem;
+    }
+  }
+
+  .quant-dividas {
+    position: absolute;
+    bottom: 0%;
+    font-size: 0.6rem;
+    right: 5%;
+
+    .numQuantDividas {
+      font-size: 3rem;
+      text-align: end;
+    }
+  }
 }
 
 ion-popover {
   --background: #ffffff;
   border-radius: 12px;
   --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  
 }
 
 ion-popover .popover-content ion-list {
@@ -91,8 +217,11 @@ ion-popover .popover-content ion-list {
   width: 9%;
 }
 .list-ios {
-    background: var(--ion-background-color, var(--ion-background-color, #ffffff00));
-    border: none !important;
+  background: var(
+    --ion-background-color,
+    var(--ion-background-color, #ffffff00)
+  );
+  border: none !important;
 }
 
 /* Estiliza o ion-popover no modo iOS */
@@ -111,7 +240,7 @@ ion-popover ion-item.editar {
   --background: white;
   --color: #1565c0;
   border: none !important;
-  
+
   ion-icon {
     color: #1565c0;
   }

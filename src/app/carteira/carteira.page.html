@@ -1,28 +1,35 @@
 <ion-content class="pagina-gerenciar" fullscreen>
   <ion-header>
-    <ion-title>Gerenciar Dívidas</ion-title>
+    <ion-title>Gerenciar Dívidas<ion-icon name="add-circle-outline" class="add-categoria" (click)="novaCategoria()"></ion-icon></ion-title>
+    
   </ion-header>
   <!-- Lista de categorias -->
   <div class="grid-categorias">
-    <div class="categoria-box">
-      <div class="conteudo-categoria">
-        <ion-icon name="wallet-outline"></ion-icon>
+    <div class="carteira-box">
+      <div class="capa-carteira">
+        <ion-icon name="card-outline"></ion-icon>
         <p>Cartões</p>
       </div>
+      <div class="cartao1"></div>
+      <div class="cartao2"></div>
+      <div class="fundo-carteira"></div>
     </div>
+
     <div class="categoria-box" *ngFor="let categoria of categorias">
-      <div class="conteudo-categoria">
-        <ion-icon
-          [name]="categoria.icone"
-          [style.color]="categoria.cor"
-        ></ion-icon>
+      <div class="info-categoria">
+        <div class="icon-box" [style.background]="categoria.cor">
+          <ion-icon [name]="categoria.icone"></ion-icon>
+        </div>
         <p [style.color]="categoria.cor">{{ categoria.nome }}</p>
       </div>
 
       <!-- Botão de menu visível apenas no modo edição -->
-      <ion-buttons class="menu-categoria" *ngIf="modoEdicao">
+      <ion-buttons class="menu-categoria">
         <ion-button fill="clear" size="small" [id]="'menu-'+categoria.id">
-          <ion-icon name="ellipsis-vertical"></ion-icon>
+          <ion-icon
+            name="ellipsis-vertical"
+            [style.color]="categoria.cor"
+          ></ion-icon>
         </ion-button>
 
         <ion-popover
@@ -57,19 +64,19 @@
           </ng-template>
         </ion-popover>
       </ion-buttons>
+
+      <div class="valor-categoria" [style.color]="categoria.cor">
+        <p class="ttValorDividas">Valor Total</p>
+        <p class="valorDividas">
+          {{ categoria.valor != null ? (categoria.valor |
+          currency:'BRL':'symbol':'1.2-2') : 'R$ 0,00' }}
+        </p>
+      </div>
+
+      <div class="quant-dividas" [style.color]="categoria.cor">
+        <p class="ttQuantDividas">Dívidas</p>
+        <p class="numQuantDividas">{{ categoria.quantDividas || '0'}}</p>
+      </div>
     </div>
   </div>
-
-  <!-- FAB Labels -->
-  <div class="fab-labels" *ngIf="mostrarBotoesFlutuantes">
-    <div class="fab-option" (click)="novaCategoria()">Nova Categoria</div>
-    <div class="fab-option" (click)="editarCategorias()">Editar Categorias</div>
-  </div>
-
-  <!-- FAB Button -->
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="acaoFab()">
-      <ion-icon [name]="iconeFab"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
 </ion-content>

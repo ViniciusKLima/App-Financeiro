@@ -1,7 +1,7 @@
 :host {
   .modal-wrapper {
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
+    border-top-left-radius: 40px;
+    border-top-right-radius: 40px;
     background-color: var(--ion-background-color);
   }
 
@@ -15,7 +15,7 @@
 
     ion-title {
       padding-left: 24px;
-      font-size: 1rem;
+      font-size: 1.5rem;
       text-align: start;
       --color: var(--cor-principal);
       display: flex;
@@ -45,20 +45,21 @@
     .borda-cor {
       width: 80px;
       height: 36px;
-      border: var(--cor-principal) 2px solid;
+      border: var(--cor-principal) 1px solid;
       overflow: hidden;
-      border-radius: 10px;
+      border-radius: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 5px;
     }
 
     .input-cor-wrapper {
-      width: 78px;
-      height: 34px;
-      border: white 1px solid;
-      display: flex;
-      justify-content: flex-end;
+      width: 76px;
+      height: 28px;
       display: flex;
       overflow: hidden;
-      border-radius: 10px;
+      border-radius: 1000px;
       justify-content: center;
       align-items: center;
     }
@@ -66,7 +67,7 @@
     .input-cor {
       width: 100%;
       height: 100%;
-      border: none;
+      cursor: pointer;
 
       &:focus {
         --box-shadow: none;
@@ -120,7 +121,7 @@
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    border: #666 1px solid;
+    border: #a5a5a5 1px solid;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -128,7 +129,7 @@
     transition: all 0.2s ease-in-out;
     ion-icon {
       font-size: 24px;
-      color: #666;
+      color: #a5a5a5;
     }
   }
 
