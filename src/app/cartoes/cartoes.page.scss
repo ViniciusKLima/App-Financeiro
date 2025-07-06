@@ -1,0 +1,189 @@
+.content {
+  --padding-bottom: 10vh;
+}
+
+.header {
+  position: relative;
+  color: var(--cor-principal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 10vh;
+  box-shadow: none;
+
+  ion-icon:nth-child(1) {
+    position: absolute;
+    font-size: 1.5rem;
+    left: 6%;
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  ion-icon:nth-child(3) {
+    position: absolute;
+    right: 12%;
+    font-size: 1.7rem;
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  p {
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+}
+
+.cartoes-scroll-wrapper {
+  width: 100vw;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+.cartoes-scroll {
+  display: flex;
+  overflow-x: auto;
+  padding: 16px 0;
+  gap: 16px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+.cartoes-scroll::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.cartao-espaco {
+  min-width: 5vw;
+  pointer-events: none;
+  flex-shrink: 0;
+  scroll-snap-align: center;
+}
+.cartao-box.ativo {
+  z-index: 2;
+  transform: scale(1.05);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+}
+
+.cartao-box {
+  position: relative;
+  margin: 25px auto;
+  width: 83vw;
+  max-width: 500px;
+  height: 50vw;
+  max-height: 320px;
+  flex: 0 0 83vw;
+  border-radius: 20px;
+  scroll-snap-align: center;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.24);
+
+  .nome-cartao {
+    position: absolute;
+    top: 8%;
+    left: 5.5%;
+    font-size: 1.7rem;
+  }
+
+  .menu-cartao {
+    position: absolute;
+    top: 7%;
+    right: 4%;
+
+    ion-icon {
+      font-size: 1.4rem;
+      color: white;
+    }
+  }
+
+  .valor-cartao {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 5.5%;
+
+    p {
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
+  }
+
+  .fechamento-cartao {
+    position: absolute;
+    bottom: 8%;
+    left: 5.5%;
+
+    .ttFechamento {
+      font-size: 0.5rem;
+    }
+    .numFechamento {
+      font-size: 1rem;
+    }
+  }
+
+  .vencimento-cartao {
+    position: absolute;
+    bottom: 8%;
+    right: 5.5%;
+    text-align: end;
+
+    .ttVencimento {
+      font-size: 0.5rem;
+    }
+    .numVencimento {
+      font-size: 1rem;
+    }
+  }
+}
+
+.fatura-card {
+  background: transparent !important;
+  color: white;
+  margin-top: 15px;
+  box-shadow: none;
+  padding-inline: 20px;
+
+  ion-card-header,
+  ion-card-title {
+    text-align: center;
+    background: transparent !important;
+    font-size: 1rem;
+  }
+
+  ion-card-title{
+    margin-bottom: 10px;
+  }
+
+  ion-grid {
+    padding: 0;
+  }
+
+  ion-row {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 8px 0;
+  }
+
+  .fatura-header {
+    font-weight: bold;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  }
+
+  ion-col {
+    font-size: 14px;
+    color: #666;
+  }
+
+  .col-nome {
+    text-align: start;
+    justify-content: flex-start;
+  }
+
+  .col-parcelas {
+    text-align: center;
+    justify-content: center;
+  }
+
+  .col-valor {
+    text-align: end;
+    justify-content: flex-end;
+  }
+}

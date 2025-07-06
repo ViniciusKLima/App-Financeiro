@@ -43,6 +43,7 @@ ion-header {
     max-width: 400px;
     height: 50vw;
     max-height: 260px;
+    cursor: pointer;
 
     .capa-carteira {
       position: absolute;
@@ -131,7 +132,7 @@ ion-header {
     height: 45vw;
     max-height: 260px;
     background: white;
-    border-radius: 20px;
+    border-radius: 20px 5px 20px 5px;
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.24);
     transition: transform 0.2s;
     cursor: pointer;

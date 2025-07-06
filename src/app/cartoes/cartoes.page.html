@@ -1,0 +1,76 @@
+<ion-content [fullscreen]="true" class="content">
+  <ion-header class="header">
+    <ion-icon
+      name="chevron-back-outline"
+      [routerLink]="['/nav/carteira']"
+    ></ion-icon>
+    <p>Meus Cartões</p>
+    <ion-icon name="add-circle-outline"></ion-icon>
+  </ion-header>
+
+  <div class="cartoes-scroll-wrapper">
+    <div class="cartoes-scroll" #scrollDiv (scroll)="onScroll($event)">
+      <!-- Espaço à esquerda para centralizar o primeiro cartão -->
+      <div class="cartao-espaco"></div>
+      <div
+        class="cartao-box"
+        *ngFor="let cartao of cartoes; let i = index"
+        [class.ativo]="i === cartaoAtivoIndex"
+        [style.background]="cartao.gradient"
+      >
+        <div class="nome-cartao">
+          <p>{{ cartao.nome }}</p>
+        </div>
+        <!-- Menu de opções -->
+        <div class="menu-cartao">
+          <ion-icon
+            name="ellipsis-vertical"
+            (click)="abrirMenuCartao(cartao, $event)"
+          ></ion-icon>
+        </div>
+        <div class="valor-cartao">
+          <p class="valorFaturas">
+            {{ cartao.valor != null ? (cartao.valor |
+            currency:'BRL':'symbol':'1.2-2') : 'R$ 0,00' }}
+          </p>
+        </div>
+        <div class="fechamento-cartao">
+          <p class="ttFechamento">Fechamento</p>
+          <p class="numFechamento">Dia {{ cartao.diaFechamento || '-' }}</p>
+        </div>
+        <div class="vencimento-cartao">
+          <p class="ttVencimento">Vencimento</p>
+          <p class="numVencimento">Dia {{ cartao.diaVencimento || '-' }}</p>
+        </div>
+      </div>
+      <!-- Espaço à direita para centralizar o último cartão -->
+      <div class="cartao-espaco"></div>
+    </div>
+  </div>
+
+  <ion-card class="fatura-card" >
+    <ion-card-header>
+      <ion-card-title [style.color]="cartaoAtivo.cor">Fatura do {{ cartaoAtivo.nome }}</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-grid>
+        <ion-row class="fatura-header">
+          <ion-col class="col-nome" [style.color]="cartaoAtivo.cor">Nome</ion-col>
+          <ion-col size="4" class="col-parcelas" [style.color]="cartaoAtivo.cor">Parcelas</ion-col>
+          <ion-col size="4" class="col-valor" [style.color]="cartaoAtivo.cor">Valor</ion-col>
+        </ion-row>
+
+        <ion-row *ngFor="let compra of cartaoAtivo.compras">
+          <ion-col class="col-nome">{{ compra.nome }}</ion-col>
+          <ion-col size="4" class="col-parcelas"
+            >{{ compra.parcelaAtual }} de {{ compra.totalParcelas }}</ion-col
+          >
+          <ion-col size="4" class="col-valor"
+            >{{ compra.valor | currency:'BRL':'symbol':'1.2-2' }}</ion-col
+          >
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
