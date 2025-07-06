@@ -199,3 +199,47 @@ ion-fab-button {
 .botoes-form {
   margin-top: 1rem;
 }
+
+.alerta-exclusao {
+  // Fundo do alerta
+  --background: white;
+  --border-radius: 16px;
+  --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+
+  // Cabeçalho
+  .alert-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--cor-principal);
+  }
+
+  // Mensagem
+  .alert-message {
+    font-size: 0.95rem;
+    color: #555555;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  // Botões
+  .alert-button-role-cancel {
+    color: var(--cor-principal);
+    font-weight: 500;
+  }
+
+  .alert-button-role-destructive {
+    color: #d32f2f;
+    font-weight: bold;
+  }
+
+  // Ajuste dos botões (opcional)
+  .alert-button-group {
+    display: flex;
+    flex-direction: row-reverse; // "Excluir" à direita
+    button {
+      flex: 1;
+      border-radius: 8px;
+      margin: 0 4px;
+    }
+  }
+}

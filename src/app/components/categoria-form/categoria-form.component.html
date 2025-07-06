@@ -1,16 +1,16 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>{{
-      categoria ? "Editar Categoria" : "Nova Categoria"
-    }}</ion-title>
-  </ion-toolbar>
+  <ion-title>{{
+    categoria ? "Editar Categoria" : "Criar Categoria"
+  }}</ion-title>
 </ion-header>
 
 <ion-content class="ion-padding">
   <form>
     <!-- Campo Nome -->
     <div class="input-row">
-      <ion-label position="fixed">Nome</ion-label>
+      <ion-label position="fixed"
+        ><ion-icon name="pencil-outline"></ion-icon> Nome:</ion-label
+      >
       <ion-input
         [(ngModel)]="novaCategoria.nome"
         name="nome"
@@ -21,15 +21,18 @@
 
     <!-- Campo Cor -->
     <div class="input-row">
-      <ion-label position="fixed">Cor</ion-label>
-      <div class="input-cor-wrapper">
-        <ion-input
-          type="color"
-          [(ngModel)]="novaCategoria.cor"
-          name="cor"
-          class="input-direita input-cor"
-          placeholder="#ffffff"
-        ></ion-input>
+      <ion-label position="fixed"
+        ><ion-icon name="color-fill-outline"></ion-icon> Cor:</ion-label
+      >
+      <div class="borda-cor">
+        <div class="input-cor-wrapper">
+          <ion-input
+            type="color"
+            [(ngModel)]="novaCategoria.cor"
+            name="cor"
+            class="input-direita input-cor"
+          ></ion-input>
+        </div>
       </div>
     </div>
 
@@ -54,9 +57,7 @@
     </div>
 
     <!-- Botões -->
-    <ion-button
-      (click)="salvar()"
-      class="btn-salvar ion-margin-top"
+    <ion-button (click)="salvar()" class="btn-salvar ion-margin-top"
       >Salvar</ion-button
     >
     <ion-button expand="block" fill="clear" color="medium" (click)="fechar()"

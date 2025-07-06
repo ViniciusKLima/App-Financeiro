@@ -35,6 +35,7 @@ export class CategoriaFormComponent {
     // 🚗 Transporte / Viagens
     'car-outline',
     'bus-outline',
+    'bicycle-outline',
     'airplane-outline',
 
     // 🎮 Lazer / Entretenimento
