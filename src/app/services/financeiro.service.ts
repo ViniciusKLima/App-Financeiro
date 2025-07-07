@@ -20,10 +20,11 @@ export class FinanceiroService {
           parcelaAtual: 3,
           totalParcelas: 10,
           valor: 100.0,
+          descricao: 'Assinatura mensal da Alexa',
         },
-        { nome: 'Netflix', parcelaAtual: 1, totalParcelas: 1, valor: 55.9 },
-        { nome: 'Uber', parcelaAtual: 1, totalParcelas: 1, valor: 32.5 },
-        { nome: 'Farmácia', parcelaAtual: 1, totalParcelas: 2, valor: 80.0 },
+        { nome: 'Netflix', parcelaAtual: 1, totalParcelas: 1, valor: 55.9, descricao: 'Plano básico mensal' },
+        { nome: 'Uber', parcelaAtual: 1, totalParcelas: 1, valor: 32.5, descricao: 'Corrida Uber' },
+        { nome: 'Farmácia', parcelaAtual: 1, totalParcelas: 2, valor: 80.0, descricao: 'Medicamentos' },
       ],
     },
     {
@@ -35,10 +36,10 @@ export class FinanceiroService {
       cor: '#21C25E', // Verde PicPay
       gradient: '',
       compras: [
-        { nome: 'Curso Udemy', parcelaAtual: 5, totalParcelas: 5, valor: 45.5 },
-        { nome: 'Spotify', parcelaAtual: 2, totalParcelas: 12, valor: 19.9 },
-        { nome: 'Livraria', parcelaAtual: 1, totalParcelas: 1, valor: 120.0 },
-        { nome: 'Padaria', parcelaAtual: 1, totalParcelas: 1, valor: 18.0 },
+        { nome: 'Curso Udemy', parcelaAtual: 5, totalParcelas: 5, valor: 45.5, descricao: 'Curso online de programação' },
+        { nome: 'Spotify', parcelaAtual: 2, totalParcelas: 12, valor: 19.9, descricao: 'Assinatura música' },
+        { nome: 'Livraria', parcelaAtual: 1, totalParcelas: 1, valor: 120.0, descricao: 'Compra de livros' },
+        { nome: 'Padaria', parcelaAtual: 1, totalParcelas: 1, valor: 18.0, descricao: 'Pães e lanches' },
       ],
     },
     {
@@ -50,14 +51,15 @@ export class FinanceiroService {
       cor: '#F79E1B', // Laranja MasterCard
       gradient: '',
       compras: [
-        { nome: 'Livro', parcelaAtual: 1, totalParcelas: 3, valor: 60.0 },
+        { nome: 'Livro', parcelaAtual: 1, totalParcelas: 3, valor: 60.0, descricao: 'Livro técnico' },
         {
           nome: 'Restaurante',
           parcelaAtual: 1,
           totalParcelas: 1,
           valor: 150.0,
+          descricao: 'Almoço com amigos',
         },
-        { nome: 'Cinema', parcelaAtual: 1, totalParcelas: 1, valor: 40.0 },
+        { nome: 'Cinema', parcelaAtual: 1, totalParcelas: 1, valor: 40.0, descricao: 'Ingresso de cinema' },
       ],
     },
     {
@@ -69,14 +71,15 @@ export class FinanceiroService {
       cor: '#00E1E6', // Azul Neon
       gradient: '',
       compras: [
-        { nome: 'iFood', parcelaAtual: 1, totalParcelas: 1, valor: 60.0 },
+        { nome: 'iFood', parcelaAtual: 1, totalParcelas: 1, valor: 60.0, descricao: 'Pedido de comida' },
         {
           nome: 'Assinatura Deezer',
           parcelaAtual: 2,
           totalParcelas: 12,
           valor: 19.9,
+          descricao: 'Música online',
         },
-        { nome: 'Posto', parcelaAtual: 1, totalParcelas: 1, valor: 120.0 },
+        { nome: 'Posto', parcelaAtual: 1, totalParcelas: 1, valor: 120.0, descricao: 'Combustível' },
       ],
     },
   ];
@@ -91,11 +94,11 @@ export class FinanceiroService {
       icone: 'document-text-outline',
       cor: '#666',
       dividas: [
-        { nome: 'Amazon Alexa', diaPagamento: 3, valor: 104.0 },
-        { nome: 'Lanche', diaPagamento: 4, valor: 100.0 },
-        { nome: 'Água', diaPagamento: 7, valor: 80.0 },
-        { nome: 'Luz', diaPagamento: 10, valor: 200.0 },
-        { nome: 'Internet', diaPagamento: 12, valor: 120.0 },
+        { nome: 'Amazon Alexa', diaPagamento: 3, valor: 104.0, descricao: 'Assinatura Alexa' },
+        { nome: 'Lanche', diaPagamento: 4, valor: 100.0, descricao: 'Lanche do dia' },
+        { nome: 'Água', diaPagamento: 7, valor: 80.0, descricao: 'Conta de água' },
+        { nome: 'Luz', diaPagamento: 10, valor: 200.0, descricao: 'Conta de energia' },
+        { nome: 'Internet', diaPagamento: 12, valor: 120.0, descricao: 'Plano internet' },
       ],
     },
     {
@@ -106,10 +109,10 @@ export class FinanceiroService {
       icone: 'card-outline',
       cor: '#007BFF',
       dividas: [
-        { nome: 'Curso Udemy', diaPagamento: 10, valor: 200.0 },
-        { nome: 'Notebook', diaPagamento: 15, valor: 3000.0 },
-        { nome: 'Mouse', diaPagamento: 18, valor: 150.0 },
-        { nome: 'Cadeira', diaPagamento: 20, valor: 400.0 },
+        { nome: 'Curso Udemy', diaPagamento: 10, valor: 200.0, descricao: 'Curso profissionalizante' },
+        { nome: 'Notebook', diaPagamento: 15, valor: 3000.0, descricao: 'Parcelamento notebook' },
+        { nome: 'Mouse', diaPagamento: 18, valor: 150.0, descricao: 'Mouse gamer' },
+        { nome: 'Cadeira', diaPagamento: 20, valor: 400.0, descricao: 'Cadeira ergonômica' },
       ],
     },
     {
@@ -120,12 +123,12 @@ export class FinanceiroService {
       icone: 'home-outline',
       cor: '#08a708',
       dividas: [
-        { nome: 'Aluguel', diaPagamento: 5, valor: 1200.0 },
-        { nome: 'Energia', diaPagamento: 10, valor: 250.0 },
-        { nome: 'Condomínio', diaPagamento: 8, valor: 300.0 },
-        { nome: 'Gás', diaPagamento: 12, valor: 100.0 },
-        { nome: 'Mercado', diaPagamento: 15, valor: 150.0 },
-        { nome: 'Manutenção', diaPagamento: 25, valor: 65.38 },
+        { nome: 'Aluguel', diaPagamento: 5, valor: 1200.0, descricao: 'Aluguel mensal' },
+        { nome: 'Energia', diaPagamento: 10, valor: 250.0, descricao: 'Conta de energia' },
+        { nome: 'Condomínio', diaPagamento: 8, valor: 300.0, descricao: 'Taxa condomínio' },
+        { nome: 'Gás', diaPagamento: 12, valor: 100.0, descricao: 'Botijão de gás' },
+        { nome: 'Mercado', diaPagamento: 15, valor: 150.0, descricao: 'Compras de supermercado' },
+        { nome: 'Manutenção', diaPagamento: 25, valor: 65.38, descricao: 'Manutenção casa' },
       ],
     },
     {
@@ -136,22 +139,22 @@ export class FinanceiroService {
       icone: 'car-outline',
       cor: '#ffa600',
       dividas: [
-        { nome: 'IPVA', diaPagamento: 20, valor: 900.0 },
-        { nome: 'Seguro', diaPagamento: 15, valor: 350.0 },
-        { nome: 'Combustível', diaPagamento: 22, valor: 1981.6 },
+        { nome: 'IPVA', diaPagamento: 20, valor: 900.0, descricao: 'IPVA anual' },
+        { nome: 'Seguro', diaPagamento: 15, valor: 350.0, descricao: 'Seguro do veículo' },
+        { nome: 'Combustível', diaPagamento: 22, valor: 1981.6, descricao: 'Abastecimento' },
       ],
     },
     {
       id: '5',
       nome: 'Lazer',
       valor: '205.76',
-      quantDividas: 2,
+      quantDividas: 3,
       icone: 'football-outline',
       cor: '#6F42C1',
       dividas: [
-        { nome: 'Cinema', diaPagamento: 12, valor: 50.0 },
-        { nome: 'Restaurante', diaPagamento: 18, valor: 80.0 },
-        { nome: 'Viagem', diaPagamento: 28, valor: 75.76 },
+        { nome: 'Cinema', diaPagamento: 12, valor: 50.0, descricao: 'Ingresso de cinema' },
+        { nome: 'Restaurante', diaPagamento: 18, valor: 80.0, descricao: 'Jantar' },
+        { nome: 'Viagem', diaPagamento: 28, valor: 75.76, descricao: 'Passeio de final de semana' },
       ],
     },
     {
@@ -162,9 +165,9 @@ export class FinanceiroService {
       icone: 'cart-outline',
       cor: '#FF1493',
       dividas: [
-        { nome: 'Roupas', diaPagamento: 8, valor: 200.0 },
-        { nome: 'Presentes', diaPagamento: 22, valor: 150.0 },
-        { nome: 'Eletrônicos', diaPagamento: 28, valor: 150.0 },
+        { nome: 'Roupas', diaPagamento: 8, valor: 200.0, descricao: 'Compra de roupas' },
+        { nome: 'Presentes', diaPagamento: 22, valor: 150.0, descricao: 'Presentes para família' },
+        { nome: 'Eletrônicos', diaPagamento: 28, valor: 150.0, descricao: 'Compras eletrônicas' },
       ],
     },
   ];

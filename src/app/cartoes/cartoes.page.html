@@ -32,7 +32,7 @@
           <p class="valorFaturas">
             {{ financeiroService.getValorTotalCartao(cartao.id) |
             currency:'BRL':'symbol':'1.2-2' }}
-          </p> 
+          </p>
         </div>
         <div class="fechamento-cartao">
           <p class="ttFechamento">Fechamento</p>
@@ -81,4 +81,13 @@
       </ion-grid>
     </ion-card-content>
   </ion-card>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button
+      [style.--background]="cartaoAtivo.cor"
+      [style.--color]="'#fff'"
+      (click)="openAdicionarCompra()"
+    >
+      <ion-icon name="cart-outline" [style.color]="'#fff'"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

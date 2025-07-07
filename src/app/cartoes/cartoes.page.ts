@@ -1,5 +1,7 @@
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { FinanceiroService } from '../services/financeiro.service';
+import { ModalController } from '@ionic/angular';
+import { DividaFormComponent } from '../components/divida-form/divida-form.component';
 
 @Component({
   selector: 'app-cartoes',
@@ -14,7 +16,10 @@ export class CartoesPage implements AfterViewInit {
   cartoes: any[] = [];
   cartaoAtivoIndex = 0;
 
-  constructor(public financeiroService: FinanceiroService) {
+  constructor(
+    public financeiroService: FinanceiroService,
+    private modalCtrl: ModalController
+  ) {
     this.cartoes = this.financeiroService.getCartoes().map((cartao: any) => ({
       ...cartao,
       gradient: this.financeiroService.generateGradient(cartao.cor),
@@ -23,6 +28,21 @@ export class CartoesPage implements AfterViewInit {
 
   ngAfterViewInit() {
     setTimeout(() => this.scrollToCenter(this.cartaoAtivoIndex), 100);
+  }
+
+  async openAdicionarCompra() {
+    const modal = await this.modalCtrl.create({
+      component: DividaFormComponent,
+      componentProps: {
+        modo: 'cartao', // 🔹 Passa o tipo de uso para o modal
+      },
+      breakpoints: [0, 0.8, 0.9],
+      initialBreakpoint: 0.9,
+      showBackdrop: true,
+      backdropDismiss: true,
+    });
+
+    await modal.present();
   }
 
   get cartaoAtivo() {

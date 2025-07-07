@@ -1,0 +1,162 @@
+<ion-content class="ion-padding">
+  <form [formGroup]="formCompra" (ngSubmit)="salvar()" id="formDividaCompra">
+    <!-- Formulário COMPRA via cartão -->
+    <div *ngIf="modo === 'cartao'">
+      <!-- Custom Select fora do ion-item para evitar overflow hidden -->
+      <div class="custom-select-wrapper">
+        <div class="custom-select" (click)="toggleSelect('cartoes')">
+          <div class="selected-option" [style.color]="cartaoSelecionado?.cor">
+            {{ cartaoSelecionado?.nome || "Selecione um cartão" }}
+          </div>
+          <ion-icon
+            name="chevron-down-outline"
+            class="arrow"
+            [class.open]="mostrandoCartoes"
+          ></ion-icon>
+
+          <!-- Lista de opções -->
+          <div class="options" *ngIf="mostrandoCartoes">
+            <div
+              *ngFor="let cartao of cartoes"
+              (click)="selecionarCartao(cartao)"
+              [style.color]="cartao.cor"
+            >
+              {{ cartao.nome }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Campo de valor centralizado -->
+      <div class="campo-valor-central">
+        <input
+          type="tel"
+          formControlName="valor"
+          class="input-valor"
+          placeholder="R$ 0,00"
+          [value]="
+            formCompra.get('valor')?.value
+              ? formatarValor(formCompra.get('valor')?.value)
+              : 'R$ 0,00'
+          "
+          (input)="onInputValor($event)"
+          ionInput
+          [style.color]="cartaoSelecionado?.cor"
+        />
+      </div>
+
+      <ion-item>
+        <ion-label position="floating">
+          <ion-icon slot="start" name="cart"></ion-icon>
+          Nome da Compra
+        </ion-label>
+        <ion-input formControlName="nomeCompra"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>
+          <ion-icon slot="start" name="repeat-outline"></ion-icon>
+          Compra Fixa
+        </ion-label>
+        <ion-toggle
+          formControlName="compraFixa"
+          (ionChange)="onToggleFixa()"
+        ></ion-toggle>
+      </ion-item>
+
+      <ion-item [class.item-disabled]="formCompra.value.compraFixa">
+        <ion-label>
+          <ion-icon slot="start" name="calendar-number-outline"></ion-icon>
+          Parcela Atual
+        </ion-label>
+        <ion-input
+          type="number"
+          formControlName="parcelaAtual"
+          [disabled]="formCompra.value.compraFixa"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item [class.item-disabled]="formCompra.value.compraFixa">
+        <ion-label>
+          <ion-icon slot="start" name="layers-outline"></ion-icon>
+          Total de Parcelas
+        </ion-label>
+        <ion-input
+          type="number"
+          formControlName="totalParcelas"
+          [disabled]="formCompra.value.compraFixa"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">
+          <ion-icon slot="start" name="document-text-outline"></ion-icon>
+          Descrição
+        </ion-label>
+        <ion-textarea formControlName="descricao"></ion-textarea>
+      </ion-item>
+    </div>
+
+    <!-- Formulário DÍVIDA em categoria -->
+    <div *ngIf="modo === 'categoria'">
+      <ion-item>
+        <ion-label>
+          <ion-icon slot="start" name="list-outline"></ion-icon>
+          Categoria
+        </ion-label>
+      </ion-item>
+      <div class="custom-select" (click)="toggleSelect('categorias')">
+        <div class="selected-option">
+          {{ categoriaSelecionada?.nome || "Selecione uma categoria" }}
+        </div>
+        <ion-icon name="chevron-down-outline" class="arrow"></ion-icon>
+
+        <!-- Lista de opções -->
+        <div class="options" *ngIf="mostrandoCategorias">
+          <div
+            *ngFor="let categoria of categorias"
+            (click)="selecionarCategoria(categoria)"
+            [style.color]="categoria.cor"
+          >
+            {{ categoria.nome }}
+          </div>
+        </div>
+      </div>
+
+      <ion-item>
+        <ion-label position="floating">
+          <ion-icon slot="start" name="receipt-outline"></ion-icon>
+          Nome da Dívida
+        </ion-label>
+        <ion-input formControlName="nomeDivida"></ion-input>
+      </ion-item>
+
+      <!-- Campo de valor centralizado -->
+      <div class="campo-valor-central">
+        <ion-item>
+          <ion-icon name="cash-outline" slot="start"></ion-icon>
+          <ion-input
+            type="number"
+            formControlName="valor"
+            placeholder="R$ 0,00"
+          ></ion-input>
+        </ion-item>
+      </div>
+
+      <ion-item>
+        <ion-label position="floating">
+          <ion-icon slot="start" name="document-text-outline"></ion-icon>
+          Descrição
+        </ion-label>
+        <ion-textarea formControlName="descricaoDivida"></ion-textarea>
+      </ion-item>
+    </div>
+  </form>
+</ion-content>
+
+<!-- FAB FORA DO FORM -->
+<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab-button (click)="salvar()" color="primary" title="Salvar">
+    <ion-icon name="checkmark-outline"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FinanceiroService } from '../services/financeiro.service';
+import { ModalController } from '@ionic/angular';
+import { DividaFormComponent } from '../components/divida-form/divida-form.component';
 
 @Component({
   selector: 'app-dividas',
   templateUrl: './dividas.page.html',
   styleUrls: ['./dividas.page.scss'],
-  standalone: false
+  standalone: false,
 })
 export class DividasPage implements OnInit {
   categoria: any;
@@ -14,7 +16,8 @@ export class DividasPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private financeiroService: FinanceiroService
+    private financeiroService: FinanceiroService,
+    private modalCtrl: ModalController // <- adicionado aqui
   ) {}
 
   ngOnInit() {
@@ -26,5 +29,21 @@ export class DividasPage implements OnInit {
 
   ordenarDividasPorDia() {
     this.dividas.sort((a, b) => a.diaPagamento - b.diaPagamento);
+  }
+  
+
+  async openAdicionarDivida() {
+    const modal = await this.modalCtrl.create({
+      component: DividaFormComponent,
+      componentProps: {
+        modo: 'categoria', // isso faz com que o formulário abra na aba correta
+      },
+      breakpoints: [0, 0.5, 0.8],
+      initialBreakpoint: 0.5,
+      showBackdrop: true,
+      backdropDismiss: true,
+    });
+
+    await modal.present();
   }
 }

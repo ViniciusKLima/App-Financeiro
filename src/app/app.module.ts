@@ -7,10 +7,12 @@ import { AppComponent } from './app.component';
 import { CategoriaFormComponent } from './components/categoria-form/categoria-form.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DividaFormComponent } from './components/divida-form/divida-form.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [AppComponent, CategoriaFormComponent],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, CommonModule, FormsModule],
+  declarations: [AppComponent, CategoriaFormComponent, DividaFormComponent],
+  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, CommonModule, FormsModule, ReactiveFormsModule],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
 })
