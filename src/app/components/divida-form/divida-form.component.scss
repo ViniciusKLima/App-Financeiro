@@ -3,24 +3,24 @@
     --background: #f9f9f9;
   }
 
-  // Remove fundo dos ion-items
-  ion-item {
-    --background: transparent;
-    --border-color: transparent;
-    --padding-start: 0;
-    --padding-end: 0;
+  .row-inputs {
+    display: flex;
+    justify-content: space-between;
+    background-color: red;
     margin-bottom: 10px;
+    align-items: center;
+    height: 50px;
+    text-align: right;
+    color: #333;
 
     ion-label {
-      font-size: 1rem;
-      color: #555;
+      width: 50%;
+      text-align: start;
     }
 
-    ion-input,
-    ion-textarea {
-      text-align: right;
+    ion-input {
+      width: 50%;
     }
-
     &.disabled {
       opacity: 0.5;
       pointer-events: none;
