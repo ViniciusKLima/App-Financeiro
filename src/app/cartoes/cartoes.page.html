@@ -30,9 +30,9 @@
         </div>
         <div class="valor-cartao">
           <p class="valorFaturas">
-            {{ cartao.valor != null ? (cartao.valor |
-            currency:'BRL':'symbol':'1.2-2') : 'R$ 0,00' }}
-          </p>
+            {{ financeiroService.getValorTotalCartao(cartao.id) |
+            currency:'BRL':'symbol':'1.2-2' }}
+          </p> 
         </div>
         <div class="fechamento-cartao">
           <p class="ttFechamento">Fechamento</p>
@@ -48,17 +48,25 @@
     </div>
   </div>
 
-  <ion-card class="fatura-card" >
+  <ion-card class="fatura-card">
     <ion-card-header>
-      <ion-card-title [style.color]="cartaoAtivo.cor">Fatura do {{ cartaoAtivo.nome }}</ion-card-title>
+      <ion-card-title [style.color]="cartaoAtivo.cor"
+        >Fatura do {{ cartaoAtivo.nome }}</ion-card-title
+      >
     </ion-card-header>
 
     <ion-card-content>
       <ion-grid>
         <ion-row class="fatura-header">
-          <ion-col class="col-nome" [style.color]="cartaoAtivo.cor">Nome</ion-col>
-          <ion-col size="4" class="col-parcelas" [style.color]="cartaoAtivo.cor">Parcelas</ion-col>
-          <ion-col size="4" class="col-valor" [style.color]="cartaoAtivo.cor">Valor</ion-col>
+          <ion-col class="col-nome" [style.color]="cartaoAtivo.cor"
+            >Nome</ion-col
+          >
+          <ion-col size="4" class="col-parcelas" [style.color]="cartaoAtivo.cor"
+            >Parcelas</ion-col
+          >
+          <ion-col size="4" class="col-valor" [style.color]="cartaoAtivo.cor"
+            >Valor</ion-col
+          >
         </ion-row>
 
         <ion-row *ngFor="let compra of cartaoAtivo.compras">

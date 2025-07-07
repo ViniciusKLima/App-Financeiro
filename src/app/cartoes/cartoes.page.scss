@@ -149,7 +149,7 @@
     font-size: 1rem;
   }
 
-  ion-card-title{
+  ion-card-title {
     margin-bottom: 10px;
   }
 
@@ -158,8 +158,11 @@
   }
 
   ion-row {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 8px 0;
+    padding: 17px 0;
+  }
+
+  ion-row:not(:first-child):not(:last-child) {
+    border-bottom: 1px solid rgba(41, 41, 41, 0.2);
   }
 
   .fatura-header {

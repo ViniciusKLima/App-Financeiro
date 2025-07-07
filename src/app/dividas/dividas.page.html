@@ -1,0 +1,60 @@
+<ion-content [fullscreen]="true" class="custom-bg">
+  <div [ngStyle]="{'background': categoria?.cor}">
+    <ion-header class="header">
+      <ion-icon
+        name="chevron-back-outline"
+        [routerLink]="['/nav/carteira']"
+      ></ion-icon>
+      <p>{{ categoria?.nome }}</p>
+      <ion-icon name="add-circle-outline"></ion-icon>
+    </ion-header>
+    <div class="content-dividas">
+      <ion-card class="fatura-card">
+        <ion-card-header>
+          <ion-card-title [style.color]="categoria?.cor">
+            {{ categoria?.valor ? ('R$ ' + categoria.valor) : '' }}
+          </ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <ion-grid>
+            <ion-row class="fatura-header">
+              <ion-col class="col-nome" [style.color]="categoria?.cor"
+                >Dívida</ion-col
+              >
+              <ion-col size="4" class="col-dia" [style.color]="categoria?.cor"
+                >Dia</ion-col
+              >
+              <ion-col size="4" class="col-valor" [style.color]="categoria?.cor"
+                >Valor</ion-col
+              >
+            </ion-row>
+
+            <ng-container *ngIf="dividas.length > 0; else semDividas">
+              <ion-row *ngFor="let divida of dividas">
+                <ion-col class="col-nome">{{ divida.nome }}</ion-col>
+                <ion-col size="4" class="col-dia"
+                  >{{ divida.diaPagamento }}</ion-col
+                >
+                <ion-col size="4" class="col-valor"
+                  >{{ divida.valor | currency:'BRL':'symbol':'1.2-2' }}</ion-col
+                >
+              </ion-row>
+            </ng-container>
+            <ng-template #semDividas>
+              <ion-row>
+                <ion-col
+                  class="col-nome"
+                  size="12"
+                  style="text-align: center; color: #888"
+                >
+                  Nenhuma dívida cadastrada nesta categoria.
+                </ion-col>
+              </ion-row>
+            </ng-template>
+          </ion-grid>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+</ion-content>

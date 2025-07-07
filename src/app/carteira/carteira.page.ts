@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { CategoriaFormComponent } from '../components/categoria-form/categoria-form.component';
 import { AlertController } from '@ionic/angular';
+import { FinanceiroService } from '../services/financeiro.service';
 
 @Component({
   selector: 'app-carteira',
@@ -10,54 +11,26 @@ import { AlertController } from '@ionic/angular';
   standalone: false,
 })
 export class CarteiraPage {
-  categorias = [
-    {
-      id: '1',
-      nome: 'Boletos',
-      valor: '1532.20',
-      quantDividas: 5,
-      icone: 'document-text-outline',
-      cor: '#666',
-    },
-    {
-      id: '2',
-      nome: 'Trabalho',
-      valor: '6244.00',
-      quantDividas: 4,
-      icone: 'card-outline',
-      cor: '#007BFF',
-    },
-    {
-      id: '3',
-      nome: 'Casa',
-      valor: '2065.38',
-      quantDividas: 6,
-      icone: 'home-outline',
-      cor: '#08a708',
-    },
-    {
-      id: '4',
-      nome: 'Carro',
-      valor: '3231.60',
-      quantDividas: 3,
-      icone: 'car-outline',
-      cor: '#ffa600',
-    },
-    {
-      id: '5',
-      nome: 'Lazer',
-      valor: '205.76',
-      quantDividas: 2,
-      icone: 'football-outline',
-      cor: '#6F42C1',
-    },
-  ];
+  categorias: any[] = [];
 
   constructor(
-    private modalCtrl: ModalController,
-    private alertCtrl: AlertController,
-    private popoverCtrl: PopoverController
+    public modalCtrl: ModalController,
+    public alertCtrl: AlertController,
+    public popoverCtrl: PopoverController,
+    public financeiroService: FinanceiroService // <-- troque de private para public
   ) {
+    this.carregarCategorias();
+  }
+
+  public get categoriasCartoes() {
+    return this.financeiroService.getCartoes().map((cartao: any) => ({
+      ...cartao,
+      gradient: this.financeiroService.generateGradient(cartao.cor),
+    }));
+  }
+
+  carregarCategorias() {
+    this.categorias = this.financeiroService.getCategorias();
     this.ordenarCategoriasPorValor();
   }
 
@@ -98,14 +71,14 @@ export class CarteiraPage {
   adicionarNovaCategoria(novaCat: any) {
     novaCat.id = Date.now().toString();
     this.categorias.push(novaCat);
-    this.ordenarCategoriasPorValor(); // <- aqui
+    this.ordenarCategoriasPorValor();
   }
 
   atualizarCategoria(catEditada: any) {
     const index = this.categorias.findIndex((c) => c.id === catEditada.id);
     if (index > -1) {
       this.categorias[index] = catEditada;
-      this.ordenarCategoriasPorValor(); // <- aqui
+      this.ordenarCategoriasPorValor();
     }
   }
 

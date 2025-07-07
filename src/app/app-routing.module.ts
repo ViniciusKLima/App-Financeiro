@@ -9,6 +9,10 @@ const routes: Routes = [
   {
     path: 'cartoes',
     loadChildren: () => import('./cartoes/cartoes.module').then( m => m.CartoesPageModule)
+  },
+  {
+    path: 'dividas',
+    loadChildren: () => import('./dividas/dividas.module').then( m => m.DividasPageModule)
   }
 ];
 @NgModule({

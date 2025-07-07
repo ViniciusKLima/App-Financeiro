@@ -1,4 +1,5 @@
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { FinanceiroService } from '../services/financeiro.service';
 
 @Component({
   selector: 'app-cartoes',
@@ -10,58 +11,14 @@ export class CartoesPage implements AfterViewInit {
   @ViewChild('scrollDiv', { static: false })
   scrollDiv!: ElementRef<HTMLDivElement>;
 
-  cartoes = [
-    {
-      id: '1',
-      nome: 'Nubank',
-      valor: 1532.2,
-      diaFechamento: 5,
-      diaVencimento: 10,
-      cor: '#666',
-      gradient: '',
-      compras: [
-        {
-          nome: 'Amazon Alexa',
-          parcelaAtual: 3,
-          totalParcelas: 10,
-          valor: 100.0,
-        },
-        { nome: 'Netflix', parcelaAtual: 1, totalParcelas: 1, valor: 55.9 },
-      ],
-    },
-    {
-      id: '2',
-      nome: 'Picpay',
-      valor: 6244.0,
-      diaFechamento: 15,
-      diaVencimento: 20,
-      cor: '#007BFF',
-      gradient: '',
-      compras: [
-        { nome: 'Curso Udemy', parcelaAtual: 5, totalParcelas: 5, valor: 45.5 },
-        { nome: 'Spotify', parcelaAtual: 2, totalParcelas: 12, valor: 19.9 },
-      ],
-    },
-    {
-      id: '3',
-      nome: 'Master',
-      valor: 800.0,
-      diaFechamento: 20,
-      diaVencimento: 25,
-      cor: '#FF5722',
-      gradient: '',
-      compras: [
-        { nome: 'Livro', parcelaAtual: 1, totalParcelas: 3, valor: 60.0 },
-      ],
-    },
-  ];
-
+  cartoes: any[] = [];
   cartaoAtivoIndex = 0;
 
-  constructor() {
-    this.cartoes.forEach((cartao) => {
-      cartao.gradient = this.generateGradient(cartao.cor);
-    });
+  constructor(public financeiroService: FinanceiroService) {
+    this.cartoes = this.financeiroService.getCartoes().map((cartao: any) => ({
+      ...cartao,
+      gradient: this.financeiroService.generateGradient(cartao.cor),
+    }));
   }
 
   ngAfterViewInit() {
@@ -72,7 +29,6 @@ export class CartoesPage implements AfterViewInit {
     return this.cartoes[this.cartaoAtivoIndex];
   }
 
-  // Detecta o cartão central ao rolar
   onScroll(event: any) {
     const scrollDiv = this.scrollDiv.nativeElement;
     const boxes = Array.from(
@@ -97,13 +53,6 @@ export class CartoesPage implements AfterViewInit {
     }
   }
 
-  abrirMenuCartao(cartao: any, event: Event) {
-    event.stopPropagation();
-    // Aqui você pode abrir um popover, modal ou menu de opções
-    alert(`Menu do cartão: ${cartao.nome}`);
-  }
-
-  // Centraliza o cartão ao abrir a tela
   scrollToCenter(index: number) {
     const scrollDiv = this.scrollDiv.nativeElement;
     const boxes = Array.from(
@@ -116,25 +65,9 @@ export class CartoesPage implements AfterViewInit {
     scrollDiv.scrollTo({ left: scrollLeft, behavior: 'smooth' });
   }
 
-  generateGradient(baseColor: string): string {
-    const darkColor = this.darkenColor(baseColor, 30);
-    return `linear-gradient(135deg, ${baseColor}, ${darkColor})`;
-  }
-
-  darkenColor(color: string, percent: number): string {
-    const num = parseInt(color.replace('#', ''), 16);
-    const amt = Math.round(2.55 * percent);
-    const R = (num >> 16) - amt;
-    const B = ((num >> 8) & 0x00ff) - amt;
-    const G = (num & 0x0000ff) - amt;
-
-    const clamp = (val: number) => Math.max(Math.min(255, val), 0);
-
-    return (
-      '#' +
-      ('0' + clamp(R).toString(16)).slice(-2) +
-      ('0' + clamp(B).toString(16)).slice(-2) +
-      ('0' + clamp(G).toString(16)).slice(-2)
-    );
+  abrirMenuCartao(cartao: any, event: Event) {
+    event.stopPropagation();
+    // Implemente aqui o menu de opções do cartão
+    alert(`Menu do cartão: ${cartao.nome}`);
   }
 }

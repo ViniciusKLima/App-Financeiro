@@ -10,7 +10,6 @@
       <h6 class="tt-valorPago">Valor Pago</h6>
       <h4 class="num-valorPago">R$ 2.000,00</h4>
     </div>
-
     <div class="valorPendente">
       <h6 class="tt-valorPendente">Valor Pendente</h6>
       <h4 class="num-valorPendente">R$ 14.541,49</h4>
@@ -39,30 +38,27 @@
   <div class="slider">
     <div class="slide" [class.active]="abaAtual === 'pendentes'">
       <!-- Atrasados -->
-      <ng-container
-        *ngIf="dividasAtrasadas.length > 0"
-        class="container-dividas"
-      >
+      <ng-container *ngIf="compromissosAtrasados.length > 0" class="container-dividas">
         <section class="cards-dividas card-atrasado">
           <h2>Atrasado</h2>
           <div
             class="itens-dividas item-atrasado"
-            *ngFor="let divida of dividasAtrasadas"
+            *ngFor="let compromisso of compromissosAtrasados"
           >
             <div class="top-divida">
-              <ion-label [style.color]="divida.cor">
+              <ion-label [style.color]="compromisso.cor">
                 <ion-icon
-                  [name]="divida.icone"
-                  [style.color]="divida.cor"
+                  [name]="compromisso.tipo === 'cartao' ? 'card-outline' : compromisso.icone"
+                  [style.color]="compromisso.cor"
                   style="margin-right: 8px"
                 ></ion-icon>
-                {{ divida.nome }}
+                {{ compromisso.nome }}
               </ion-label>
               <ion-checkbox
                 class="check"
                 slot="end"
-                [(ngModel)]="divida.foiPago"
-                (ionChange)="alternarStatus(divida.id)"
+                [(ngModel)]="compromisso.foiPago"
+                (ionChange)="alternarStatus(compromisso.id)"
                 mode="ios"
               ></ion-checkbox>
             </div>
@@ -70,7 +66,14 @@
             <div class="bottom-divida">
               <ion-label>
                 <h6>Valor</h6>
-                <h6>R$ {{ divida.valor }}</h6>
+                <ng-container *ngIf="compromisso.tipo === 'cartao'; else valorDividaAtrasado">
+                  <h6>
+                    R$ {{ getValorTotalCartao(compromisso.id.replace('cartao-', '')) | number:'1.2-2' }}
+                  </h6>
+                </ng-container>
+                <ng-template #valorDividaAtrasado>
+                  <h6>R$ {{ compromisso.valor }}</h6>
+                </ng-template>
               </ion-label>
             </div>
           </div>
@@ -78,36 +81,39 @@
       </ng-container>
 
       <!-- Pendentes por Dia -->
-      <ng-container
-        *ngFor="let dia of objectKeys(dividasPorDia)"
-        class="container-dividas"
-      >
+      <ng-container *ngFor="let dia of objectKeys(compromissosPorDia)" class="container-dividas">
         <section class="cards-dividas">
           <h2 class="h2-pendente">{{ formatarTituloDia(+dia) }}</h2>
-          <div class="itens-dividas" *ngFor="let divida of dividasPorDia[+dia]">
+          <div class="itens-dividas" *ngFor="let compromisso of compromissosPorDia[+dia]">
             <div class="top-divida">
-              <ion-label [style.color]="divida.cor">
+              <ion-label [style.color]="compromisso.cor">
                 <ion-icon
-                  [name]="divida.icone"
-                  [style.color]="divida.cor"
+                  [name]="compromisso.tipo === 'cartao' ? 'card-outline' : compromisso.icone"
+                  [style.color]="compromisso.cor"
                   style="margin-right: 8px"
                 ></ion-icon>
-                {{ divida.nome }}
+                {{ compromisso.nome }}
               </ion-label>
               <ion-checkbox
                 class="check"
                 slot="end"
-                [checked]="divida.foiPago"
-                (ionChange)="alternarStatus(divida.id)"
+                [checked]="compromisso.foiPago"
+                (ionChange)="alternarStatus(compromisso.id)"
                 mode="ios"
               ></ion-checkbox>
             </div>
-
             <hr class="linha-divida" />
             <div class="bottom-divida">
               <ion-label>
                 <h6>Valor</h6>
-                <h6>R$ {{ divida.valor }}</h6>
+                <ng-container *ngIf="compromisso.tipo === 'cartao'; else valorDividaPendente">
+                  <h6>
+                    R$ {{ getValorTotalCartao(compromisso.id.replace('cartao-', '')) | number:'1.2-2' }}
+                  </h6>
+                </ng-container>
+                <ng-template #valorDividaPendente>
+                  <h6>R$ {{ compromisso.valor }}</h6>
+                </ng-template>
               </ion-label>
             </div>
           </div>
@@ -116,7 +122,7 @@
     </div>
 
     <div class="slide" [class.active]="abaAtual === 'pagos'">
-      <ng-container *ngIf="dividasPagas.length === 0">
+      <ng-container *ngIf="objectKeys(compromissosPagosPorDia).length === 0">
         <div class="content-vazio">
           <p class="mensagem-vazio">
             Você ainda não marcou nenhuma dívida como paga...
@@ -124,29 +130,35 @@
         </div>
       </ng-container>
 
-      <ng-container *ngFor="let dia of objectKeys(dividasPagasPorDia)">
+      <ng-container *ngFor="let dia of objectKeys(compromissosPagosPorDia)">
         <section class="cards-dividas card-pago">
           <h2 class="h2-pago">{{ formatarTituloDia(+dia) }}</h2>
-
           <div
             class="itens-dividas item-pago"
-            *ngFor="let divida of dividasPagasPorDia[+dia]"
+            *ngFor="let compromisso of compromissosPagosPorDia[+dia]"
           >
             <div class="top-divida">
-              <ion-label [style.color]="divida.cor">
+              <ion-label [style.color]="compromisso.cor">
                 <ion-icon
-                  [name]="divida.icone"
-                  [style.color]="divida.cor"
+                  [name]="compromisso.tipo === 'cartao' ? 'card-outline' : compromisso.icone"
+                  [style.color]="compromisso.cor"
                   style="margin-right: 8px"
                 ></ion-icon>
-                {{ divida.nome }}
+                {{ compromisso.nome }}
               </ion-label>
             </div>
             <hr class="linha-divida" />
             <div class="bottom-divida">
               <ion-label>
                 <h6>Valor</h6>
-                <h6>R$ {{ divida.valor }}</h6>
+                <ng-container *ngIf="compromisso.tipo === 'cartao'; else valorDividaPaga">
+                  <h6>
+                    R$ {{ getValorTotalCartao(compromisso.id.replace('cartao-', '')) | number:'1.2-2' }}
+                  </h6>
+                </ng-container>
+                <ng-template #valorDividaPaga>
+                  <h6>R$ {{ compromisso.valor }}</h6>
+                </ng-template>
               </ion-label>
             </div>
           </div>

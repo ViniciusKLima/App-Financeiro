@@ -1,7 +1,12 @@
 <ion-content class="pagina-gerenciar" fullscreen>
   <ion-header>
-    <ion-title>Gerenciar Dívidas<ion-icon name="add-circle-outline" class="add-categoria" (click)="novaCategoria()"></ion-icon></ion-title>
-    
+    <ion-title
+      >Gerenciar Dívidas<ion-icon
+        name="add-circle-outline"
+        class="add-categoria"
+        (click)="novaCategoria()"
+      ></ion-icon
+    ></ion-title>
   </ion-header>
   <!-- Lista de categorias -->
   <div class="grid-categorias">
@@ -10,12 +15,28 @@
         <ion-icon name="card-outline"></ion-icon>
         <p>Cartões</p>
       </div>
-      <div class="cartao1"></div>
-      <div class="cartao2"></div>
+      <div
+        class="cartao1"
+        [ngStyle]="{
+      background: categoriasCartoes[0]?.gradient || 'transparent',
+      boxShadow: categoriasCartoes[0]?.gradient ? '8px -6px 12px rgba(0,0,0,0.24)' : 'none'
+    }"
+      ></div>
+      <div
+        class="cartao2"
+        [ngStyle]="{
+      background: categoriasCartoes[1]?.gradient || 'transparent',
+      boxShadow: categoriasCartoes[1]?.gradient ? '8px -6px 12px rgba(0,0,0,0.24)' : 'none'
+    }"
+      ></div>
       <div class="fundo-carteira"></div>
     </div>
 
-    <div class="categoria-box" *ngFor="let categoria of categorias">
+    <div
+      class="categoria-box"
+      *ngFor="let categoria of categorias"
+      [routerLink]="['/dividas', categoria.id]"
+    >
       <div class="info-categoria">
         <div class="icon-box" [style.background]="categoria.cor">
           <ion-icon [name]="categoria.icone"></ion-icon>
@@ -68,14 +89,16 @@
       <div class="valor-categoria" [style.color]="categoria.cor">
         <p class="ttValorDividas">Valor Total</p>
         <p class="valorDividas">
-          {{ categoria.valor != null ? (categoria.valor |
-          currency:'BRL':'symbol':'1.2-2') : 'R$ 0,00' }}
+          {{ financeiroService.getTotalDividasCategoria(categoria.id) |
+          currency:'BRL':'symbol':'1.2-2' }}
         </p>
       </div>
 
       <div class="quant-dividas" [style.color]="categoria.cor">
         <p class="ttQuantDividas">Dívidas</p>
-        <p class="numQuantDividas">{{ categoria.quantDividas || '0'}}</p>
+        <p class="numQuantDividas">
+          {{ financeiroService.getQuantidadeDividasCategoria(categoria.id) }}
+        </p>
       </div>
     </div>
   </div>

@@ -1,5 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { DividaService, Divida } from '../services/dividas.service';
+import { FinanceiroService } from '../services/financeiro.service';
+
+interface Compromisso {
+  id: string;
+  nome: string;
+  tipo: 'cartao' | 'divida';
+  valor: number;
+  dia: number; // dia de vencimento ou pagamento
+  cor: string;
+  icone: string;
+  foiPago?: boolean;
+}
 
 @Component({
   selector: 'app-home',
@@ -10,16 +21,15 @@ import { DividaService, Divida } from '../services/dividas.service';
 export class HomePage implements OnInit {
   abaAtual: 'pendentes' | 'pagos' = 'pendentes';
 
-  dividasAtrasadas: Divida[] = [];
-  dividasPagas: Divida[] = [];
-  dividasPorDia: { [dia: number]: Divida[] } = {};
-  dividasPagasPorDia: { [dia: number]: Divida[] } = {};
+  compromissosPorDia: { [dia: number]: Compromisso[] } = {};
+  compromissosPagosPorDia: { [dia: number]: Compromisso[] } = {};
+  compromissosAtrasados: Compromisso[] = [];
   public objectKeys = Object.keys;
 
-  constructor(private dividaService: DividaService) {}
+  constructor(private financeiroService: FinanceiroService) {}
 
   ngOnInit() {
-    this.carregarDividas();
+    this.carregarCompromissos();
   }
 
   trocarAba(aba: 'pendentes' | 'pagos') {
@@ -33,58 +43,103 @@ export class HomePage implements OnInit {
     return `Dia ${dia}`;
   }
 
-  carregarDividas() {
+  carregarCompromissos() {
     const hoje = new Date().getDate();
-    this.dividasAtrasadas = [];
-    this.dividasPagas = [];
-    this.dividasPorDia = {};
-    this.dividasPagasPorDia = {};
+    const compromissos: Compromisso[] = [];
 
-    this.dividaService.getDividas().forEach((divida) => {
-      if (!divida.foiPago && divida.dia < hoje) {
-        this.dividasAtrasadas.push(divida);
-      } else if (divida.foiPago) {
-        this.dividasPagas.push(divida);
+    // Adiciona cartões (cada cartão é um compromisso)
+    this.financeiroService.getCartoes().forEach((cartao) => {
+      compromissos.push({
+        id: 'cartao-' + cartao.id,
+        nome: cartao.nome,
+        tipo: 'cartao',
+        valor: cartao.valor,
+        dia: cartao.diaVencimento,
+        cor: cartao.cor,
+        icone: 'card-outline',
+        foiPago: false,
+      });
+    });
 
-        if (!this.dividasPagasPorDia[divida.dia]) {
-          this.dividasPagasPorDia[divida.dia] = [];
-        }
-        this.dividasPagasPorDia[divida.dia].push(divida);
-      } else {
-        if (!this.dividasPorDia[divida.dia]) {
-          this.dividasPorDia[divida.dia] = [];
-        }
-        this.dividasPorDia[divida.dia].push(divida);
+    // Adiciona cada dívida de cada categoria
+    this.financeiroService.getCategorias().forEach((cat) => {
+      if (cat.dividas && cat.dividas.length > 0) {
+        cat.dividas.forEach((divida: any, idx: number) => {
+          compromissos.push({
+            id: `divida-${cat.id}-${idx}`,
+            nome: divida.nome,
+            tipo: 'divida',
+            valor: divida.valor,
+            dia: divida.diaPagamento,
+            cor: cat.cor,
+            icone: cat.icone,
+            foiPago: divida.foiPago ?? false,
+          });
+        });
       }
     });
 
-    // Ordenar atrasadas e pagas por dia
-    this.dividasAtrasadas.sort((a, b) => a.dia - b.dia);
-    this.dividasPagas.sort((a, b) => a.dia - b.dia);
+    // Separar por status e dia
+    this.compromissosPorDia = {};
+    this.compromissosPagosPorDia = {};
+    this.compromissosAtrasados = [];
 
-    // Ordenar dividasPorDia
-    const ordenadoPendentes: { [dia: number]: Divida[] } = {};
-    Object.keys(this.dividasPorDia)
+    compromissos.forEach((comp) => {
+      if (comp.foiPago) {
+        if (!this.compromissosPagosPorDia[comp.dia])
+          this.compromissosPagosPorDia[comp.dia] = [];
+        this.compromissosPagosPorDia[comp.dia].push(comp);
+      } else if (comp.dia < hoje) {
+        this.compromissosAtrasados.push(comp);
+      } else {
+        if (!this.compromissosPorDia[comp.dia])
+          this.compromissosPorDia[comp.dia] = [];
+        this.compromissosPorDia[comp.dia].push(comp);
+      }
+    });
+
+    // Ordenar arrays por dia
+    this.compromissosAtrasados.sort((a, b) => a.dia - b.dia);
+
+    const ordenadoPendentes: { [dia: number]: Compromisso[] } = {};
+    Object.keys(this.compromissosPorDia)
       .map((k) => parseInt(k, 10))
       .sort((a, b) => a - b)
       .forEach((dia) => {
-        ordenadoPendentes[dia] = this.dividasPorDia[dia];
+        ordenadoPendentes[dia] = this.compromissosPorDia[dia];
       });
-    this.dividasPorDia = ordenadoPendentes;
+    this.compromissosPorDia = ordenadoPendentes;
 
-    // Ordenar dividasPagasPorDia
-    const ordenadoPagas: { [dia: number]: Divida[] } = {};
-    Object.keys(this.dividasPagasPorDia)
+    const ordenadoPagos: { [dia: number]: Compromisso[] } = {};
+    Object.keys(this.compromissosPagosPorDia)
       .map((k) => parseInt(k, 10))
       .sort((a, b) => a - b)
       .forEach((dia) => {
-        ordenadoPagas[dia] = this.dividasPagasPorDia[dia];
+        ordenadoPagos[dia] = this.compromissosPagosPorDia[dia];
       });
-    this.dividasPagasPorDia = ordenadoPagas;
+    this.compromissosPagosPorDia = ordenadoPagos;
+  }
+
+  getValorTotalCartao(cartaoId: string): number {
+    return this.financeiroService.getValorTotalCartao(cartaoId);
   }
 
   alternarStatus(id: string) {
-    this.dividaService.togglePago(id);
-    this.carregarDividas();
+    // Aqui você pode implementar lógica para marcar como pago (exemplo: salvar no localStorage)
+    // Exemplo simples: alternar no array local (não persiste)
+    Object.values(this.compromissosPorDia).forEach((arr) => {
+      arr.forEach((comp) => {
+        if (comp.id === id) comp.foiPago = !comp.foiPago;
+      });
+    });
+    Object.values(this.compromissosAtrasados).forEach((comp: any) => {
+      if (comp.id === id) comp.foiPago = !comp.foiPago;
+    });
+    Object.values(this.compromissosPagosPorDia).forEach((arr) => {
+      arr.forEach((comp) => {
+        if (comp.id === id) comp.foiPago = !comp.foiPago;
+      });
+    });
+    this.carregarCompromissos();
   }
 }
