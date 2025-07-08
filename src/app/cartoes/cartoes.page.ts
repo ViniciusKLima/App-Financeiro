@@ -2,6 +2,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { FinanceiroService } from '../services/financeiro.service';
 import { ModalController } from '@ionic/angular';
 import { DividaFormComponent } from '../components/divida-form/divida-form.component';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-cartoes',
@@ -18,7 +19,8 @@ export class CartoesPage implements AfterViewInit {
 
   constructor(
     public financeiroService: FinanceiroService,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private navCtrl: NavController
   ) {
     this.cartoes = this.financeiroService.getCartoes().map((cartao: any) => ({
       ...cartao,
@@ -28,6 +30,10 @@ export class CartoesPage implements AfterViewInit {
 
   ngAfterViewInit() {
     setTimeout(() => this.scrollToCenter(this.cartaoAtivoIndex), 100);
+  }
+
+  voltar() {
+    this.navCtrl.navigateBack('/nav/carteira'); // ou navigateBack se for voltar
   }
 
   async openAdicionarCompra() {

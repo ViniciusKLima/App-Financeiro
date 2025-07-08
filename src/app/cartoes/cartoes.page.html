@@ -2,7 +2,7 @@
   <ion-header class="header">
     <ion-icon
       name="chevron-back-outline"
-      [routerLink]="['/nav/carteira']"
+      (click)="voltar()"
     ></ion-icon>
     <p>Meus Cartões</p>
     <ion-icon name="add-circle-outline"></ion-icon>
@@ -11,7 +11,7 @@
   <div class="cartoes-scroll-wrapper">
     <div class="cartoes-scroll" #scrollDiv (scroll)="onScroll($event)">
       <!-- Espaço à esquerda para centralizar o primeiro cartão -->
-      <div class="cartao-espaco"></div>
+      <div class="cartao-espaco" tabindex="-1"></div>
       <div
         class="cartao-box"
         *ngFor="let cartao of cartoes; let i = index"
@@ -44,7 +44,7 @@
         </div>
       </div>
       <!-- Espaço à direita para centralizar o último cartão -->
-      <div class="cartao-espaco"></div>
+      <div class="cartao-espaco" tabindex="-1"></div>
     </div>
   </div>
 

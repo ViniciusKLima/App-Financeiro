@@ -1,7 +1,5 @@
 .barra-nav {
-  background: none !important;
-  position: absolute;
-  z-index: 1000;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 ion-tab-bar {

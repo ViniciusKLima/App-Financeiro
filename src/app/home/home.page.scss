@@ -1,4 +1,5 @@
 .painelValores {
+  padding-top: env(safe-area-inset-top);
   height: 32vh;
   width: 100%;
   border-bottom-left-radius: 20px;

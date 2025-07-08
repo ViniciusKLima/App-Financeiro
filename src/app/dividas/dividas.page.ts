@@ -38,8 +38,8 @@ export class DividasPage implements OnInit {
       componentProps: {
         modo: 'categoria', // isso faz com que o formulário abra na aba correta
       },
-      breakpoints: [0, 0.5, 0.8],
-      initialBreakpoint: 0.5,
+      breakpoints: [0, 0.8, 0.9],
+      initialBreakpoint: 0.8,
       showBackdrop: true,
       backdropDismiss: true,
     });

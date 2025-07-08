@@ -1,5 +1,6 @@
 .content {
   --padding-bottom: 10vh;
+  padding-bottom: env(safe-area-inset-bottom);padding-top: env(safe-area-inset-top);
 }
 
 .header {
@@ -46,6 +47,7 @@
   padding: 16px 0;
   gap: 16px;
   scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE 10+ */
 }

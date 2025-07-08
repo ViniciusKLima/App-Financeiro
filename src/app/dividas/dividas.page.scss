@@ -32,6 +32,7 @@ ion-content {
 
   div {
     height: 100vh;
+    padding-top: env(safe-area-inset-top);
 
     .content-dividas {
       background: var(--ion-background-color);

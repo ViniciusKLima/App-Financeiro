@@ -5,6 +5,11 @@
       <!-- Custom Select fora do ion-item para evitar overflow hidden -->
       <div class="custom-select-wrapper">
         <div class="custom-select" (click)="toggleSelect('cartoes')">
+          <ion-icon
+            name="card-outline"
+            [style.color]="cartaoSelecionado?.cor"
+            class="card"
+          ></ion-icon>
           <div class="selected-option" [style.color]="cartaoSelecionado?.cor">
             {{ cartaoSelecionado?.nome || "Selecione um cartão" }}
           </div>
@@ -50,21 +55,28 @@
           <ion-icon slot="start" name="pencil"></ion-icon>
           Nome da Compra
         </ion-label>
-        <ion-input formControlName="nomeCompra"></ion-input>
+        <ion-input
+          formControlName="nomeCompra"
+          placeholder="Ex: Mercado"
+        ></ion-input>
       </div>
 
       <div class="row-inputs">
         <ion-label>
-          <ion-icon slot="start" name="repeat-outline"></ion-icon>
+          <ion-icon slot="start" name="pin-outline"></ion-icon>
           Compra Fixa
         </ion-label>
         <ion-toggle
           formControlName="compraFixa"
           (ionChange)="onToggleFixa()"
+          mode="ios"
         ></ion-toggle>
       </div>
 
-      <div [class.item-disabled]="formCompra.value.compraFixa" class="row-inputs">
+      <div
+        [class.item-disabled]="formCompra.value.compraFixa"
+        class="row-inputs"
+      >
         <ion-label>
           <ion-icon slot="start" name="calendar-number-outline"></ion-icon>
           Parcela Atual
@@ -73,40 +85,46 @@
           type="number"
           formControlName="parcelaAtual"
           [disabled]="formCompra.value.compraFixa"
+          placeholder="-"
         ></ion-input>
       </div>
 
-      <div [class.item-disabled]="formCompra.value.compraFixa" class="row-inputs">
+      <div
+        [class.item-disabled]="formCompra.value.compraFixa"
+        class="row-inputs"
+      >
         <ion-label>
-          <ion-icon slot="start" name="layers-outline"></ion-icon>
+          <ion-icon slot="start" name="repeat-outline"></ion-icon>
           Total de Parcelas
         </ion-label>
         <ion-input
           type="number"
           formControlName="totalParcelas"
           [disabled]="formCompra.value.compraFixa"
+          placeholder="-"
         ></ion-input>
       </div>
 
-      <div class="row-inputs">
-        <ion-label position="floating">
+      <div class="row-textarea">
+        <ion-label>
           <ion-icon slot="start" name="document-text-outline"></ion-icon>
-          Descrição
         </ion-label>
-        <ion-textarea formControlName="descricao"></ion-textarea>
+        <ion-textarea
+          formControlName="descricao"
+          placeholder="Descreva a sua compra..."
+        ></ion-textarea>
       </div>
     </div>
 
     <!-- Formulário DÍVIDA em categoria -->
     <div *ngIf="modo === 'categoria'">
-      <ion-item>
-        <ion-label>
-          <ion-icon slot="start" name="list-outline"></ion-icon>
-          Categoria
-        </ion-label>
-      </ion-item>
       <div class="custom-select" (click)="toggleSelect('categorias')">
-        <div class="selected-option">
+        <ion-icon
+          name="folder-outline"
+          [style.color]="categoriaSelecionada?.cor"
+          class="card"
+        ></ion-icon>
+        <div class="selected-option" [style.color]="categoriaSelecionada?.cor">
           {{ categoriaSelecionada?.nome || "Selecione uma categoria" }}
         </div>
         <ion-icon name="chevron-down-outline" class="arrow"></ion-icon>
@@ -123,40 +141,64 @@
         </div>
       </div>
 
-      <ion-item>
-        <ion-label position="floating">
-          <ion-icon slot="start" name="receipt-outline"></ion-icon>
-          Nome da Dívida
-        </ion-label>
-        <ion-input formControlName="nomeDivida"></ion-input>
-      </ion-item>
-
       <!-- Campo de valor centralizado -->
       <div class="campo-valor-central">
-        <ion-item>
-          <ion-icon name="cash-outline" slot="start"></ion-icon>
-          <ion-input
-            type="number"
-            formControlName="valor"
-            placeholder="R$ 0,00"
-          ></ion-input>
-        </ion-item>
+        <input
+          type="tel"
+          formControlName="valorDivida"
+          class="input-valor"
+          placeholder="R$ 0,00"
+          [value]="
+            formCompra.get('valor')?.value
+              ? formatarValor(formCompra.get('valor')?.value)
+              : 'R$ 0,00'
+          "
+          (input)="onInputValor($event)"
+          ionInput
+          [style.color]="categoriaSelecionada?.cor"
+        />
       </div>
 
-      <ion-item>
-        <ion-label position="floating">
-          <ion-icon slot="start" name="document-text-outline"></ion-icon>
-          Descrição
+      <div class="row-inputs">
+        <ion-label>
+          <ion-icon slot="start" name="pencil"></ion-icon>
+          Nome da Dívida
         </ion-label>
-        <ion-textarea formControlName="descricaoDivida"></ion-textarea>
-      </ion-item>
+        <ion-input
+          formControlName="nomeDivida"
+          placeholder="Ex: Mercado"
+        ></ion-input>
+      </div>
+
+      <div class="row-inputs">
+        <ion-label>
+          <ion-icon slot="start" name="calendar-number-outline"></ion-icon>
+          Dia de Pagamento
+        </ion-label>
+        <ion-input
+          type="number"
+          formControlName="totalParcelas"
+          placeholder="-"
+        ></ion-input>
+      </div>
+
+      <div class="row-textarea">
+        <ion-label>
+          <ion-icon slot="start" name="document-text-outline"></ion-icon>
+        </ion-label>
+        <ion-textarea
+          formControlName="descricaoDivida"
+          placeholder="Descreva a sua compra..."
+        ></ion-textarea>
+      </div>
     </div>
   </form>
+  <!-- Botões -->
+  <ion-button
+    (click)="salvar()"
+    class="btn-salvar ion-margin-top"
+    [style.--background]="cartaoSelecionado?.cor"
+    >Salvar</ion-button
+  >
+  <ion-button expand="block" fill="clear" color="medium">Cancelar</ion-button>
 </ion-content>
-
-<!-- FAB FORA DO FORM -->
-<ion-fab vertical="bottom" horizontal="end" slot="fixed">
-  <ion-fab-button (click)="salvar()" color="primary" title="Salvar">
-    <ion-icon name="checkmark-outline"></ion-icon>
-  </ion-fab-button>
-</ion-fab>
