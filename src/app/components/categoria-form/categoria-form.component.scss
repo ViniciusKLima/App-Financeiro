@@ -1,151 +1,181 @@
 :host {
   .modal-wrapper {
-    border-top-left-radius: 40px;
-    border-top-right-radius: 40px;
+    border-top-left-radius: 32px;
+    border-top-right-radius: 32px;
     background-color: var(--ion-background-color);
   }
 
   ion-header {
-    --background: transparent;
+    --background: var(--ion-background-color);
     border: none;
-    height: 80px;
+    height: 64px;
     display: flex;
-    align-items: end;
-    margin-bottom: 10px;
+    align-items: flex-end;
+    margin-bottom: 8px;
 
     ion-title {
-      padding-left: 24px;
-      font-size: 1.5rem;
+      padding-left: 16px;
+      font-size: 1.12rem;
       text-align: start;
       --color: var(--cor-principal);
       display: flex;
-      align-items: end;
+      align-items: flex-end;
+      font-weight: 600;
+      letter-spacing: 0.01em;
     }
   }
 
   ion-content {
-    --background: #efefef !important;
+    --background: var(--ion-background-color) !important;
+  }
+
+  form {
+    max-width: 100%;
+    margin: 0 auto;
+    padding-bottom: 12px;
   }
 
   .input-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
-    border-bottom: #c0c0c0 0.6px solid;
-    padding-right: 10px;
+    margin-bottom: 12px;
+    border-bottom: #e0e0e0 1px solid;
+    padding-right: 6px;
 
     .input-direita {
       width: 65%;
-      padding-left: 8px;
+      padding-left: 6px;
       text-align: right;
       color: #2b2b2b;
-    }
-
-    .borda-cor {
-      width: 80px;
-      height: 36px;
-      border: var(--cor-principal) 1px solid;
-      overflow: hidden;
-      border-radius: 15px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 5px;
-    }
-
-    .input-cor-wrapper {
-      width: 76px;
-      height: 28px;
-      display: flex;
-      overflow: hidden;
-      border-radius: 1000px;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .input-cor {
-      width: 100%;
-      height: 100%;
-      cursor: pointer;
-
-      &:focus {
-        --box-shadow: none;
-      }
-    }
-
-    .input-cor::-webkit-color-swatch-wrapper {
-      width: 100px;
-      height: 36px;
-      border-radius: 50%;
-      overflow: hidden;
-      border: 2px solid #ccc;
-    }
-
-    .input-cor::-webkit-color-swatch {
-      border-radius: 50%;
+      font-size: 0.98rem;
+      background: transparent;
       border: none;
     }
   }
 
   ion-label {
-    width: 30%;
+    width: 32%;
     text-align: left;
     font-weight: 500;
     color: #1b57be;
-    font-size: 1rem;
+    font-size: 0.98rem;
     margin: 0;
-    padding-left: 8px;
+    padding-left: 4px;
     display: flex;
     align-items: center;
 
     ion-icon {
-      font-size: 1.5rem;
-      margin-right: 5px;
+      font-size: 1.2rem;
+      margin-right: 4px;
     }
+  }
+
+  .cores-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 6px 0 6px 6px;
+    align-items: center;
+    min-width: 140px;
+  }
+
+  .cor-botao {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    outline: none;
+    cursor: pointer;
+    transition: border 0.2s, box-shadow 0.2s;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+    padding: 0;
+  }
+
+  .cor-botao.selecionado {
+    border: 2px solid #1b57be;
+    box-shadow: 0 0 0 2px #1b57be33;
+  }
+
+  .label-icone {
+    font-size: 0.98rem;
+    color: #1b57be;
+    font-weight: 500;
+    margin-top: 10px;
+    margin-bottom: 2px;
+    display: block;
   }
 
   .icone-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 12px;
-    padding: 12px 0;
+    gap: 8px;
+    padding: 10px 0;
     justify-items: center;
     align-items: center;
-    height: 200px;
-    overflow-y: scroll;
-    border: 20px;
+    max-height: 160px;
+    overflow-y: auto;
   }
 
   .icone-botao {
-    width: 48px;
-    height: 48px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     border: #a5a5a5 1px solid;
     display: flex;
     align-items: center;
     justify-content: center;
     background: none;
-    transition: all 0.2s ease-in-out;
+    transition: all 0.18s;
     ion-icon {
-      font-size: 24px;
+      font-size: 20px;
       color: #a5a5a5;
     }
   }
 
   .icone-botao.selecionado {
-    background: var(--cor-principal);
+    background: var(--cor-principal, #1b57be);
     border: none;
     ion-icon {
       color: white;
     }
   }
-}
 
-.btn-salvar {
-  --background: #1b57be;
-  --color: white;
-  --border-radius: 8px;
-  width: 100%;
-  font-size: 1rem;
+  .btn-salvar {
+    --background: #1b57be;
+    --color: white;
+    --border-radius: 8px;
+    width: 100%;
+    font-size: 1rem;
+    margin-top: 10px;
+    margin-bottom: 4px;
+    letter-spacing: 0.01em;
+    font-weight: 500;
+  }
+
+  ion-button[color="medium"] {
+    font-size: 0.98rem;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  @media (min-width: 700px) {
+    form {
+      max-width: 600px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    form {
+      max-width: 98vw;
+      padding: 0 2vw;
+    }
+    .cores-grid {
+      min-width: 100px;
+    }
+    .icone-grid {
+      grid-template-columns: repeat(5, 1fr);
+      max-height: 120px;
+    }
+  }
 }

@@ -1,32 +1,50 @@
-<ion-content [fullscreen]="true" class="content">
+<ion-content [fullscreen]="true" class="content" (click)="fecharMenus()">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
   <ion-header class="header">
-    <ion-icon
-      name="chevron-back-outline"
-      (click)="voltar()"
-    ></ion-icon>
+    <ion-icon name="chevron-back-outline" (click)="voltar()"></ion-icon>
     <p>Meus Cartões</p>
-    <ion-icon name="add-circle-outline"></ion-icon>
+    <ion-icon name="add-circle-outline" (click)="novoCartao()"></ion-icon>
   </ion-header>
 
   <div class="cartoes-scroll-wrapper">
     <div class="cartoes-scroll" #scrollDiv (scroll)="onScroll($event)">
-      <!-- Espaço à esquerda para centralizar o primeiro cartão -->
       <div class="cartao-espaco" tabindex="-1"></div>
       <div
         class="cartao-box"
         *ngFor="let cartao of cartoes; let i = index"
         [class.ativo]="i === cartaoAtivoIndex"
         [style.background]="cartao.gradient"
+        (click)="scrollToCenter(i)"
       >
         <div class="nome-cartao">
           <p>{{ cartao.nome }}</p>
         </div>
-        <!-- Menu de opções -->
         <div class="menu-cartao">
           <ion-icon
             name="ellipsis-vertical"
             (click)="abrirMenuCartao(cartao, $event)"
           ></ion-icon>
+          <!-- Menu customizado -->
+          <div
+            class="menu-cartao-custom"
+            *ngIf="cartaoMenuAberto === cartao.id"
+            (click)="$event.stopPropagation()"
+          >
+            <button class="editar" (click)="editarCartao(cartao, $event)">
+              <ion-icon name="create-outline"></ion-icon>
+              Editar
+            </button>
+            <button
+              class="excluir"
+              (click)="confirmarExclusao(cartao.id, $event)"
+            >
+              <ion-icon name="trash-outline"></ion-icon>
+              Excluir
+            </button>
+          </div>
         </div>
         <div class="valor-cartao">
           <p class="valorFaturas">
@@ -43,7 +61,6 @@
           <p class="numVencimento">Dia {{ cartao.diaVencimento || '-' }}</p>
         </div>
       </div>
-      <!-- Espaço à direita para centralizar o último cartão -->
       <div class="cartao-espaco" tabindex="-1"></div>
     </div>
   </div>

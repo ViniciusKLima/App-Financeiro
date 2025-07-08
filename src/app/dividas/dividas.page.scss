@@ -31,7 +31,7 @@ ion-content {
   }
 
   div {
-    height: 100vh;
+    min-height: 90vh;
     padding-top: env(safe-area-inset-top);
 
     .content-dividas {
@@ -102,4 +102,11 @@ ion-content {
       }
     }
   }
+}
+
+.fab-ajustada {
+  right: 24px !important;
+  bottom: 24px !important;
+  position: fixed !important;
+  z-index: 100;
 }

@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import { ModalController, PopoverController } from '@ionic/angular';
+import { ModalController, AlertController } from '@ionic/angular';
 import { CategoriaFormComponent } from '../components/categoria-form/categoria-form.component';
-import { AlertController } from '@ionic/angular';
 import { FinanceiroService } from '../services/financeiro.service';
 
 @Component({
@@ -12,12 +11,12 @@ import { FinanceiroService } from '../services/financeiro.service';
 })
 export class CarteiraPage {
   categorias: any[] = [];
+  categoriaMenuAberto: string | null = null; // Controle do menu customizado
 
   constructor(
     public modalCtrl: ModalController,
     public alertCtrl: AlertController,
-    public popoverCtrl: PopoverController,
-    public financeiroService: FinanceiroService // <-- troque de private para public
+    public financeiroService: FinanceiroService
   ) {
     this.carregarCategorias();
   }
@@ -40,16 +39,30 @@ export class CarteiraPage {
 
   // Ação do botão "Nova Categoria"
   novaCategoria() {
-    this.abrirModalCategoriaIndividual();
+    this.abrirModalCategoriaOuCartao('categoria');
   }
 
-  // Abre o modal para criar/editar categoria
-  async abrirModalCategoriaIndividual(categoria?: any) {
+  // Ação do botão "Novo Cartão"
+  novoCartao() {
+    this.abrirModalCategoriaOuCartao('cartao');
+  }
+
+  // Abre o modal para criar/editar categoria ou cartão
+  async abrirModalCategoriaOuCartao(
+    modo: 'categoria' | 'cartao',
+    objetoParaEditar?: any
+  ) {
+    const componentProps: any = { modo };
+    if (objetoParaEditar) {
+      if (modo === 'categoria') componentProps.categoria = objetoParaEditar;
+      if (modo === 'cartao') componentProps.cartao = objetoParaEditar;
+    }
+
     const modal = await this.modalCtrl.create({
       component: CategoriaFormComponent,
-      componentProps: { categoria },
+      componentProps,
       initialBreakpoint: 0.9,
-      breakpoints: [0, 0.35, 0.6, 0.9],
+      breakpoints: [0, 0.8, 0.9],
       backdropDismiss: true,
       mode: 'ios',
       cssClass: 'custom-modal-bottom-sheet',
@@ -57,11 +70,14 @@ export class CarteiraPage {
 
     modal.onDidDismiss().then((retorno) => {
       if (retorno.data) {
-        if (categoria) {
-          this.atualizarCategoria(retorno.data);
-        } else {
-          this.adicionarNovaCategoria(retorno.data);
+        if (modo === 'categoria') {
+          if (objetoParaEditar) {
+            this.atualizarCategoria(retorno.data);
+          } else {
+            this.adicionarNovaCategoria(retorno.data);
+          }
         }
+        // Para cartões, você pode adicionar lógica semelhante aqui se desejar atualizar a lista de cartões na tela
       }
     });
 
@@ -82,18 +98,28 @@ export class CarteiraPage {
     }
   }
 
+  // Abre o menu customizado da categoria
+  abrirMenuCategoria(categoria: any, event: Event) {
+    event.stopPropagation();
+    this.categoriaMenuAberto = categoria.id;
+  }
+
+  // Fecha todos os menus ao clicar fora
+  fecharMenus() {
+    this.categoriaMenuAberto = null;
+  }
+
   // Abre o modal de edição da categoria
   async abrirModalCategoria(categoria: any, event: any) {
-    const popover = await this.popoverCtrl.getTop();
-    if (popover) await popover.dismiss();
-
-    this.abrirModalCategoriaIndividual(categoria);
+    event.stopPropagation();
+    this.fecharMenus();
+    this.abrirModalCategoriaOuCartao('categoria', categoria);
   }
 
   // Exclusão com confirmação
   async confirmarExclusao(id: string, event: any) {
-    const popover = await this.popoverCtrl.getTop();
-    if (popover) await popover.dismiss();
+    event.stopPropagation();
+    this.fecharMenus();
 
     const alert = await this.alertCtrl.create({
       header: 'Tem certeza?',
@@ -118,5 +144,12 @@ export class CarteiraPage {
 
   excluirCategoria(id: string) {
     this.categorias = this.categorias.filter((cat) => cat.id !== id);
+  }
+
+  doRefresh(event: any) {
+    this.carregarCategorias();
+    setTimeout(() => {
+      event.target.complete();
+    }, 600); // tempo para simular carregamento, ajuste se quiser
   }
 }

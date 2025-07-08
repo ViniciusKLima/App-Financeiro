@@ -150,15 +150,61 @@ ion-header {
 
   .menu-categoria {
     position: absolute;
-    top: 7%;
-    right: 2%;
+    top: 12px;
+    right: 12px;
     z-index: 10;
+    display: flex;
+    align-items: center;
 
-    ion-icon {
-      font-size: 1.5rem;
-      color: #888;
-      cursor: pointer;
-      transition: color 0.2s;
+    .menu-categoria-custom {
+      position: absolute;
+      top: 28px;
+      right: 0;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.13);
+      min-width: 120px;
+      display: flex;
+      flex-direction: column;
+      padding: 4px 0;
+      animation: fadeInMenu 0.18s;
+
+      button {
+        background: none;
+        border: none;
+        width: 100%;
+        text-align: left;
+        padding: 10px 16px;
+        font-size: 0.98rem;
+        color: #222;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+
+      button.editar {
+        color: #1b57be;
+      }
+      button.excluir {
+        color: #e53935;
+      }
+
+      ion-icon {
+        font-size: 1.1rem;
+      }
+    }
+  }
+
+  @keyframes fadeInMenu {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 

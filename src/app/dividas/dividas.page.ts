@@ -37,6 +37,7 @@ export class DividasPage implements OnInit {
       component: DividaFormComponent,
       componentProps: {
         modo: 'categoria', // isso faz com que o formulário abra na aba correta
+        categoriaId: this.categoria?.id
       },
       breakpoints: [0, 0.8, 0.9],
       initialBreakpoint: 0.8,

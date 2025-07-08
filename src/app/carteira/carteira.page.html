@@ -1,4 +1,7 @@
-<ion-content class="pagina-gerenciar" fullscreen>
+<ion-content class="pagina-gerenciar" fullscreen (click)="fecharMenus()">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <ion-header>
     <ion-title
       >Gerenciar Dívidas<ion-icon
@@ -46,44 +49,39 @@
 
       <!-- Botão de menu visível apenas no modo edição -->
       <ion-buttons class="menu-categoria">
-        <ion-button fill="clear" size="small" [id]="'menu-'+categoria.id">
+        <ion-button
+          fill="clear"
+          size="small"
+          [id]="'menu-'+categoria.id"
+          (click)="abrirMenuCategoria(categoria, $event); $event.stopPropagation()"
+        >
           <ion-icon
             name="ellipsis-vertical"
             [style.color]="categoria.cor"
           ></ion-icon>
         </ion-button>
 
-        <ion-popover
-          [trigger]="'menu-'+categoria.id"
-          side="bottom"
-          alignment="end"
-          [showBackdrop]="false"
-          mode="ios"
+        <!-- Menu customizado -->
+        <div
+          class="menu-categoria-custom"
+          *ngIf="categoriaMenuAberto === categoria.id"
+          (click)="$event.stopPropagation()"
         >
-          <ng-template>
-            <ion-list lines="none">
-              <!-- Editar -->
-              <ion-item
-                button
-                class="editar"
-                (click)="abrirModalCategoria(categoria, $event)"
-              >
-                <ion-icon slot="start" name="create-outline"></ion-icon>
-                Editar
-              </ion-item>
-
-              <!-- Excluir -->
-              <ion-item
-                button
-                class="excluir"
-                (click)="confirmarExclusao(categoria.id, $event)"
-              >
-                <ion-icon slot="start" name="trash-outline"></ion-icon>
-                Excluir
-              </ion-item>
-            </ion-list>
-          </ng-template>
-        </ion-popover>
+          <button
+            class="editar"
+            (click)="abrirModalCategoria(categoria, $event)"
+          >
+            <ion-icon name="create-outline"></ion-icon>
+            Editar
+          </button>
+          <button
+            class="excluir"
+            (click)="confirmarExclusao(categoria.id, $event)"
+          >
+            <ion-icon name="trash-outline"></ion-icon>
+            Excluir
+          </button>
+        </div>
       </ion-buttons>
 
       <div class="valor-categoria" [style.color]="categoria.cor">

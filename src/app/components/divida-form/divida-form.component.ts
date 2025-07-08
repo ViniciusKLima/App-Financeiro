@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { FinanceiroService } from '../../services/financeiro.service';
-import { HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-divida-form',
@@ -10,14 +9,19 @@ import { HostListener } from '@angular/core';
   standalone: false,
 })
 export class DividaFormComponent implements OnInit {
+  @Input() cartaoId?: string;
+  @Input() categoriaId?: string;
   cartoes: any[] = [];
   categorias: any[] = [];
 
   formCompra!: FormGroup;
-  modo: 'cartao' | 'categoria' = 'cartao'; // controla qual formulário exibe
+  modo: 'cartao' | 'categoria' = 'cartao';
 
   mostrandoCartoes = false;
   mostrandoCategorias = false;
+
+  valorFormatado = 'R$ 0,00';
+  valorDividaFormatado = 'R$ 0,00';
 
   constructor(
     private financeiroService: FinanceiroService,
@@ -31,22 +35,31 @@ export class DividaFormComponent implements OnInit {
     this.formCompra = this.fb.group({
       cartaoId: [''],
       nomeCompra: [''],
-      valor: [''], // Começa como string vazio pra formatar corretamente
+      valor: [null],
       compraFixa: [false],
       parcelaAtual: [1],
       totalParcelas: [1],
       descricao: [''],
       categoriaId: [''],
       nomeDivida: [''],
-      valorDivida: [''], // Alterado pra começar como string vazio
+      valorDivida: [null],
       descricaoDivida: [''],
     });
 
-    // Garantir que o input comece com R$ 0,00
-    const inputElement = document.querySelector('.input-valor') as HTMLInputElement;
-    if (inputElement) {
-      inputElement.value = this.formatarValor(0);
+    if (this.cartaoId) {
+      this.formCompra.get('cartaoId')?.setValue(this.cartaoId);
     }
+    if (this.categoriaId) {
+      this.formCompra.get('categoriaId')?.setValue(this.categoriaId);
+    }
+
+    // Inicializa os valores formatados
+    this.valorFormatado = this.formatarValor(
+      this.formCompra.get('valor')?.value
+    );
+    this.valorDividaFormatado = this.formatarValor(
+      this.formCompra.get('valorDivida')?.value
+    );
   }
 
   get cartaoSelecionado() {
@@ -59,7 +72,48 @@ export class DividaFormComponent implements OnInit {
     return this.categorias.find((c) => c.id === id);
   }
 
-  // Abre/fecha o select personalizado
+  onInputValor(event: Event, campo: 'valor' | 'valorDivida') {
+    const input = event.target as HTMLInputElement;
+    let valorBruto = input.value.replace(/[^\d]/g, '');
+
+    if (!valorBruto) valorBruto = '0';
+    if (valorBruto.length < 3) valorBruto = valorBruto.padStart(3, '0');
+    valorBruto = valorBruto.slice(0, 12);
+
+    const numeroCentavos = parseInt(valorBruto, 10);
+    const valorReal = numeroCentavos / 100;
+
+    this.formCompra.get(campo)?.setValue(valorReal);
+
+    // Atualiza o valor formatado para exibir no input
+    const valorFormatado = this.formatarValor(valorReal);
+    if (campo === 'valor') {
+      this.valorFormatado = valorFormatado;
+    } else {
+      this.valorDividaFormatado = valorFormatado;
+    }
+
+    // Atualiza o input visualmente sem travar o cursor
+    setTimeout(() => {
+      input.value = valorFormatado;
+    });
+  }
+
+  formatarValor(valor: number | string | null | undefined): string {
+    let numeroLimpo: number = 0;
+    if (typeof valor === 'string') {
+      numeroLimpo = parseFloat(valor.replace(/[^0-9]/g, '') || '0');
+    } else if (typeof valor === 'number') {
+      numeroLimpo = valor;
+    }
+    return (numeroLimpo || 0).toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 2,
+    });
+  }
+
+  // ...restante do seu código (toggleSelect, selecionarCartao, selecionarCategoria, onToggleFixa, salvar etc)...
   toggleSelect(tipo: 'cartoes' | 'categorias') {
     if (tipo === 'cartoes') {
       this.mostrandoCartoes = !this.mostrandoCartoes;
@@ -70,21 +124,14 @@ export class DividaFormComponent implements OnInit {
     }
   }
 
-  // Seleciona cartão e atualiza o form
-  selecionarCartao(cartao: any) {
+  selecionarCartao(cartao: any, event?: Event) {
+    if (event) event.stopPropagation();
     this.formCompra.get('cartaoId')?.setValue(cartao.id);
     this.mostrandoCartoes = false;
-
-    // Atualiza o input com o valor formatado
-    const input = document.querySelector('.input-valor') as HTMLInputElement;
-    const valorAtual = this.formCompra.get('valor')?.value || 0;
-    if (input) {
-      input.value = this.formatarValor(valorAtual);
-    }
   }
 
-  // Seleciona categoria e atualiza o form
-  selecionarCategoria(categoria: any) {
+  selecionarCategoria(categoria: any, event?: Event) {
+    if (event) event.stopPropagation();
     this.formCompra.get('categoriaId')?.setValue(categoria.id);
     this.mostrandoCategorias = false;
   }
@@ -101,55 +148,6 @@ export class DividaFormComponent implements OnInit {
       parcelaAtual?.enable({ emitEvent: false });
       totalParcelas?.enable({ emitEvent: false });
     }
-  }
-
-  // Formata o valor para exibição visual
-  formatarValor(valor: number | string): string {
-    let numeroLimpo: number;
-
-    if (typeof valor === 'string') {
-      numeroLimpo = parseFloat(valor.replace(/[^0-9]/g, '') || '0');
-    } else {
-      numeroLimpo = Number(valor);
-    }
-
-    const numeroFormatado = (numeroLimpo / 100).toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      minimumFractionDigits: 2,
-    });
-
-    return numeroFormatado;
-  }
-
-  // Atualiza o valor no formulário com base na entrada do usuário
-  onInputValor(event: Event) {
-    const input = event.target as HTMLInputElement;
-    let valorBruto = input.value.replace(/[^\d]/g, '');
-
-    // Se for vazio, volta pro padrão
-    if (!valorBruto || valorBruto === '') {
-      this.formCompra.get('valor')?.setValue(0);
-      input.value = this.formatarValor(0);
-      return;
-    }
-
-    // Preenche com zero à direita se for menor que 3 dígitos
-    if (valorBruto.length < 3) {
-      valorBruto = valorBruto.padEnd(3, '0'); // Ex: '2' → '200' = R$ 2 centavos = 0,02
-    }
-
-    // Limita a 12 dígitos (ex: 999.999.999,99)
-    valorBruto = valorBruto.slice(0, 12);
-
-    const numeroCentavos = parseInt(valorBruto, 10);
-    const valorReal = numeroCentavos / 100;
-
-    // Atualiza o form com número real
-    this.formCompra.get('valor')?.setValue(valorReal);
-
-    // Atualiza o input com o valor formatado
-    input.value = this.formatarValor(valorReal);
   }
 
   salvar() {
@@ -176,7 +174,9 @@ export class DividaFormComponent implements OnInit {
         descricao: this.formCompra.value.descricaoDivida,
       };
 
-      const categoria = this.financeiroService.getCategoriaById(this.formCompra.value.categoriaId);
+      const categoria = this.financeiroService.getCategoriaById(
+        this.formCompra.value.categoriaId
+      );
 
       if (categoria) {
         categoria.dividas.push(novaDivida);

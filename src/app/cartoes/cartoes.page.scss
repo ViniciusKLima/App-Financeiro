@@ -1,198 +1,253 @@
 .content {
   --padding-bottom: 10vh;
-  padding-bottom: env(safe-area-inset-bottom);padding-top: env(safe-area-inset-top);
-}
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-top: env(safe-area-inset-top);
 
-.header {
-  position: relative;
-  color: var(--cor-principal);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 10vh;
-  box-shadow: none;
+  .header {
+    position: relative;
+    color: var(--cor-principal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 10vh;
+    box-shadow: none;
 
-  ion-icon:nth-child(1) {
-    position: absolute;
-    font-size: 1.5rem;
-    left: 6%;
-    padding: 10px;
-    cursor: pointer;
-  }
-
-  ion-icon:nth-child(3) {
-    position: absolute;
-    right: 12%;
-    font-size: 1.7rem;
-    padding: 10px;
-    cursor: pointer;
-  }
-
-  p {
-    font-size: 1.1rem;
-    font-weight: 500;
-  }
-}
-
-.cartoes-scroll-wrapper {
-  width: 100vw;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-}
-
-.cartoes-scroll {
-  display: flex;
-  overflow-x: auto;
-  padding: 16px 0;
-  gap: 16px;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE 10+ */
-}
-.cartoes-scroll::-webkit-scrollbar {
-  display: none; /* Chrome/Safari */
-}
-
-.cartao-espaco {
-  min-width: 5vw;
-  pointer-events: none;
-  flex-shrink: 0;
-  scroll-snap-align: center;
-}
-.cartao-box.ativo {
-  z-index: 2;
-  transform: scale(1.05);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
-}
-
-.cartao-box {
-  position: relative;
-  margin: 25px auto;
-  width: 83vw;
-  max-width: 500px;
-  height: 50vw;
-  max-height: 320px;
-  flex: 0 0 83vw;
-  border-radius: 20px;
-  scroll-snap-align: center;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.24);
-
-  .nome-cartao {
-    position: absolute;
-    top: 8%;
-    left: 5.5%;
-    font-size: 1.7rem;
-  }
-
-  .menu-cartao {
-    position: absolute;
-    top: 7%;
-    right: 4%;
-
-    ion-icon {
-      font-size: 1.4rem;
-      color: white;
+    ion-icon:nth-child(1) {
+      position: absolute;
+      font-size: 1.5rem;
+      left: 6%;
+      padding: 10px;
+      cursor: pointer;
     }
-  }
 
-  .valor-cartao {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    left: 5.5%;
+    ion-icon:nth-child(3) {
+      position: absolute;
+      right: 12%;
+      font-size: 1.7rem;
+      padding: 10px;
+      cursor: pointer;
+    }
 
     p {
-      font-size: 1.5rem;
+      font-size: 1.1rem;
       font-weight: 500;
     }
   }
 
-  .fechamento-cartao {
-    position: absolute;
-    bottom: 8%;
-    left: 5.5%;
-
-    .ttFechamento {
-      font-size: 0.5rem;
-    }
-    .numFechamento {
-      font-size: 1rem;
-    }
-  }
-
-  .vencimento-cartao {
-    position: absolute;
-    bottom: 8%;
-    right: 5.5%;
-    text-align: end;
-
-    .ttVencimento {
-      font-size: 0.5rem;
-    }
-    .numVencimento {
-      font-size: 1rem;
-    }
-  }
-}
-
-.fatura-card {
-  background: transparent !important;
-  color: white;
-  margin-top: 15px;
-  box-shadow: none;
-  padding-inline: 20px;
-
-  ion-card-header,
-  ion-card-title {
-    text-align: center;
-    background: transparent !important;
-    font-size: 1rem;
-  }
-
-  ion-card-title {
-    margin-bottom: 10px;
-  }
-
-  ion-grid {
-    padding: 0;
-  }
-
-  ion-row {
-    padding: 17px 0;
-  }
-
-  ion-row:not(:first-child):not(:last-child) {
-    border-bottom: 1px solid rgba(41, 41, 41, 0.2);
-  }
-
-  .fatura-header {
-    font-weight: bold;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
-  }
-
-  ion-col {
-    font-size: 14px;
-    color: #666;
-  }
-
-  .col-nome {
-    text-align: start;
-    justify-content: flex-start;
-  }
-
-  .col-parcelas {
-    text-align: center;
+  .cartoes-scroll-wrapper {
+    width: 100vw;
+    overflow: hidden;
+    display: flex;
     justify-content: center;
+
+    .cartoes-scroll {
+      display: flex;
+      overflow-x: auto;
+      padding: 16px 0;
+      gap: 16px;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      scrollbar-width: none; // Firefox
+      -ms-overflow-style: none; // IE 10+
+
+      &::-webkit-scrollbar {
+        display: none; // Chrome/Safari
+      }
+
+      .cartao-espaco {
+        min-width: 5vw;
+        pointer-events: none;
+        flex-shrink: 0;
+        scroll-snap-align: center;
+      }
+
+      .cartao-box {
+        position: relative;
+        margin: 25px auto;
+        width: 83vw;
+        max-width: 500px;
+        height: 50vw;
+        max-height: 320px;
+        flex: 0 0 83vw;
+        border-radius: 20px;
+        scroll-snap-align: center;
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.24);
+        transition: transform 0.3s;
+
+        &.ativo {
+          z-index: 2;
+          transform: scale(1.05);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+        }
+
+        .nome-cartao {
+          position: absolute;
+          top: 8%;
+          left: 5.5%;
+          font-size: 1.7rem;
+        }
+
+        .menu-cartao {
+          position: absolute;
+          top: 7%;
+          right: 4%;
+          z-index: 10;
+          display: flex;
+          align-items: center;
+
+          .menu-cartao-custom {
+            position: absolute;
+            top: 28px;
+            right: 0;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.13);
+            min-width: 120px;
+            display: flex;
+            flex-direction: column;
+            padding: 4px 0;
+            animation: fadeInMenu 0.18s;
+
+            button {
+              background: none;
+              border: none;
+              width: 100%;
+              text-align: left;
+              padding: 10px 16px;
+              font-size: 0.98rem;
+              color: #222;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              cursor: pointer;
+              transition: background 0.15s;
+            }
+
+            button.editar:hover {
+              background: #f0f6ff;
+              color: #1b57be;
+            }
+            button.excluir:hover {
+              background: #fff0f0;
+              color: #e53935;
+            }
+
+            ion-icon {
+              font-size: 1.1rem;
+            }
+          }
+        }
+
+        .valor-cartao {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          left: 5.5%;
+
+          p {
+            font-size: 1.5rem;
+            font-weight: 500;
+          }
+        }
+
+        .fechamento-cartao {
+          position: absolute;
+          bottom: 8%;
+          left: 5.5%;
+
+          .ttFechamento {
+            font-size: 0.5rem;
+          }
+          .numFechamento {
+            font-size: 1rem;
+          }
+        }
+
+        .vencimento-cartao {
+          position: absolute;
+          bottom: 8%;
+          right: 5.5%;
+          text-align: end;
+
+          .ttVencimento {
+            font-size: 0.5rem;
+          }
+          .numVencimento {
+            font-size: 1rem;
+          }
+        }
+      }
+    }
   }
 
-  .col-valor {
-    text-align: end;
-    justify-content: flex-end;
-  }
-}
+  .fatura-card {
+    background: transparent !important;
+    color: white;
+    margin-top: 15px;
+    box-shadow: none;
+    padding-inline: 20px;
 
-ion-fab{
-  margin-bottom: 5vh;
+    ion-card-header,
+    ion-card-title {
+      text-align: center;
+      background: transparent !important;
+      font-size: 1rem;
+    }
+
+    ion-card-title {
+      margin-bottom: 10px;
+    }
+
+    ion-grid {
+      padding: 0;
+    }
+
+    ion-row {
+      padding: 17px 0;
+    }
+
+    ion-row:not(:first-child):not(:last-child) {
+      border-bottom: 1px solid rgba(41, 41, 41, 0.2);
+    }
+
+    .fatura-header {
+      font-weight: bold;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    ion-col {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .col-nome {
+      text-align: start;
+      justify-content: flex-start;
+    }
+
+    .col-parcelas {
+      text-align: center;
+      justify-content: center;
+    }
+
+    .col-valor {
+      text-align: end;
+      justify-content: flex-end;
+    }
+  }
+
+  ion-fab {
+    margin-bottom: 5vh;
+  }
+
+  @keyframes fadeInMenu {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }

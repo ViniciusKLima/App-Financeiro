@@ -6,7 +6,6 @@
         [routerLink]="['/nav/carteira']"
       ></ion-icon>
       <p>{{ categoria?.nome }}</p>
-      <ion-icon name="add-circle-outline"></ion-icon>
     </ion-header>
     <div class="content-dividas">
       <ion-card class="fatura-card">
@@ -55,7 +54,7 @@
           </ion-grid>
         </ion-card-content>
       </ion-card>
-      <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+      <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="fab-ajustada">
         <ion-fab-button
           [style.--background]="categoria?.cor"
           [style.color]="'#fff'"

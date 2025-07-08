@@ -1,9 +1,10 @@
+::ng-deep .modal-wrapper {
+  border-top-left-radius: 40px !important;
+  border-top-right-radius: 40px !important;
+  background: var(--ion-background-color, #fff) !important;
+}
+
 :host {
-  .modal-wrapper {
-    border-top-left-radius: 40px;
-    border-top-right-radius: 40px;
-    background-color: var(--ion-background-color);
-  }
 
   ion-content {
     --background: #f9f9f9;
@@ -87,7 +88,7 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     transition: all 0.2s ease-in-out;
 
-    .card{
+    .card {
       position: absolute;
       left: 12px;
       top: 14px;
@@ -157,6 +158,7 @@
       background: transparent;
       border: none;
       outline: none;
+      color: inherit;
     }
   }
 

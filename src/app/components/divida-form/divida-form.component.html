@@ -2,7 +2,6 @@
   <form [formGroup]="formCompra" (ngSubmit)="salvar()" id="formDividaCompra">
     <!-- Formulário COMPRA via cartão -->
     <div *ngIf="modo === 'cartao'">
-      <!-- Custom Select fora do ion-item para evitar overflow hidden -->
       <div class="custom-select-wrapper">
         <div class="custom-select" (click)="toggleSelect('cartoes')">
           <ion-icon
@@ -18,12 +17,10 @@
             class="arrow"
             [class.open]="mostrandoCartoes"
           ></ion-icon>
-
-          <!-- Lista de opções -->
           <div class="options" *ngIf="mostrandoCartoes">
             <div
               *ngFor="let cartao of cartoes"
-              (click)="selecionarCartao(cartao)"
+              (click)="selecionarCartao(cartao, $event)"
               [style.color]="cartao.cor"
             >
               {{ cartao.nome }}
@@ -36,17 +33,13 @@
       <div class="campo-valor-central">
         <input
           type="tel"
-          formControlName="valor"
           class="input-valor"
           placeholder="R$ 0,00"
-          [value]="
-            formCompra.get('valor')?.value
-              ? formatarValor(formCompra.get('valor')?.value)
-              : 'R$ 0,00'
-          "
-          (input)="onInputValor($event)"
-          ionInput
-          [style.color]="cartaoSelecionado?.cor"
+          [ngStyle]="{ color: cartaoSelecionado?.cor || '#bbb' }"
+          [disabled]="!cartaoSelecionado"
+          [value]="valorFormatado"
+          (input)="onInputValor($event, 'valor')"
+          autocomplete="off"
         />
       </div>
 
@@ -58,6 +51,7 @@
         <ion-input
           formControlName="nomeCompra"
           placeholder="Ex: Mercado"
+          [disabled]="!cartaoSelecionado"
         ></ion-input>
       </div>
 
@@ -70,6 +64,7 @@
           formControlName="compraFixa"
           (ionChange)="onToggleFixa()"
           mode="ios"
+          [disabled]="!cartaoSelecionado"
         ></ion-toggle>
       </div>
 
@@ -84,7 +79,7 @@
         <ion-input
           type="number"
           formControlName="parcelaAtual"
-          [disabled]="formCompra.value.compraFixa"
+          [disabled]="formCompra.value.compraFixa || !cartaoSelecionado"
           placeholder="-"
         ></ion-input>
       </div>
@@ -100,7 +95,7 @@
         <ion-input
           type="number"
           formControlName="totalParcelas"
-          [disabled]="formCompra.value.compraFixa"
+          [disabled]="formCompra.value.compraFixa || !cartaoSelecionado"
           placeholder="-"
         ></ion-input>
       </div>
@@ -112,31 +107,45 @@
         <ion-textarea
           formControlName="descricao"
           placeholder="Descreva a sua compra..."
+          [disabled]="!cartaoSelecionado"
         ></ion-textarea>
       </div>
+
+      <!-- Botão salvar para cartão -->
+      <ion-button
+        (click)="salvar()"
+        class="btn-salvar ion-margin-top"
+        [style.--background]="cartaoSelecionado?.cor"
+        [disabled]="!cartaoSelecionado"
+        expand="block"
+        >Salvar</ion-button
+      >
     </div>
 
     <!-- Formulário DÍVIDA em categoria -->
     <div *ngIf="modo === 'categoria'">
-      <div class="custom-select" (click)="toggleSelect('categorias')">
-        <ion-icon
-          name="folder-outline"
-          [style.color]="categoriaSelecionada?.cor"
-          class="card"
-        ></ion-icon>
-        <div class="selected-option" [style.color]="categoriaSelecionada?.cor">
-          {{ categoriaSelecionada?.nome || "Selecione uma categoria" }}
-        </div>
-        <ion-icon name="chevron-down-outline" class="arrow"></ion-icon>
-
-        <!-- Lista de opções -->
-        <div class="options" *ngIf="mostrandoCategorias">
+      <div class="custom-select-wrapper">
+        <div class="custom-select" (click)="toggleSelect('categorias')">
+          <ion-icon
+            name="folder-outline"
+            [style.color]="categoriaSelecionada?.cor"
+            class="card"
+          ></ion-icon>
           <div
-            *ngFor="let categoria of categorias"
-            (click)="selecionarCategoria(categoria)"
-            [style.color]="categoria.cor"
+            class="selected-option"
+            [style.color]="categoriaSelecionada?.cor"
           >
-            {{ categoria.nome }}
+            {{ categoriaSelecionada?.nome || "Selecione uma categoria" }}
+          </div>
+          <ion-icon name="chevron-down-outline" class="arrow"></ion-icon>
+          <div class="options" *ngIf="mostrandoCategorias">
+            <div
+              *ngFor="let categoria of categorias"
+              (click)="selecionarCategoria(categoria, $event)"
+              [style.color]="categoria.cor"
+            >
+              {{ categoria.nome }}
+            </div>
           </div>
         </div>
       </div>
@@ -145,17 +154,13 @@
       <div class="campo-valor-central">
         <input
           type="tel"
-          formControlName="valorDivida"
           class="input-valor"
           placeholder="R$ 0,00"
-          [value]="
-            formCompra.get('valor')?.value
-              ? formatarValor(formCompra.get('valor')?.value)
-              : 'R$ 0,00'
-          "
-          (input)="onInputValor($event)"
-          ionInput
-          [style.color]="categoriaSelecionada?.cor"
+          [ngStyle]="{ color: categoriaSelecionada?.cor || '#bbb' }"
+          [disabled]="!categoriaSelecionada"
+          [value]="valorDividaFormatado"
+          (input)="onInputValor($event, 'valorDivida')"
+          autocomplete="off"
         />
       </div>
 
@@ -167,6 +172,7 @@
         <ion-input
           formControlName="nomeDivida"
           placeholder="Ex: Mercado"
+          [disabled]="!categoriaSelecionada"
         ></ion-input>
       </div>
 
@@ -179,6 +185,7 @@
           type="number"
           formControlName="totalParcelas"
           placeholder="-"
+          [disabled]="!categoriaSelecionada"
         ></ion-input>
       </div>
 
@@ -189,16 +196,20 @@
         <ion-textarea
           formControlName="descricaoDivida"
           placeholder="Descreva a sua compra..."
+          [disabled]="!categoriaSelecionada"
         ></ion-textarea>
       </div>
+
+      <!-- Botão salvar para categoria -->
+      <ion-button
+        (click)="salvar()"
+        class="btn-salvar ion-margin-top"
+        [style.--background]="categoriaSelecionada?.cor"
+        [disabled]="!categoriaSelecionada"
+        expand="block"
+        >Salvar</ion-button
+      >
     </div>
   </form>
-  <!-- Botões -->
-  <ion-button
-    (click)="salvar()"
-    class="btn-salvar ion-margin-top"
-    [style.--background]="cartaoSelecionado?.cor"
-    >Salvar</ion-button
-  >
   <ion-button expand="block" fill="clear" color="medium">Cancelar</ion-button>
 </ion-content>

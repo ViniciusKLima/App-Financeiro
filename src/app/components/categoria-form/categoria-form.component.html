@@ -1,62 +1,130 @@
 <ion-header>
-  <ion-title>{{
-    categoria ? "Editar Categoria" : "Criar Categoria"
-  }}</ion-title>
+  <ion-title>
+    <ng-container *ngIf="modo === 'cartao'; else categoriaTitulo">
+      {{ cartao ? "Editar Cartão" : "Adicionar Cartão" }}
+    </ng-container>
+    <ng-template #categoriaTitulo>
+      {{ categoria ? "Editar Categoria" : "Criar Categoria" }}
+    </ng-template>
+  </ion-title>
 </ion-header>
 
 <ion-content class="ion-padding">
   <form>
-    <!-- Campo Nome -->
-    <div class="input-row">
-      <ion-label position="fixed"
-        ><ion-icon name="pencil-outline"></ion-icon> Nome:</ion-label
-      >
-      <ion-input
-        [(ngModel)]="novaCategoria.nome"
-        name="nome"
-        class="input-direita"
-        placeholder="Ex: Trabalho"
-      ></ion-input>
-    </div>
-
-    <!-- Campo Cor -->
-    <div class="input-row">
-      <ion-label position="fixed"
-        ><ion-icon name="color-fill-outline"></ion-icon> Cor:</ion-label
-      >
-      <div class="borda-cor">
-        <div class="input-cor-wrapper">
-          <ion-input
-            type="color"
-            [(ngModel)]="novaCategoria.cor"
-            name="cor"
-            class="input-direita input-cor"
-          ></ion-input>
+    <!-- FORMULÁRIO DE CATEGORIA -->
+    <ng-container *ngIf="modo === 'categoria'">
+      <div class="input-row">
+        <ion-label position="fixed"
+          ><ion-icon name="pencil-outline"></ion-icon> Nome:</ion-label
+        >
+        <ion-input
+          [(ngModel)]="novaCategoria.nome"
+          name="nome"
+          class="input-direita"
+          placeholder="Ex: Trabalho"
+        ></ion-input>
+      </div>
+      <div class="input-row">
+        <ion-label position="fixed"
+          ><ion-icon name="color-fill-outline"></ion-icon> Cor:</ion-label
+        >
+        <div class="cores-grid">
+          <button
+            *ngFor="let cor of coresDisponiveis"
+            type="button"
+            class="cor-botao"
+            [ngStyle]="{
+              background: cor,
+              border:
+                cor === novaCategoria.cor
+                  ? '2px solid #1b57be'
+                  : '2px solid #fff'
+            }"
+            [class.selecionado]="cor === novaCategoria.cor"
+            (click)="novaCategoria.cor = cor"
+          ></button>
         </div>
       </div>
-    </div>
-
-    <!-- Label dos Ícones -->
-    <ion-label
-      class="label-icone ion-margin-top ion-margin-start"
-      position="stacked"
-      >Ícone:</ion-label
-    >
-
-    <!-- Grade de Ícones -->
-    <div class="icone-grid">
-      <button
-        *ngFor="let icon of iconesDisponiveis"
-        type="button"
-        class="icone-botao"
-        [class.selecionado]="icon === novaCategoria.icone"
-        (click)="selecionarIcone(icon)"
+      <ion-label
+        class="label-icone ion-margin-top ion-margin-start"
+        position="stacked"
+        >Ícone:</ion-label
       >
-        <ion-icon [name]="icon"></ion-icon>
-      </button>
-    </div>
+      <div class="icone-grid">
+        <button
+          *ngFor="let icon of iconesDisponiveis"
+          type="button"
+          class="icone-botao"
+          [class.selecionado]="icon === novaCategoria.icone"
+          (click)="selecionarIcone(icon)"
+        >
+          <ion-icon [name]="icon"></ion-icon>
+        </button>
+      </div>
+    </ng-container>
 
-    <!-- Botões -->
+    <!-- FORMULÁRIO DE CARTÃO -->
+    <ng-container *ngIf="modo === 'cartao'">
+      <div class="input-row">
+        <ion-label position="fixed"
+          ><ion-icon name="card-outline"></ion-icon> Nome:</ion-label
+        >
+        <ion-input
+          [(ngModel)]="novoCartao.nome"
+          name="nomeCartao"
+          class="input-direita"
+          placeholder="Ex: Nubank"
+        ></ion-input>
+      </div>
+      <div class="input-row">
+        <ion-label position="fixed"
+          ><ion-icon name="calendar-outline"></ion-icon> Fechamento:</ion-label
+        >
+        <ion-input
+          type="number"
+          [(ngModel)]="novoCartao.diaFechamento"
+          name="fechamento"
+          class="input-direita"
+          min="1"
+          max="31"
+          placeholder="Ex: 10"
+        ></ion-input>
+      </div>
+      <div class="input-row">
+        <ion-label position="fixed"
+          ><ion-icon name="calendar-outline"></ion-icon> Vencimento:</ion-label
+        >
+        <ion-input
+          type="number"
+          [(ngModel)]="novoCartao.diaVencimento"
+          name="vencimento"
+          class="input-direita"
+          min="1"
+          max="31"
+          placeholder="Ex: 17"
+        ></ion-input>
+      </div>
+      <div class="input-row">
+        <ion-label position="fixed"
+          ><ion-icon name="color-fill-outline"></ion-icon> Cor:</ion-label
+        >
+        <div class="cores-grid">
+          <button
+            *ngFor="let cor of coresDisponiveis"
+            type="button"
+            class="cor-botao"
+            [ngStyle]="{
+              background: cor,
+              border:
+                cor === novoCartao.cor ? '2px solid #1b57be' : '2px solid #fff'
+            }"
+            [class.selecionado]="cor === novoCartao.cor"
+            (click)="novoCartao.cor = cor"
+          ></button>
+        </div>
+      </div>
+    </ng-container>
+
     <ion-button (click)="salvar()" class="btn-salvar ion-margin-top"
       >Salvar</ion-button
     >
