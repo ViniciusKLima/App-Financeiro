@@ -61,6 +61,16 @@
           <ion-icon [name]="icon"></ion-icon>
         </button>
       </div>
+      <div
+        *ngIf="formTouched && !novaCategoria.nome.trim()"
+        class="erro-campo"
+        style="text-align: center; margin-bottom: 12px"
+      >
+        Preencha todos os campos
+      </div>
+      <ion-button (click)="salvar()" class="btn-salvar ion-margin-top"
+        >Salvar</ion-button
+      >
     </ng-container>
 
     <!-- FORMULÁRIO DE CARTÃO -->
@@ -123,11 +133,23 @@
           ></button>
         </div>
       </div>
+      <div
+        *ngIf="
+          formTouched &&
+          (!novoCartao.nome.trim() ||
+            !novoCartao.diaFechamento ||
+            !novoCartao.diaVencimento)
+        "
+        class="erro-campo"
+        style="text-align: center; margin-bottom: 12px"
+      >
+        Preencha todos os campos
+      </div>
+      <ion-button (click)="salvar()" class="btn-salvar ion-margin-top"
+        >Salvar</ion-button
+      >
     </ng-container>
 
-    <ion-button (click)="salvar()" class="btn-salvar ion-margin-top"
-      >Salvar</ion-button
-    >
     <ion-button expand="block" fill="clear" color="medium" (click)="fechar()"
       >Cancelar</ion-button
     >

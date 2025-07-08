@@ -1,9 +1,16 @@
 <ion-content class="ion-padding">
-  <form [formGroup]="formCompra" (ngSubmit)="salvar()" id="formDividaCompra">
+  <form [formGroup]="formCompra" id="formDividaCompra">
     <!-- Formulário COMPRA via cartão -->
     <div *ngIf="modo === 'cartao'">
-      <div class="custom-select-wrapper">
-        <div class="custom-select" (click)="toggleSelect('cartoes')">
+      <div
+        class="custom-select-wrapper"
+        [class.disabled]="compraIndex !== undefined"
+      >
+        <div
+          class="custom-select"
+          (click)="compraIndex === undefined && toggleSelect('cartoes')"
+          [style.pointer-events]="compraIndex !== undefined ? 'none' : 'auto'"
+        >
           <ion-icon
             name="card-outline"
             [style.color]="cartaoSelecionado?.cor"
@@ -29,7 +36,6 @@
         </div>
       </div>
 
-      <!-- Campo de valor centralizado -->
       <div class="campo-valor-central">
         <input
           type="tel"
@@ -45,7 +51,11 @@
 
       <div class="row-inputs">
         <ion-label>
-          <ion-icon slot="start" name="pencil"></ion-icon>
+          <ion-icon
+            slot="start"
+            name="pencil"
+            [style.color]="cartaoSelecionado?.cor || '#bbb'"
+          ></ion-icon>
           Nome da Compra
         </ion-label>
         <ion-input
@@ -57,7 +67,11 @@
 
       <div class="row-inputs">
         <ion-label>
-          <ion-icon slot="start" name="pin-outline"></ion-icon>
+          <ion-icon
+            slot="start"
+            name="pin-outline"
+            [style.color]="cartaoSelecionado?.cor || '#bbb'"
+          ></ion-icon>
           Compra Fixa
         </ion-label>
         <ion-toggle
@@ -73,7 +87,11 @@
         class="row-inputs"
       >
         <ion-label>
-          <ion-icon slot="start" name="calendar-number-outline"></ion-icon>
+          <ion-icon
+            slot="start"
+            name="calendar-number-outline"
+            [style.color]="cartaoSelecionado?.cor || '#bbb'"
+          ></ion-icon>
           Parcela Atual
         </ion-label>
         <ion-input
@@ -89,7 +107,11 @@
         class="row-inputs"
       >
         <ion-label>
-          <ion-icon slot="start" name="repeat-outline"></ion-icon>
+          <ion-icon
+            slot="start"
+            name="repeat-outline"
+            [style.color]="cartaoSelecionado?.cor || '#bbb'"
+          ></ion-icon>
           Total de Parcelas
         </ion-label>
         <ion-input
@@ -102,7 +124,11 @@
 
       <div class="row-textarea">
         <ion-label>
-          <ion-icon slot="start" name="document-text-outline"></ion-icon>
+          <ion-icon
+            slot="start"
+            name="document-text-outline"
+            [style.color]="cartaoSelecionado?.cor || '#bbb'"
+          ></ion-icon>
         </ion-label>
         <ion-textarea
           formControlName="descricao"
@@ -110,16 +136,6 @@
           [disabled]="!cartaoSelecionado"
         ></ion-textarea>
       </div>
-
-      <!-- Botão salvar para cartão -->
-      <ion-button
-        (click)="salvar()"
-        class="btn-salvar ion-margin-top"
-        [style.--background]="cartaoSelecionado?.cor"
-        [disabled]="!cartaoSelecionado"
-        expand="block"
-        >Salvar</ion-button
-      >
     </div>
 
     <!-- Formulário DÍVIDA em categoria -->
@@ -150,7 +166,6 @@
         </div>
       </div>
 
-      <!-- Campo de valor centralizado -->
       <div class="campo-valor-central">
         <input
           type="tel"
@@ -166,7 +181,11 @@
 
       <div class="row-inputs">
         <ion-label>
-          <ion-icon slot="start" name="pencil"></ion-icon>
+          <ion-icon
+            slot="start"
+            name="pencil"
+            [style.color]="categoriaSelecionada?.cor || '#bbb'"
+          ></ion-icon>
           Nome da Dívida
         </ion-label>
         <ion-input
@@ -178,12 +197,16 @@
 
       <div class="row-inputs">
         <ion-label>
-          <ion-icon slot="start" name="calendar-number-outline"></ion-icon>
+          <ion-icon
+            slot="start"
+            name="calendar-number-outline"
+            [style.color]="categoriaSelecionada?.cor || '#bbb'"
+          ></ion-icon>
           Dia de Pagamento
         </ion-label>
         <ion-input
           type="number"
-          formControlName="totalParcelas"
+          formControlName="diaPagamento"
           placeholder="-"
           [disabled]="!categoriaSelecionada"
         ></ion-input>
@@ -191,7 +214,11 @@
 
       <div class="row-textarea">
         <ion-label>
-          <ion-icon slot="start" name="document-text-outline"></ion-icon>
+          <ion-icon
+            slot="start"
+            name="document-text-outline"
+            [style.color]="categoriaSelecionada?.cor || '#bbb'"
+          ></ion-icon>
         </ion-label>
         <ion-textarea
           formControlName="descricaoDivida"
@@ -199,17 +226,64 @@
           [disabled]="!categoriaSelecionada"
         ></ion-textarea>
       </div>
+    </div>
 
-      <!-- Botão salvar para categoria -->
+    <!-- Mensagem de erro única -->
+    <div
+      *ngIf="formCompra.invalid && formTouched"
+      class="erro-campo"
+      style="text-align: center; margin-bottom: 12px"
+    >
+      Preencha todos os campos
+    </div>
+
+    <div
+      *ngIf="compraIndex !== undefined; else btnSalvarUnico"
+      class="botoes-edicao"
+      style="display: flex; gap: 12px; margin-top: 18px"
+    >
+      <ion-button
+        (click)="salvar()"
+        class="btn-salvar"
+        [style.--background]="
+          modo === 'cartao' ? cartaoSelecionado?.cor : categoriaSelecionada?.cor
+        "
+        [disabled]="
+          modo === 'cartao' ? !cartaoSelecionado : !categoriaSelecionada
+        "
+        expand="block"
+        style="flex: 1"
+      >
+        Alterar
+      </ion-button>
+      <ion-button
+        expand="block"
+        color="danger"
+        (click)="excluir()"
+        style="flex: 1"
+      >
+        Excluir
+      </ion-button>
+    </div>
+
+    <ng-template #btnSalvarUnico>
       <ion-button
         (click)="salvar()"
         class="btn-salvar ion-margin-top"
-        [style.--background]="categoriaSelecionada?.cor"
-        [disabled]="!categoriaSelecionada"
+        [style.--background]="
+          modo === 'cartao' ? cartaoSelecionado?.cor : categoriaSelecionada?.cor
+        "
+        [disabled]="
+          modo === 'cartao' ? !cartaoSelecionado : !categoriaSelecionada
+        "
         expand="block"
-        >Salvar</ion-button
       >
-    </div>
+        Salvar
+      </ion-button>
+    </ng-template>
+
+    <ion-button expand="block" fill="clear" color="medium" (click)="cancelar()">
+      Cancelar
+    </ion-button>
   </form>
-  <ion-button expand="block" fill="clear" color="medium">Cancelar</ion-button>
 </ion-content>

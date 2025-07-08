@@ -26,10 +26,12 @@ export class CartoesPage implements AfterViewInit {
     private navCtrl: NavController,
     private alertCtrl: AlertController
   ) {
-    this.cartoes = this.financeiroService.getCartoes().map((cartao: any) => ({
-      ...cartao,
-      gradient: this.financeiroService.generateGradient(cartao.cor),
-    }));
+    this.cartoes = this.ordenarCartoesPorVencimento(
+      this.financeiroService.getCartoes().map((cartao: any) => ({
+        ...cartao,
+        gradient: this.financeiroService.generateGradient(cartao.cor),
+      }))
+    );
   }
 
   ngAfterViewInit() {
@@ -58,7 +60,41 @@ export class CartoesPage implements AfterViewInit {
 
   // Abrir modal para adicionar cartão
   async novoCartao() {
-    await this.abrirModalCartao('cartao');
+    const modal = await this.modalCtrl.create({
+      component: CategoriaFormComponent,
+      componentProps: { modo: 'cartao' },
+      initialBreakpoint: 0.9,
+      breakpoints: [0, 0.8, 0.9],
+      backdropDismiss: true,
+      mode: 'ios',
+      cssClass: 'custom-modal-bottom-sheet',
+    });
+
+    modal.onDidDismiss().then((retorno) => {
+      if (retorno.data) {
+        // Atualize e ordene a lista
+        const novosCartoes = this.financeiroService
+          .getCartoes()
+          .map((cartao: any) => ({
+            ...cartao,
+            gradient: this.financeiroService.generateGradient(cartao.cor),
+          }));
+        this.cartoes = this.ordenarCartoesPorVencimento(novosCartoes);
+
+        // Se um novo cartão foi adicionado, defina ele como ativo
+        if (retorno.data.id) {
+          const novoIndex = this.cartoes.findIndex(
+            (c) => c.id === retorno.data.id
+          );
+          if (novoIndex !== -1) {
+            this.cartaoAtivoIndex = novoIndex;
+            setTimeout(() => this.scrollToCenter(novoIndex), 100);
+          }
+        }
+      }
+    });
+
+    await modal.present();
   }
 
   // Método genérico para abrir o modal de cartão
@@ -186,5 +222,55 @@ export class CartoesPage implements AfterViewInit {
     setTimeout(() => {
       event.target.complete();
     }, 600); // tempo para simular carregamento, ajuste se quiser
+  }
+
+  async editarCompra(compra: any, index: number) {
+    const modal = await this.modalCtrl.create({
+      component: DividaFormComponent,
+      componentProps: {
+        modo: 'cartao',
+        cartaoId: this.cartaoAtivo?.id,
+        compra: { ...compra }, // passa uma cópia da compra
+        compraIndex: index,
+      },
+      breakpoints: [0, 0.8, 0.9],
+      initialBreakpoint: 0.9,
+      showBackdrop: true,
+      backdropDismiss: true,
+    });
+
+    modal.onDidDismiss().then((retorno) => {
+      if (retorno.data && retorno.data.compraEditada) {
+        // Atualiza a compra editada no array do cartão ativo
+        this.cartaoAtivo.compras[index] = retorno.data.compraEditada;
+        // Atualize a lista de cartões se necessário
+        this.cartoes = this.financeiroService
+          .getCartoes()
+          .map((cartao: any) => ({
+            ...cartao,
+            gradient: this.financeiroService.generateGradient(cartao.cor),
+          }));
+      }
+    });
+
+    await modal.present();
+  }
+
+  private ordenarCartoesPorVencimento(cartoes: any[]): any[] {
+    const hoje = new Date();
+    const diaHoje = hoje.getDate();
+
+    // Calcula quantos dias faltam para o vencimento de cada cartão
+    return cartoes
+      .map((cartao) => {
+        let diasParaVencer = cartao.diaVencimento - diaHoje;
+        if (diasParaVencer < 0) diasParaVencer += 31; // Considera mês de 31 dias para simplificar
+        return { ...cartao, _diasParaVencer: diasParaVencer };
+      })
+      .sort((a, b) => a._diasParaVencer - b._diasParaVencer)
+      .map((cartao) => {
+        delete cartao._diasParaVencer;
+        return cartao;
+      });
   }
 }

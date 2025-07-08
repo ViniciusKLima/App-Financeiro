@@ -251,3 +251,93 @@
     }
   }
 }
+
+.cartao-empty-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 72vh;
+  margin-top: 0;
+}
+
+.cartao-empty-silhueta {
+  border: 2.5px dashed #bbb;
+  border-radius: 24px;
+  width: 380px;
+  max-width: 92vw;
+  height: 240px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #bbb;
+  font-size: 1.25rem;
+  margin-bottom: 36px;
+  box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.04);
+  position: relative;
+  transition: box-shadow 0.2s;
+}
+
+.cartao-empty-silhueta:hover {
+  box-shadow: 0 4px 32px 0 rgba(27, 87, 190, 0.08);
+}
+
+.cartao-empty-silhueta ion-icon {
+  font-size: 74px;
+  margin-bottom: 18px;
+  color: #888;
+  opacity: 0.7;
+}
+
+.cartao-empty-silhueta span {
+  display: block;
+  text-align: center;
+  font-size: 1.22rem;
+  color: #888;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  margin-top: 0;
+  margin-bottom: 0;
+  line-height: 1.4;
+  position: static;
+}
+
+.btn-add-cartao {
+  margin-top: 14px;
+  --background: var(--cor-principal);
+  --color: #fff;
+  font-size: 1.08rem;
+  border-radius: 14px;
+  letter-spacing: 0.01em;
+  padding: 0 28px;
+  min-height: 48px;
+  min-width: 210px;
+  transition: box-shadow 0.18s;
+}
+
+.nenhuma-compra-msg {
+  width: 100%;
+  text-align: center;
+  color: #888;
+  font-size: 1.18rem;
+  font-weight: 500;
+  margin: 32px 0 18px 0;
+  padding: 32px 0 18px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.01em;
+  border-radius: 12px;
+  border: 1.5px dashed #d0d0d0;
+  min-height: 90px;
+  gap: 8px;
+}
+
+.nenhuma-compra-msg ion-icon {
+  font-size: 2.2rem;
+  color: var(--cor-principal, #bbb);
+  margin-bottom: 6px;
+  opacity: 0.7;
+}

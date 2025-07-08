@@ -404,6 +404,15 @@ export class FinanceiroService {
     }
   }
 
+  updateCartao(cartaoEditado: any) {
+    const idx = this.cartoes.findIndex(
+      (cartao) => cartao.id === cartaoEditado.id
+    );
+    if (idx !== -1) {
+      this.cartoes[idx] = { ...this.cartoes[idx], ...cartaoEditado };
+    }
+  }
+
   getCategorias() {
     return this.categorias;
   }

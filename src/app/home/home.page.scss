@@ -1,6 +1,6 @@
 .painelValores {
   padding-top: env(safe-area-inset-top);
-  height: 32vh;
+  height: 30vh;
   width: 100%;
   border-bottom-left-radius: 25px;
   border-bottom-right-radius: 25px;
@@ -53,6 +53,15 @@
       color: white;
       font-size: 0.8rem;
       margin: 0;
+      font-weight: 600;
+    }
+
+    .num-valorPago {
+      color: var(--cor-pago);
+    }
+
+    .num-valorPendente {
+      color: orangered;
     }
 
     .tt-valorPendente {
@@ -155,7 +164,8 @@ ion-checkbox {
   }
 
   .item-atrasado {
-    border: 2px solid var(--cor-atraso);
+    border: 1px solid var(--cor-atraso);
+    box-shadow: 0 0 10px rgba(70, 4, 4, 0.13) !important;
   }
 }
 

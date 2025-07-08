@@ -1,4 +1,7 @@
 <ion-content [fullscreen]="true" class="custom-bg">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <div [ngStyle]="{'background': categoria?.cor}">
     <ion-header class="header">
       <ion-icon
@@ -11,7 +14,8 @@
       <ion-card class="fatura-card">
         <ion-card-header>
           <ion-card-title [style.color]="categoria?.cor">
-            {{ categoria?.valor ? ('R$ ' + categoria.valor) : '' }}
+            R$ {{ financeiroService.getTotalDividasCategoria(categoria?.id) |
+            number:'1.2-2' }}
           </ion-card-title>
         </ion-card-header>
 
@@ -30,14 +34,17 @@
             </ion-row>
 
             <ng-container *ngIf="dividas.length > 0; else semDividas">
-              <ion-row *ngFor="let divida of dividas">
+              <ion-row
+                *ngFor="let divida of dividas; let i = index"
+                (click)="editarDivida(divida, i)"
+              >
                 <ion-col class="col-nome">{{ divida.nome }}</ion-col>
                 <ion-col size="4" class="col-dia"
                   >{{ divida.diaPagamento }}</ion-col
                 >
-                <ion-col size="4" class="col-valor"
-                  >{{ divida.valor | currency:'BRL':'symbol':'1.2-2' }}</ion-col
-                >
+                <ion-col size="4" class="col-valor">
+                  {{ divida.valor | currency:'BRL':'symbol':'1.2-2' }}
+                </ion-col>
               </ion-row>
             </ng-container>
             <ng-template #semDividas>
@@ -54,7 +61,12 @@
           </ion-grid>
         </ion-card-content>
       </ion-card>
-      <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="fab-ajustada">
+      <ion-fab
+        vertical="bottom"
+        horizontal="end"
+        slot="fixed"
+        class="fab-ajustada"
+      >
         <ion-fab-button
           [style.--background]="categoria?.cor"
           [style.color]="'#fff'"

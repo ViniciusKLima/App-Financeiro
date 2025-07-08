@@ -11,7 +11,7 @@ import { FinanceiroService } from 'src/app/services/financeiro.service';
 export class CategoriaFormComponent {
   @Input() categoria: any = null;
   @Input() cartao: any = null;
-  @Input() modo: 'categoria' | 'cartao' = 'categoria'; // NOVO
+  @Input() modo: 'categoria' | 'cartao' = 'categoria';
 
   novaCategoria = {
     id: '',
@@ -24,27 +24,29 @@ export class CategoriaFormComponent {
     id: '',
     nome: '',
     cor: '#2196f3',
-    diaFechamento: null, // ou undefined
-    diaVencimento: null, // ou undefined
+    diaFechamento: null,
+    diaVencimento: null,
   };
+
+  formTouched = false;
 
   coresDisponiveis = [
     '#2196f3',
-    '#1565c0', // Azul
+    '#1565c0',
     '#4caf50',
-    '#087f23', // Verde
+    '#087f23',
     '#f44336',
-    '#b71c1c', // Vermelho
+    '#b71c1c',
     '#ff9800',
-    '#e65100', // Laranja
+    '#e65100',
     '#9c27b0',
-    '#4a148c', // Roxo
+    '#4a148c',
     '#ffd600',
-    '#ffb300', // Amarelo
+    '#ffb300',
     '#bdbdbd',
-    '#424242', // Cinza
+    '#424242',
     '#a1887f',
-    '#4e342e', // Marrom
+    '#4e342e',
   ];
 
   iconesDisponiveis = [
@@ -108,24 +110,31 @@ export class CategoriaFormComponent {
   }
 
   salvar() {
+    this.formTouched = true;
+
     if (this.modo === 'categoria') {
       if (!this.novaCategoria.nome.trim()) {
-        alert('Informe o nome da categoria');
         return;
       }
       if (this.novaCategoria.id) {
         this.financeiroService.updateCategoria(this.novaCategoria);
+        this.modalCtrl.dismiss(this.novaCategoria);
       } else {
-        this.financeiroService.addCategoria(this.novaCategoria);
+        this.modalCtrl.dismiss(this.novaCategoria);
       }
-      this.modalCtrl.dismiss(this.novaCategoria);
     } else {
-      if (!this.novoCartao.nome.trim()) {
-        alert('Informe o nome do cartão');
+      if (
+        !this.novoCartao.nome.trim() ||
+        !this.novoCartao.diaFechamento ||
+        !this.novoCartao.diaVencimento
+      ) {
         return;
       }
-      // Aqui você pode chamar o método do service para adicionar cartão
-      this.financeiroService.addCartao(this.novoCartao);
+      if (this.novoCartao.id) {
+        this.financeiroService.updateCartao(this.novoCartao);
+      } else {
+        this.financeiroService.addCartao(this.novoCartao);
+      }
       this.modalCtrl.dismiss(this.novoCartao);
     }
   }
