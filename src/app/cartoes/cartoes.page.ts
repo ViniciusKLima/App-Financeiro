@@ -215,7 +215,13 @@ export class CartoesPage implements AfterViewInit {
 
   // Excluir cartão da lista
   excluirCartao(id: string) {
+    this.financeiroService.removerCartao(id);
     this.cartoes = this.cartoes.filter((cartao) => cartao.id !== id);
+
+    // Ajusta o cartão ativo se necessário
+    if (this.cartaoAtivoIndex >= this.cartoes.length) {
+      this.cartaoAtivoIndex = Math.max(0, this.cartoes.length - 1);
+    }
   }
 
   doRefresh(event: any) {
@@ -261,6 +267,56 @@ export class CartoesPage implements AfterViewInit {
     await modal.present();
   }
 
+  async confirmarAtualizarFatura() {
+    const alert = await this.alertCtrl.create({
+      header: 'Atualizar fatura?',
+      message: `Ao atualizar, as compras parceladas avançam para a próxima parcela. Compras já quitadas serão removidas. Compras fixas permanecem.<br><br>Deseja continuar?`,
+      cssClass: 'custom-alert',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Atualizar',
+          handler: () => this.atualizarFaturaCartao(),
+          role: 'destructive',
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  atualizarFaturaCartao() {
+    const cartao = this.cartaoAtivo;
+    if (!cartao || !cartao.compras) return;
+
+    cartao.compras = cartao.compras.filter((compra: any) => {
+      if (compra.compraFixa) {
+        return true;
+      }
+      if (compra.parcelaAtual < compra.totalParcelas) {
+        compra.parcelaAtual += 1;
+        return true;
+      }
+      return false;
+    });
+
+    // Salva o mês/ano da última atualização
+    const agora = new Date();
+    cartao.ultimaFaturaAtualizada = `${agora.getFullYear()}-${String(
+      agora.getMonth() + 1
+    ).padStart(2, '0')}`;
+
+    this.financeiroService.updateCartao(cartao);
+
+    const novosCartoes = this.financeiroService.getCartoes().map((c: any) => ({
+      ...c,
+      gradient: this.financeiroService.generateGradient(c.cor),
+    }));
+    this.cartoes = this.ordenarCartoesPorVencimento(novosCartoes);
+
+    const novoIndex = this.cartoes.findIndex((c) => c.id === cartao.id);
+    this.cartaoAtivoIndex = novoIndex !== -1 ? novoIndex : 0;
+  }
+
   private ordenarCartoesPorVencimento(cartoes: any[]): any[] {
     const hoje = new Date();
     const diaHoje = hoje.getDate();
@@ -277,5 +333,25 @@ export class CartoesPage implements AfterViewInit {
         delete cartao._diasParaVencer;
         return cartao;
       });
+  }
+
+  mostrarAtualizarFatura(cartao: any): boolean {
+    if (!cartao || !cartao.diaVencimento) return false;
+    const hoje = new Date();
+    const diaHoje = hoje.getDate();
+
+    // Mês/ano atual
+    const cicloAtual = `${hoje.getFullYear()}-${String(
+      hoje.getMonth() + 1
+    ).padStart(2, '0')}`;
+
+    // Só mostra se HOJE for maior que o dia de vencimento,
+    // houver compras e ainda não foi atualizado neste ciclo
+    return (
+      diaHoje > cartao.diaVencimento &&
+      cartao.compras &&
+      cartao.compras.length > 0 &&
+      cartao.ultimaFaturaAtualizada !== cicloAtual
+    );
   }
 }

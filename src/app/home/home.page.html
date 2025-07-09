@@ -52,30 +52,15 @@
   </div>
 
   <ng-container *ngIf="!temCompromissos">
-    <div
-      class="content-vazio"
-      style="
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 48px 0;
-      "
-    >
-      <ion-icon
-        name="wallet-outline"
-        style="font-size: 64px; color: #bdbdbd; margin-bottom: 10px"
-      ></ion-icon>
-      <p
-        class="mensagem-vazio"
-        style="color: #888; font-size: 1.1em; text-align: center"
-      >
-        Você ainda não cadastrou nenhuma dívida ou compra.<br />
-        Comece agora para acompanhar seus gastos!
+    <div class="content-vazio1">
+      <ion-icon name="cloud-offline-outline" class="icone-top"></ion-icon>
+      <p class="mensagem-vazio">
+        <span>Acompanhe seus gastos</span><br />
+        Você ainda não cadastrou nenhuma dívida ou compra.
       </p>
       <ion-button expand="block" (click)="irParaCarteira()"
-        >Ir para Carteira</ion-button
-      >
+        >Ir para Carteira <ion-icon name="chevron-forward-outline"></ion-icon
+      ></ion-button>
     </div>
   </ng-container>
 
@@ -182,7 +167,9 @@
 
     <!-- Pagos -->
     <div class="slide" [class.active]="abaAtual === 'pagos'">
-      <ng-container *ngIf="objectKeys(compromissosPagosPorDia).length === 0">
+      <ng-container
+        *ngIf="objectKeys(compromissosPagosPorDia).length === 0 && temCompromissos"
+      >
         <div
           class="content-vazio"
           style="

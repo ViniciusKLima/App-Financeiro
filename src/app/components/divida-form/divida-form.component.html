@@ -1,4 +1,4 @@
-<ion-content class="ion-padding">
+<ion-content class="ion-padding" keyboard-attach>
   <form [formGroup]="formCompra" id="formDividaCompra">
     <!-- Formulário COMPRA via cartão -->
     <div *ngIf="modo === 'cartao'">
@@ -256,11 +256,7 @@
       >
         Alterar
       </ion-button>
-      <ion-button
-        (click)="excluir()"
-        style="flex: 1"
-        class="btn-excluir"
-      >
+      <ion-button (click)="excluir()" style="flex: 1" class="btn-excluir">
         Excluir
       </ion-button>
     </div>

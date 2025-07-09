@@ -5,154 +5,154 @@ import { Injectable } from '@angular/core';
 })
 export class FinanceiroService {
   // Cartões com detalhes e compras
-  private cartoes = [
-    {
-      id: '1',
-      nome: 'Nubank',
-      valor: 1532.2,
-      diaFechamento: 5,
-      diaVencimento: 10,
-      cor: '#8A05BE', // Roxo Nubank
-      gradient: '',
-      compras: [
-        {
-          nome: 'Amazon Alexa',
-          parcelaAtual: 3,
-          totalParcelas: 10,
-          valor: 100.0,
-          descricao: 'Assinatura mensal da Alexa',
-        },
-        {
-          nome: 'Netflix',
-          parcelaAtual: 1,
-          totalParcelas: 1,
-          valor: 55.9,
-          descricao: 'Plano básico mensal',
-        },
-        {
-          nome: 'Uber',
-          parcelaAtual: 1,
-          totalParcelas: 1,
-          valor: 32.5,
-          descricao: 'Corrida Uber',
-        },
-        {
-          nome: 'Farmácia',
-          parcelaAtual: 1,
-          totalParcelas: 2,
-          valor: 80.0,
-          descricao: 'Medicamentos',
-        },
-      ],
-    },
-    {
-      id: '2',
-      nome: 'PicPay',
-      valor: 6244.0,
-      diaFechamento: 15,
-      diaVencimento: 20,
-      cor: '#21C25E', // Verde PicPay
-      gradient: '',
-      compras: [
-        {
-          nome: 'Curso Udemy',
-          parcelaAtual: 5,
-          totalParcelas: 5,
-          valor: 45.5,
-          descricao: 'Curso online de programação',
-        },
-        {
-          nome: 'Spotify',
-          parcelaAtual: 2,
-          totalParcelas: 12,
-          valor: 19.9,
-          descricao: 'Assinatura música',
-        },
-        {
-          nome: 'Livraria',
-          parcelaAtual: 1,
-          totalParcelas: 1,
-          valor: 120.0,
-          descricao: 'Compra de livros',
-        },
-        {
-          nome: 'Padaria',
-          parcelaAtual: 1,
-          totalParcelas: 1,
-          valor: 18.0,
-          descricao: 'Pães e lanches',
-        },
-      ],
-    },
-    {
-      id: '3',
-      nome: 'Master',
-      valor: 800.0,
-      diaFechamento: 20,
-      diaVencimento: 25,
-      cor: '#F79E1B', // Laranja MasterCard
-      gradient: '',
-      compras: [
-        {
-          nome: 'Livro',
-          parcelaAtual: 1,
-          totalParcelas: 3,
-          valor: 60.0,
-          descricao: 'Livro técnico',
-        },
-        {
-          nome: 'Restaurante',
-          parcelaAtual: 1,
-          totalParcelas: 1,
-          valor: 150.0,
-          descricao: 'Almoço com amigos',
-        },
-        {
-          nome: 'Cinema',
-          parcelaAtual: 1,
-          totalParcelas: 1,
-          valor: 40.0,
-          descricao: 'Ingresso de cinema',
-        },
-      ],
-    },
-    {
-      id: '4',
-      nome: 'Neon',
-      valor: 1200.0,
-      diaFechamento: 8,
-      diaVencimento: 13,
-      cor: '#00E1E6', // Azul Neon
-      gradient: '',
-      compras: [
-        {
-          nome: 'iFood',
-          parcelaAtual: 1,
-          totalParcelas: 1,
-          valor: 60.0,
-          descricao: 'Pedido de comida',
-        },
-        {
-          nome: 'Assinatura Deezer',
-          parcelaAtual: 2,
-          totalParcelas: 12,
-          valor: 19.9,
-          descricao: 'Música online',
-        },
-        {
-          nome: 'Posto',
-          parcelaAtual: 1,
-          totalParcelas: 1,
-          valor: 120.0,
-          descricao: 'Combustível',
-        },
-      ],
-    },
+  private cartoes: any[] = [
+    /* {
+        id: '1',
+        nome: 'Nubank',
+        valor: 1532.2,
+        diaFechamento: 5,
+        diaVencimento: 10,
+        cor: '#8A05BE', // Roxo Nubank
+        gradient: '',
+        compras: [
+          {
+            nome: 'Amazon Alexa',
+            parcelaAtual: 3,
+            totalParcelas: 10,
+            valor: 100.0,
+            descricao: 'Assinatura mensal da Alexa',
+          },
+          {
+            nome: 'Netflix',
+            parcelaAtual: 1,
+            totalParcelas: 1,
+            valor: 55.9,
+            descricao: 'Plano básico mensal',
+          },
+          {
+            nome: 'Uber',
+            parcelaAtual: 1,
+            totalParcelas: 1,
+            valor: 32.5,
+            descricao: 'Corrida Uber',
+          },
+          {
+            nome: 'Farmácia',
+            parcelaAtual: 1,
+            totalParcelas: 2,
+            valor: 80.0,
+            descricao: 'Medicamentos',
+          },
+        ],
+      },
+      {
+        id: '2',
+        nome: 'PicPay',
+        valor: 6244.0,
+        diaFechamento: 15,
+        diaVencimento: 8,
+        cor: '#21C25E', // Verde PicPay
+        gradient: '',
+        compras: [
+          {
+            nome: 'Curso Udemy',
+            parcelaAtual: 5,
+            totalParcelas: 5,
+            valor: 45.5,
+            descricao: 'Curso online de programação',
+          },
+          {
+            nome: 'Spotify',
+            parcelaAtual: 2,
+            totalParcelas: 12,
+            valor: 19.9,
+            descricao: 'Assinatura música',
+          },
+          {
+            nome: 'Livraria',
+            parcelaAtual: 1,
+            totalParcelas: 1,
+            valor: 120.0,
+            descricao: 'Compra de livros',
+          },
+          {
+            nome: 'Padaria',
+            parcelaAtual: 1,
+            totalParcelas: 1,
+            valor: 18.0,
+            descricao: 'Pães e lanches',
+          },
+        ],
+      },
+      {
+        id: '3',
+        nome: 'Master',
+        valor: 800.0,
+        diaFechamento: 20,
+        diaVencimento: 25,
+        cor: '#F79E1B', // Laranja MasterCard
+        gradient: '',
+        compras: [
+          {
+            nome: 'Livro',
+            parcelaAtual: 1,
+            totalParcelas: 3,
+            valor: 60.0,
+            descricao: 'Livro técnico',
+          },
+          {
+            nome: 'Restaurante',
+            parcelaAtual: 1,
+            totalParcelas: 1,
+            valor: 150.0,
+            descricao: 'Almoço com amigos',
+          },
+          {
+            nome: 'Cinema',
+            parcelaAtual: 1,
+            totalParcelas: 1,
+            valor: 40.0,
+            descricao: 'Ingresso de cinema',
+          },
+        ],
+      },
+      {
+        id: '4',
+        nome: 'Neon',
+        valor: 1200.0,
+        diaFechamento: 8,
+        diaVencimento: 13,
+        cor: '#00E1E6', // Azul Neon
+        gradient: '',
+        compras: [
+          {
+            nome: 'iFood',
+            parcelaAtual: 1,
+            totalParcelas: 1,
+            valor: 60.0,
+            descricao: 'Pedido de comida',
+          },
+          {
+            nome: 'Assinatura Deezer',
+            parcelaAtual: 2,
+            totalParcelas: 12,
+            valor: 19.9,
+            descricao: 'Música online',
+          },
+          {
+            nome: 'Posto',
+            parcelaAtual: 1,
+            totalParcelas: 1,
+            valor: 120.0,
+            descricao: 'Combustível',
+          },
+        ],
+      },*/
   ];
 
   // Grupos de dívidas, cada um com suas dívidas
-  private categorias = [
-    {
+  private categorias: any[] = [
+    /*{
       id: '1',
       nome: 'Boletos',
       valor: '1532.20',
@@ -355,51 +355,67 @@ export class FinanceiroService {
           descricao: 'Compras eletrônicas',
         },
       ],
-    },
+    },*/
   ];
 
   getValorTotalDividas(): number {
     let total = 0;
     // Soma todas as dívidas de todas as categorias
-    this.categorias.forEach((cat) => {
-      if (cat.dividas && cat.dividas.length > 0) {
-        cat.dividas.forEach((divida) => {
-          total += Number(divida.valor) || 0;
-        });
-      }
-    });
+    if (Array.isArray(this.categorias) && this.categorias.length > 0) {
+      this.categorias.forEach((cat: any) => {
+        if (
+          cat.dividas &&
+          Array.isArray(cat.dividas) &&
+          cat.dividas.length > 0
+        ) {
+          cat.dividas.forEach((divida: any) => {
+            total += Number(divida.valor) || 0;
+          });
+        }
+      });
+    }
     // Soma todas as compras de todos os cartões
-    this.cartoes.forEach((cartao) => {
-      if (cartao.compras && cartao.compras.length > 0) {
-        cartao.compras.forEach((compra) => {
-          total += Number(compra.valor) || 0;
-        });
-      }
-    });
+    if (Array.isArray(this.cartoes) && this.cartoes.length > 0) {
+      this.cartoes.forEach((cartao: any) => {
+        if (
+          cartao.compras &&
+          Array.isArray(cartao.compras) &&
+          cartao.compras.length > 0
+        ) {
+          cartao.compras.forEach((compra: any) => {
+            total += Number(compra.valor) || 0;
+          });
+        }
+      });
+    }
     return total;
   }
 
   getCartoes() {
-    return this.cartoes;
+    return Array.isArray(this.cartoes) ? this.cartoes : [];
   }
 
   getCartaoById(id: string) {
-    return this.cartoes.find((cartao) => cartao.id === id);
+    return Array.isArray(this.cartoes) && this.cartoes.length > 0
+      ? this.cartoes.find((cartao) => cartao.id === id)
+      : undefined;
   }
 
   addCartao(cartao: any) {
+    if (!Array.isArray(this.cartoes)) return;
     cartao.id = (Math.random() * 100000).toFixed(0);
     cartao.compras = [];
     this.cartoes.push({ ...cartao });
   }
 
   addCategoria(categoria: any) {
-    // Gera um id simples (pode ser melhorado)
+    if (!Array.isArray(this.categorias)) return;
     categoria.id = (Math.random() * 100000).toFixed(0);
     this.categorias.push({ ...categoria, dividas: [] });
   }
 
   updateCategoria(categoriaEditada: any) {
+    if (!Array.isArray(this.categorias) || this.categorias.length === 0) return;
     const idx = this.categorias.findIndex(
       (cat) => cat.id === categoriaEditada.id
     );
@@ -409,6 +425,7 @@ export class FinanceiroService {
   }
 
   updateCartao(cartaoEditado: any) {
+    if (!Array.isArray(this.cartoes) || this.cartoes.length === 0) return;
     const idx = this.cartoes.findIndex(
       (cartao) => cartao.id === cartaoEditado.id
     );
@@ -418,32 +435,42 @@ export class FinanceiroService {
   }
 
   getCategorias() {
-    return this.categorias;
+    return Array.isArray(this.categorias) ? this.categorias : [];
   }
 
   getCategoriaById(id: string) {
-    return this.categorias.find((cat) => cat.id === id);
+    return Array.isArray(this.categorias) && this.categorias.length > 0
+      ? this.categorias.find((cat) => cat.id === id)
+      : undefined;
   }
 
   getValorTotalCartao(cartaoId: string): number {
-    const cartao = this.cartoes.find((c) => c.id === cartaoId);
-    if (!cartao || !cartao.compras) return 0;
+    const cartao = Array.isArray(this.cartoes)
+      ? this.cartoes.find((c: any) => c.id === cartaoId)
+      : undefined;
+    if (!cartao || !Array.isArray(cartao.compras)) return 0;
     return cartao.compras.reduce(
-      (total, compra) => total + (compra.valor || 0),
+      (total: number, compra: any) => total + (compra.valor || 0),
       0
     );
   }
 
   getQuantidadeDividasCategoria(categoriaId: string): number {
-    const categoria = this.categorias.find((c) => c.id === categoriaId);
-    return categoria && categoria.dividas ? categoria.dividas.length : 0;
+    const categoria = Array.isArray(this.categorias)
+      ? this.categorias.find((c) => c.id === categoriaId)
+      : undefined;
+    return categoria && Array.isArray(categoria.dividas)
+      ? categoria.dividas.length
+      : 0;
   }
 
   getTotalDividasCategoria(categoriaId: string): number {
-    const categoria = this.categorias.find((c) => c.id === categoriaId);
-    if (!categoria || !categoria.dividas) return 0;
+    const categoria = Array.isArray(this.categorias)
+      ? this.categorias.find((c: any) => c.id === categoriaId)
+      : undefined;
+    if (!categoria || !Array.isArray(categoria.dividas)) return 0;
     return categoria.dividas.reduce(
-      (total, divida) => total + (divida.valor || 0),
+      (total: number, divida: any) => total + (divida.valor || 0),
       0
     );
   }
@@ -468,5 +495,10 @@ export class FinanceiroService {
       ('0' + clamp(G).toString(16)).slice(-2) +
       ('0' + clamp(B).toString(16)).slice(-2)
     );
+  }
+
+  removerCartao(id: string) {
+    if (!Array.isArray(this.cartoes)) return;
+    this.cartoes = this.cartoes.filter((cartao: any) => cartao.id !== id);
   }
 }

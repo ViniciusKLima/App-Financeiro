@@ -9,7 +9,7 @@
   </ion-title>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content class="ion-padding" keyboard-attach>
   <form>
     <!-- FORMULÁRIO DE CATEGORIA -->
     <ng-container *ngIf="modo === 'categoria'">
@@ -86,10 +86,14 @@
           placeholder="Ex: Nubank"
         ></ion-input>
       </div>
+
+      <!-- Fechamento -->
       <div class="input-row">
-        <ion-label position="fixed"
-          ><ion-icon name="calendar-outline"></ion-icon> Fechamento:</ion-label
-        >
+        <ion-icon
+          name="document-lock-outline"
+          style="color: #1b57be"
+        ></ion-icon>
+        <ion-label position="fixed">Fechamento:</ion-label>
         <ion-input
           type="number"
           [(ngModel)]="novoCartao.diaFechamento"
@@ -100,10 +104,14 @@
           placeholder="Ex: 10"
         ></ion-input>
       </div>
+
+      <!-- Vencimento -->
       <div class="input-row">
-        <ion-label position="fixed"
-          ><ion-icon name="calendar-outline"></ion-icon> Vencimento:</ion-label
-        >
+        <ion-icon
+          name="calendar-number-outline"
+          style="color: #1b57be"
+        ></ion-icon>
+        <ion-label position="fixed">Vencimento:</ion-label>
         <ion-input
           type="number"
           [(ngModel)]="novoCartao.diaVencimento"

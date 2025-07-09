@@ -7,7 +7,16 @@ import { Component } from '@angular/core';
   standalone: false,
 })
 export class ConfigPage {
+  notificacoesAtivas = false;
+  modoNoturno = false;
 
   constructor() {}
 
+  alterarDadosConta() {
+    // lógica para alterar dados
+  }
+
+  sair() {
+    // lógica para sair
+  }
 }

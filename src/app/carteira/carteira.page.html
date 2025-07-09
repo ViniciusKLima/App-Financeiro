@@ -37,30 +37,14 @@
     </div>
 
     <ng-container *ngIf="categorias.length === 0">
-      <div
-        class="content-vazio"
-        style="
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          padding: 48px 0;
-        "
-      >
-        <ion-icon
-          name="folder-open-outline"
-          style="font-size: 64px; color: #bdbdbd; margin-bottom: 10px"
-        ></ion-icon>
-        <p
-          class="mensagem-vazio"
-          style="color: #888; font-size: 1.1em; text-align: center"
-        >
+      <div class="content-vazio">
+        <p class="mensagem-vazio">
           Nenhuma categoria cadastrada.<br />
           Crie uma categoria para começar!
         </p>
         <ion-button expand="block" (click)="novaCategoria()"
-          >Nova Categoria</ion-button
-        >
+          >Nova Categoria<ion-icon name="add-circle-outline"></ion-icon
+        ></ion-button>
       </div>
     </ng-container>
 

@@ -25,6 +25,46 @@ ion-header {
   }
 }
 
+.content-vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 0;
+  border: 2px dashed #707070;
+  border-radius: 20px 0 20px 0;
+  position: relative;
+  width: 80vw;
+  max-width: 500px;
+  height: 45vw;
+  max-height: 260px;
+  margin-top: 50px;
+
+  .mensagem-vazio {
+    font-size: clamp(0.6rem, 3.5vw, 1.1rem) !important;
+    text-align: center;
+  }
+
+  ion-button {
+    --background: #616161;
+    --color: #c0c0c0;
+    --border-radius: 5px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    ion-icon {
+      font-size: 1.4rem !important;
+      margin: 0 !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 5px !important;
+      padding-bottom: 1px !important;
+    }
+  }
+}
+
 .pagina-gerenciar {
   --background: none !important;
   margin: 0 auto;

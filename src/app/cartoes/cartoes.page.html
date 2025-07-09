@@ -87,10 +87,28 @@
 
     <!-- Fatura do cartão ativo -->
     <ion-card class="fatura-card">
-      <ion-card-header>
-        <ion-card-title [style.color]="cartaoAtivo.cor"
-          >Fatura do {{ cartaoAtivo.nome }}</ion-card-title
+      <ion-card-header
+        style="
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        "
+      >
+        <ion-card-title [style.color]="cartaoAtivo.cor">
+          Fatura do {{ cartaoAtivo.nome }}
+        </ion-card-title>
+        <ion-button
+          *ngIf="mostrarAtualizarFatura(cartaoAtivo)"
+          size="small"
+          fill="solid"
+          [style.--background]="cartaoAtivo.cor"
+          [style.marginLeft]="'8px'"
+          (click)="confirmarAtualizarFatura()"
+          style="color: #fff"
         >
+          <ion-icon name="refresh-outline" slot="start"></ion-icon>
+          Atualizar fatura
+        </ion-button>
       </ion-card-header>
 
       <ion-card-content>

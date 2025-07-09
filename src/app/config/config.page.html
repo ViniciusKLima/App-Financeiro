@@ -1,12 +1,49 @@
 <ion-content [fullscreen]="true" class="custom-bg">
-  <div class="container-dividas">
+  <div class="container-config">
     <ion-header class="header">
       <img
-        src="../../assets/imagens/logo-nutrifacil.png"
+        src="../../assets/imagens/controle-financeiro-logo.png"
         alt="Logo do App"
         class="logo-app"
       />
     </ion-header>
-    <div class="content-dividas"></div>
+    <div class="content-config">
+      <h2 class="titulo-config">Configurações</h2>
+      <ion-list lines="none" class="config-list">
+        <!-- Alterar dados da conta -->
+        <ion-item button (click)="alterarDadosConta()" class="item-border">
+          <ion-label>Alterar dados da conta</ion-label>
+          <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+        </ion-item>
+
+        <!-- Notificações -->
+        <ion-item class="item-border" >
+          <ion-label disabled>Notificações</ion-label>
+          <ion-toggle
+            slot="end"
+            [(ngModel)]="notificacoesAtivas"
+            mode="ios"
+            disabled
+          ></ion-toggle>
+        </ion-item>
+
+        <!-- Modo noturno -->
+        <ion-item class="item-border">
+          <ion-label disabled>Modo noturno</ion-label>
+          <ion-toggle
+            slot="end"
+            [(ngModel)]="modoNoturno"
+            mode="ios"
+            disabled
+          ></ion-toggle>
+        </ion-item>
+
+        <!-- Sair -->
+        <ion-item button (click)="sair()">
+          <ion-icon name="log-out-outline" slot="start"></ion-icon>
+          <ion-label>Sair</ion-label>
+        </ion-item>
+      </ion-list>
+    </div>
   </div>
 </ion-content>

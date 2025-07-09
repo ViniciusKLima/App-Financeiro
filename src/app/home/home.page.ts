@@ -48,18 +48,9 @@ export class HomePage implements OnInit {
   }
 
   getValorTotalPendente(): number {
-    let total = 0;
-    // Pendentes
-    Object.values(this.compromissosPorDia).forEach((lista) => {
-      lista.forEach((comp) => {
-        total += Number(comp.valor) || 0;
-      });
-    });
-    // Atrasados
-    this.compromissosAtrasados.forEach((comp) => {
-      total += Number(comp.valor) || 0;
-    });
-    return total;
+    const total = this.financeiroService.getValorTotalDividas();
+    const pago = this.getValorTotalPago();
+    return Math.max(0, total - pago);
   }
 
   async doRefresh(event: any) {
