@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FinanceiroService } from '../services/financeiro.service';
-import { ModalController } from '@ionic/angular';
+import { ModalController, NavController } from '@ionic/angular';
 import { DividaFormComponent } from '../components/divida-form/divida-form.component';
 
 @Component({
@@ -17,7 +17,8 @@ export class DividasPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     public financeiroService: FinanceiroService, // <-- troque para public
-    private modalCtrl: ModalController // <- adicionado aqui
+    private modalCtrl: ModalController, // <- adicionado aqui
+    private navCtrl: NavController // <--- adicione aqui
   ) {}
 
   ngOnInit() {
@@ -91,5 +92,9 @@ export class DividasPage implements OnInit {
     setTimeout(() => {
       event.target.complete();
     }, 600); // tempo para simular carregamento, ajuste se quiser
+  }
+
+  voltar() {
+    this.navCtrl.navigateBack(['/nav/carteira']);
   }
 }

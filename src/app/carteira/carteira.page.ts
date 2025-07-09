@@ -1,5 +1,9 @@
 import { Component } from '@angular/core';
-import { ModalController, AlertController } from '@ionic/angular';
+import {
+  ModalController,
+  AlertController,
+  NavController,
+} from '@ionic/angular';
 import { CategoriaFormComponent } from '../components/categoria-form/categoria-form.component';
 import { FinanceiroService } from '../services/financeiro.service';
 
@@ -16,7 +20,8 @@ export class CarteiraPage {
   constructor(
     public modalCtrl: ModalController,
     public alertCtrl: AlertController,
-    public financeiroService: FinanceiroService
+    public financeiroService: FinanceiroService,
+    private navCtrl: NavController // <--- adicione aqui
   ) {
     this.carregarCategorias();
   }
@@ -151,5 +156,14 @@ export class CarteiraPage {
     setTimeout(() => {
       event.target.complete();
     }, 600); // tempo para simular carregamento, ajuste se quiser
+  }
+
+  // Métodos de navegação:
+  irParaCartoes() {
+    this.navCtrl.navigateForward(['/cartoes']);
+  }
+
+  irParaDividas(categoria: any) {
+    this.navCtrl.navigateForward(['/dividas', categoria.id]);
   }
 }

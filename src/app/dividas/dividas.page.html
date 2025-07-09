@@ -4,10 +4,7 @@
   </ion-refresher>
   <div [ngStyle]="{'background': categoria?.cor}">
     <ion-header class="header">
-      <ion-icon
-        name="chevron-back-outline"
-        [routerLink]="['/nav/carteira']"
-      ></ion-icon>
+      <ion-icon name="chevron-back-outline" (click)="voltar()"></ion-icon>
       <p>{{ categoria?.nome }}</p>
     </ion-header>
     <div class="content-dividas">

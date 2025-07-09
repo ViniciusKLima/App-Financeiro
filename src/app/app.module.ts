@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, LOCALE_ID } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
@@ -10,6 +10,10 @@ import { FormsModule } from '@angular/forms';
 import { DividaFormComponent } from './components/divida-form/divida-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
+import localePt from '@angular/common/locales/pt';
+import { registerLocaleData } from '@angular/common';
+
+registerLocaleData(localePt);
 
 @NgModule({
   declarations: [AppComponent, CategoriaFormComponent, DividaFormComponent],
@@ -24,6 +28,7 @@ import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/n
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ScreenOrientation,
+    { provide: LOCALE_ID, useValue: 'pt-BR' },
   ],
   bootstrap: [AppComponent],
 })

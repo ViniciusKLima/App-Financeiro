@@ -30,7 +30,7 @@
           *ngFor="let cartao of cartoes; let i = index"
           [class.ativo]="i === cartaoAtivoIndex"
           [style.background]="cartao.gradient"
-          (click)="scrollToCenter(i)"
+          (click)="i !== cartaoAtivoIndex && scrollToCenter(i)"
         >
           <div class="nome-cartao">
             <p>{{ cartao.nome }}</p>
@@ -40,7 +40,6 @@
               name="ellipsis-vertical"
               (click)="abrirMenuCartao(cartao, $event)"
             ></ion-icon>
-            <!-- Menu customizado -->
             <div
               class="menu-cartao-custom"
               *ngIf="cartaoMenuAberto === cartao.id"
@@ -78,6 +77,15 @@
       </div>
     </div>
 
+    <!-- Bolinhas de indicação -->
+    <div class="carrossel-indicadores">
+      <span
+        *ngFor="let cartao of cartoes; let i = index"
+        [class.ativo]="i === cartaoAtivoIndex"
+      ></span>
+    </div>
+
+    <!-- Fatura do cartão ativo -->
     <ion-card class="fatura-card">
       <ion-card-header>
         <ion-card-title [style.color]="cartaoAtivo.cor"

@@ -3,17 +3,18 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
   <ion-header>
-    <ion-title
-      >Gerenciar Dívidas<ion-icon
+    <ion-title>
+      Gerenciar Dívidas
+      <ion-icon
         name="add-circle-outline"
         class="add-categoria"
         (click)="novaCategoria()"
-      ></ion-icon
-    ></ion-title>
+      ></ion-icon>
+    </ion-title>
   </ion-header>
   <!-- Lista de categorias -->
   <div class="grid-categorias">
-    <div class="carteira-box" [routerLink]="['/cartoes']">
+    <div class="carteira-box" (click)="irParaCartoes()">
       <div class="capa-carteira">
         <ion-icon name="card-outline"></ion-icon>
         <p>Cartões</p>
@@ -21,16 +22,16 @@
       <div
         class="cartao1"
         [ngStyle]="{
-      background: categoriasCartoes[0]?.gradient || 'transparent',
-      boxShadow: categoriasCartoes[0]?.gradient ? '8px -6px 12px rgba(0,0,0,0.24)' : 'none'
-    }"
+          background: categoriasCartoes[0]?.gradient || 'transparent',
+          boxShadow: categoriasCartoes[0]?.gradient ? '8px -6px 12px rgba(0,0,0,0.24)' : 'none'
+        }"
       ></div>
       <div
         class="cartao2"
         [ngStyle]="{
-      background: categoriasCartoes[1]?.gradient || 'transparent',
-      boxShadow: categoriasCartoes[1]?.gradient ? '8px -6px 12px rgba(0,0,0,0.24)' : 'none'
-    }"
+          background: categoriasCartoes[1]?.gradient || 'transparent',
+          boxShadow: categoriasCartoes[1]?.gradient ? '8px -6px 12px rgba(0,0,0,0.24)' : 'none'
+        }"
       ></div>
       <div class="fundo-carteira"></div>
     </div>
@@ -38,7 +39,7 @@
     <div
       class="categoria-box"
       *ngFor="let categoria of categorias"
-      [routerLink]="['/dividas', categoria.id]"
+      (click)="irParaDividas(categoria)"
     >
       <div class="info-categoria">
         <div class="icon-box" [style.background]="categoria.cor">
@@ -87,8 +88,8 @@
       <div class="valor-categoria" [style.color]="categoria.cor">
         <p class="ttValorDividas">Valor Total</p>
         <p class="valorDividas">
-          {{ financeiroService.getTotalDividasCategoria(categoria.id) |
-          currency:'BRL':'symbol':'1.2-2' }}
+          R$ {{ financeiroService.getTotalDividasCategoria(categoria.id) |
+          number:'1.2-2' }}
         </p>
       </div>
 
