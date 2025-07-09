@@ -29,6 +29,7 @@
 
       .num-valorTotal {
         font-size: 2rem;
+        font-weight: 600;
         font-family: "Manrope", Arial, sans-serif !important;
       }
     }
@@ -63,7 +64,7 @@
     }
 
     .num-valorPendente {
-      color: orangered;
+      color: #ffae00;
     }
 
     .tt-valorPendente {
@@ -179,7 +180,7 @@ ion-checkbox {
   }
 
   .item-pago {
-    border: 2px solid var(--cor-pago);
+    border: 1px solid var(--cor-pago);
   }
 }
 
@@ -190,7 +191,7 @@ ion-checkbox {
   gap: 0.7rem;
 
   .h2-pendente {
-    color: #525151;
+    color: #3f3f3f;
     font-size: 0.8rem;
     margin: 0;
   }
@@ -207,8 +208,8 @@ ion-checkbox {
     align-items: center;
     gap: 0.5rem;
     padding: 1rem;
-    color: #585858;
-    font-size: 0.9rem;
+    color: #2e2e2e;
+    font-size: 0.85rem;
     font-weight: 500;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.13);
 

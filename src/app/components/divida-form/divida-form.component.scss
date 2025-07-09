@@ -194,7 +194,7 @@
     margin-top: 18px;
 
     ion-button[color="danger"] {
-      --color: #fff;
+      --color: #fff !important;
       --border-radius: 8px;
     }
   }
@@ -230,7 +230,14 @@
   --color: white;
   --border-radius: 8px;
   width: 100%;
-  font-size: 1rem;
+  box-shadow: none;
+}
+
+.btn-excluir {
+  --background: #cc1d1a;
+  --color: white !important;
+  --border-radius: 8px;
+  width: 100%;
   box-shadow: none;
 }
 

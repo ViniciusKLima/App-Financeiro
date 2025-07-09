@@ -127,9 +127,9 @@ export class CarteiraPage {
     this.fecharMenus();
 
     const alert = await this.alertCtrl.create({
-      header: 'Tem certeza?',
-      message:
-        'Essa ação não pode ser desfeita e você perderá todas as dívidas associadas a esta categoria.',
+      header: 'Excluir categoria?',
+      message: 'Todos os dados e dívidas desta categoria serão removidos.',
+      cssClass: 'custom-alert',
       buttons: [
         {
           text: 'Cancelar',
@@ -137,6 +137,7 @@ export class CarteiraPage {
         },
         {
           text: 'Excluir',
+          role: 'destructive',
           handler: () => {
             this.excluirCategoria(id);
           },

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FinanceiroService } from '../services/financeiro.service';
+import { NavController } from '@ionic/angular';
 
 interface Compromisso {
   id: string;
@@ -27,7 +28,10 @@ export class HomePage implements OnInit {
   compromissosAtrasados: Compromisso[] = [];
   public objectKeys = Object.keys;
 
-  constructor(public financeiroService: FinanceiroService) {}
+  constructor(
+    public financeiroService: FinanceiroService,
+    private navCtrl: NavController
+  ) {}
 
   ngOnInit() {
     this.carregarCompromissos();
@@ -205,5 +209,17 @@ export class HomePage implements OnInit {
       localStorage.removeItem('dataPagamento-' + id);
     }
     this.carregarCompromissos();
+  }
+
+  get temCompromissos(): boolean {
+    return (
+      Object.values(this.compromissosPorDia).some((arr) => arr.length > 0) ||
+      this.compromissosAtrasados.length > 0 ||
+      Object.values(this.compromissosPagosPorDia).some((arr) => arr.length > 0)
+    );
+  }
+
+  irParaCarteira() {
+    this.navCtrl.navigateForward(['/nav/carteira']);
   }
 }

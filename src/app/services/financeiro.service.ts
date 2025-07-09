@@ -368,9 +368,13 @@ export class FinanceiroService {
         });
       }
     });
-    // Soma todos os cartões
+    // Soma todas as compras de todos os cartões
     this.cartoes.forEach((cartao) => {
-      total += Number(cartao.valor) || 0;
+      if (cartao.compras && cartao.compras.length > 0) {
+        cartao.compras.forEach((compra) => {
+          total += Number(compra.valor) || 0;
+        });
+      }
     });
     return total;
   }

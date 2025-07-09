@@ -103,3 +103,37 @@ ion-refresher-content {
   --ion-color-primary: #ccc; /* Cor do seu app, troque se quiser */
   --color: #ccc; /* Cor do texto "Atualizando..." */
 }
+
+ion-alert.custom-alert {
+  --background: #fff;
+  --border-radius: 18px;
+  --box-shadow: 0 4px 24px rgba(0, 0, 0, 0.16);
+}
+
+ion-alert.custom-alert .alert-title {
+  font-size: 1rem;
+  color: var(--cor-principal);
+}
+
+ion-alert.custom-alert .alert-message {
+  font-size: 1rem;
+  color: #707070;
+}
+
+ion-alert.custom-alert .alert-button {
+  font-size: 1rem;
+  border-radius: 8px;
+}
+
+ion-alert.custom-alert .alert-button,
+ion-alert.custom-alert .alert-button span {
+  text-transform: none !important;
+}
+
+ion-alert.custom-alert .alert-button-role-cancel {
+  color: var(--cor-principal);
+}
+
+ion-alert.custom-alert .alert-button:last-child {
+  color: #e53935;
+}

@@ -51,7 +51,7 @@ ion-content {
         ion-card-title {
           text-align: center;
           background: transparent !important;
-          font-size: 1.5rem;
+          font-size: 1.45rem;
           color: #2c2cd4;
         }
 
@@ -81,7 +81,7 @@ ion-content {
         }
 
         ion-col {
-          font-size: 14px;
+          font-size: 0.8rem;
           color: #666;
         }
 
@@ -105,8 +105,7 @@ ion-content {
 }
 
 .fab-ajustada {
-  right: 24px !important;
-  bottom: 24px !important;
+  bottom: 57px !important;
   position: fixed !important;
   z-index: 100;
 }

@@ -11,13 +11,13 @@ ion-header {
 
   ion-title {
     position: relative;
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     color: var(--cor-principal);
 
     ion-icon.add-categoria {
       position: absolute;
-      right: 30px;
-      font-size: 2rem;
+      right: 50px;
+      font-size: 1.7rem;
       transform: translateY(-12%);
       color: var(--cor-principal);
       cursor: pointer;
@@ -72,25 +72,23 @@ ion-header {
       }
     }
 
-    .cartao1 {
-      position: absolute;
-      bottom: 1.5%;
-      left: 4%;
-      z-index: 2;
-      height: 90%;
-      width: 90%;
-      padding: 1rem;
-      border-radius: 15px;
-    }
+    .cartao1,
     .cartao2 {
       position: absolute;
-      bottom: 3.5%;
-      left: 6%;
       z-index: 1;
       height: 90%;
       width: 90%;
       padding: 1rem;
       border-radius: 15px;
+    }
+    .cartao1 {
+      bottom: 1.5%;
+      left: 4%;
+      z-index: 2;
+    }
+    .cartao2 {
+      bottom: 3.5%;
+      left: 6%;
     }
 
     .fundo-carteira {
@@ -130,6 +128,7 @@ ion-header {
       display: flex;
       align-items: start;
       justify-content: center;
+      font-size: 0.9rem;
 
       .icon-box {
         width: 60px;
@@ -146,258 +145,141 @@ ion-header {
         }
       }
     }
-  }
 
-  .menu-categoria {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-
-    .menu-categoria-custom {
+    .valor-categoria {
       position: absolute;
-      top: 28px;
-      right: 0;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.13);
-      min-width: 120px;
-      display: flex;
-      flex-direction: column;
-      padding: 4px 0;
-      animation: fadeInMenu 0.18s;
+      bottom: 7%;
+      left: 4.3%;
+      font-size: 0.55rem;
 
-      button {
-        background: none;
-        border: none;
-        width: 100%;
-        text-align: left;
-        padding: 10px 16px;
-        font-size: 0.98rem;
-        color: #222;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        cursor: pointer;
-        transition: background 0.15s;
+      .ttValorDividas {
+        margin-bottom: 4px;
       }
 
-      button.editar {
-        color: #1b57be;
-      }
-      button.excluir {
-        color: #e53935;
-      }
-
-      ion-icon {
+      .valorDividas {
         font-size: 1.1rem;
       }
     }
-  }
 
-  @keyframes fadeInMenu {
-    from {
-      opacity: 0;
-      transform: translateY(-8px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+    .quant-dividas {
+      position: absolute;
+      bottom: 3%;
+      font-size: 0.55rem;
+      right: 5%;
 
-  .valor-categoria {
-    position: absolute;
-    bottom: 7%;
-    left: 4.3%;
-    font-size: 0.6rem;
-
-    .ttValorDividas {
-      margin-bottom: 4px;
-    }
-
-    .valorDividas {
-      font-size: 1.3rem;
+      .numQuantDividas {
+        font-size: 2.5rem;
+        text-align: end;
+      }
     }
   }
 
-  .quant-dividas {
-    position: absolute;
-    bottom: 0%;
-    font-size: 0.6rem;
-    right: 5%;
+  .content-vazio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 0;
 
-    .numQuantDividas {
-      font-size: 3rem;
-      text-align: end;
+    ion-icon {
+      font-size: 64px;
+      color: #bdbdbd;
+      margin-bottom: 10px;
+    }
+    .mensagem-vazio {
+      color: #888;
+      font-size: 1.1em;
+      text-align: center;
+      margin-bottom: 16px;
     }
   }
 }
 
-ion-popover {
-  --background: #ffffff;
-  border-radius: 12px;
-  --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-}
-
-ion-popover .popover-content ion-list {
-  --background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  border: none !important;
-  width: 9%;
-}
-.list-ios {
-  background: var(
-    --ion-background-color,
-    var(--ion-background-color, #ffffff00)
-  );
-  border: none !important;
-}
-
-/* Estiliza o ion-popover no modo iOS */
-ion-popover[mode="ios"] .popover-content {
-  border: none !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
-  background: white;
-}
-
-/* Remove a seta (opcional) */
-ion-popover[mode="ios"] .popover-arrow {
-  display: none; /* ou ajuste a cor se quiser manter visível */
-}
-
-ion-popover ion-item.editar {
-  --background: white;
-  --color: #1565c0;
-  border: none !important;
-
-  ion-icon {
-    color: #1565c0;
-  }
-}
-
-ion-popover ion-item.excluir {
-  --background: white;
-  --color: #d32f2f;
-  border: none !important;
-
-  ion-icon {
-    color: #d32f2f;
-  }
-}
-
-.fab-labels {
-  position: fixed;
-  bottom: 70px;
-  right: 16px;
+.menu-categoria {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
   display: flex;
-  align-items: end;
-  flex-direction: column;
-  gap: 10px;
-  z-index: 1001;
+  align-items: center;
 
-  .fab-option {
-    background: #ffffff;
-    border-radius: 10px 10px 0 10px;
-    padding: 10px 16px;
-    box-shadow: 0 0 12px rgba(0, 0, 0, 0.267);
-    color: var(--cor-principal);
-    font-size: 14px;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-    display: inline-block;
-    white-space: nowrap;
-    width: fit-content;
-    max-width: 95vw;
-  }
+  .menu-categoria-custom {
+    position: absolute;
+    top: 28px;
+    right: 0;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.13);
+    min-width: 120px;
+    display: flex;
+    flex-direction: column;
+    padding: 4px 0;
+    animation: fadeInMenu 0.18s;
 
-  .fab-option:hover {
-    transform: scale(1.05);
+    button {
+      background: none;
+      border: none;
+      width: 100%;
+      text-align: left;
+      padding: 10px 16px;
+      font-size: 0.98rem;
+      color: #222;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    button.editar {
+      color: #1b57be;
+    }
+    button.excluir {
+      color: #e53935;
+    }
+    ion-icon {
+      font-size: 1.1rem;
+    }
   }
 }
 
-ion-fab-button {
-  --background: var(--cor-principal);
-  --color: white;
-  --box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-
-  ion-icon {
-    font-size: 2.3rem;
-  }
-}
-
-.form-categoria-flutuante {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  max-width: 400px;
-  background: white;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
-  padding: 1rem;
-  z-index: 1100;
-  animation: subir 0.3s ease-out;
-}
-
-@keyframes subir {
+@keyframes fadeInMenu {
   from {
-    transform: translateY(100%) translateX(-50%);
     opacity: 0;
+    transform: translateY(-8px);
   }
-
   to {
-    transform: translateY(0) translateX(-50%);
     opacity: 1;
+    transform: translateY(0);
   }
-}
-
-.botoes-form {
-  margin-top: 1rem;
 }
 
 .alerta-exclusao {
-  // Fundo do alerta
   --background: white;
   --border-radius: 16px;
   --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 
-  // Cabeçalho
   .alert-title {
     font-size: 1.2rem;
     font-weight: 600;
     color: var(--cor-principal);
   }
-
-  // Mensagem
   .alert-message {
     font-size: 0.95rem;
     color: #555555;
     text-align: center;
     margin-bottom: 16px;
   }
-
-  // Botões
   .alert-button-role-cancel {
     color: var(--cor-principal);
     font-weight: 500;
   }
-
   .alert-button-role-destructive {
     color: #d32f2f;
     font-weight: bold;
   }
-
-  // Ajuste dos botões (opcional)
   .alert-button-group {
     display: flex;
-    flex-direction: row-reverse; // "Excluir" à direita
+    flex-direction: row-reverse;
     button {
       flex: 1;
       border-radius: 8px;

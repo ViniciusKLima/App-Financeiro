@@ -198,11 +198,16 @@ export class CartoesPage implements AfterViewInit {
     this.fecharMenus();
 
     const alert = await this.alertCtrl.create({
-      header: 'Tem certeza?',
-      message: 'Essa ação não pode ser desfeita.',
+      header: 'Excluir cartão?',
+      message: 'Você perderá todos os dados e compras salvos neste cartão.',
+      cssClass: 'custom-alert',
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
-        { text: 'Excluir', handler: () => this.excluirCartao(id) },
+        {
+          text: 'Excluir',
+          role: 'destructive',
+          handler: () => this.excluirCartao(id),
+        },
       ],
     });
     await alert.present();

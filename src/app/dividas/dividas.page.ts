@@ -69,12 +69,9 @@ export class DividasPage implements OnInit {
 
     modal.onDidDismiss().then((retorno) => {
       if (retorno.data && retorno.data.divida) {
-        // Atualiza a dívida editada no array da categoria
         this.categoria.dividas[index] = retorno.data.divida;
         this.doRefresh({ target: { complete: () => {} } });
       } else if (retorno.data && retorno.data.excluido) {
-        // Remove a dívida do array da categoria
-        this.categoria.dividas.splice(index, 1);
         this.doRefresh({ target: { complete: () => {} } });
       }
     });
