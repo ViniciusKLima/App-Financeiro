@@ -1,39 +1,110 @@
-<ion-header class="painelValores">
-  <ion-toolbar class="content-painelValores">
-    <div class="valorTotal">
-      <ion-title class="tt-valorTotal">Valor Total das Dívidas</ion-title>
-      <ion-title class="num-valorTotal">
-        R$ {{ financeiroService.getValorTotalDividas() | number:'1.2-2'
-        }}</ion-title
+<div class="painel-scroll-wrapper" [class.painel-shadow]="painelComSombra">
+  <div class="painel-scroll" #scrollDiv (scroll)="onScroll($event)">
+    <div class="painel-espaco" tabindex="-1"></div>
+
+    <div
+      class="painel-box painel1"
+      [class.ativo]="painelAtivoIndex === 0"
+      (click)="painelAtivoIndex !== 0 && scrollToCenter(0)"
+    >
+      <span class="data">{{ dataHojeFormatada }}</span>
+      <h3 class="tt-painel">Total em dívidas</h3>
+      <p class="valor-painel">
+        <ng-container *ngIf="mostrarValor; else oculto">
+          R$ {{ valorTotalDividas | number:'1.2-2' }}
+        </ng-container>
+        <ng-template #oculto> R$ -- -- </ng-template>
+        <ion-icon
+          [name]="mostrarValor ? 'eye-outline' : 'eye-off-outline'"
+          (click)="alternarMostrarValor($event)"
+          style="margin-left: 8px; cursor: pointer"
+        ></ion-icon>
+      </p>
+      <div class="quantDividas">
+        <p class="tt-quantDividas">Dívidas</p>
+        <h2 class="num-quantDividas">{{ quantidadeDividas }}</h2>
+      </div>
+    </div>
+
+    <div
+      class="painel-box painel2-3"
+      [class.ativo]="painelAtivoIndex === 1"
+      (click)="painelAtivoIndex !== 1 && scrollToCenter(1)"
+    >
+      <span class="data">Cartões</span>
+      <ion-button (click)="irParaCartoes()" class="btn-acesso">
+        Acessar cartões <ion-icon name="chevron-forward-outline"></ion-icon>
+      </ion-button>
+      <h3 class="tt-painel">Total em cartões</h3>
+      <p class="valor-painel" style="position: relative">
+        <ng-container *ngIf="mostrarValor; else ocultoCartoes">
+          R$ {{ valorTotalCartoes | number:'1.2-2' }}
+        </ng-container>
+        <ng-template #ocultoCartoes>
+          R$ {{ valorTotalCartoes | number:'1.2-2' }}
+          <div class="valor-coberto"></div>
+        </ng-template>
+        <ion-icon
+          [name]="mostrarValor ? 'eye-outline' : 'eye-off-outline'"
+          (click)="alternarMostrarValor($event)"
+          style="margin-left: 8px; cursor: pointer"
+        ></ion-icon>
+      </p>
+
+      <div class="quantCartoesCateg">
+        <p class="tt-quantCartoesCateg">Cartões</p>
+        <h2 class="num-quantCartoesCateg">{{ quantidadeCartoes }}</h2>
+      </div>
+
+      <ion-button class="btn-left" (click)="abrirModalAdicionarCompra()"
+        >Adicionar Compra</ion-button
+      >
+      <ion-button class="btn-right" (click)="abrirModalAdicionarCartao()"
+        >Adicionar Cartão</ion-button
       >
     </div>
-  </ion-toolbar>
-  <div class="outrosValores">
-    <div class="valorPago">
-      <h6 class="tt-valorPago">Valor Pago</h6>
-      <h4 class="num-valorPago">
-        R$ {{ getValorTotalPago() | number:'1.2-2' }}
-      </h4>
-    </div>
-    <div class="valorPendente">
-      <h6 class="tt-valorPendente">Valor Pendente</h6>
-      <h4 class="num-valorPendente">
-        R$ {{ getValorTotalPendente() | number:'1.2-2' }}
-      </h4>
-    </div>
-  </div>
-</ion-header>
 
-<ion-content fullscreen="true" class="content-home">
-  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
-    <ion-refresher-content
-      pullingIcon="arrow-down-outline"
-      refreshingSpinner="crescent"
-      pullingText="Puxe para atualizar"
-      refreshingText="Atualizando..."
+    <div
+      class="painel-box painel2-3"
+      [class.ativo]="painelAtivoIndex === 2"
+      (click)="painelAtivoIndex !== 2 && scrollToCenter(2)"
     >
-    </ion-refresher-content>
-  </ion-refresher>
+      <span class="data">Categorias</span>
+      <ion-button (click)="irParaCategorias()" class="btn-acesso">
+        Acessar categorias <ion-icon name="chevron-forward-outline"></ion-icon>
+      </ion-button>
+      <h3 class="tt-painel">Total em categorias</h3>
+      <p class="valor-painel" style="position: relative">
+        <ng-container *ngIf="mostrarValor; else ocultoCategorias">
+          R$ {{ valorTotalCategorias | number:'1.2-2' }}
+        </ng-container>
+        <ng-template #ocultoCategorias>
+          R$ {{ valorTotalCategorias | number:'1.2-2' }}
+          <div class="valor-coberto"></div>
+        </ng-template>
+        <ion-icon
+          [name]="mostrarValor ? 'eye-outline' : 'eye-off-outline'"
+          (click)="alternarMostrarValor($event)"
+          style="margin-left: 8px; cursor: pointer"
+        ></ion-icon>
+      </p>
+
+      <div class="quantCartoesCateg">
+        <p class="tt-quantCartoesCateg">Categorias</p>
+        <h2 class="num-quantCartoesCateg">{{ quantidadeCategorias }}</h2>
+      </div>
+
+      <ion-button class="btn-left" (click)="abrirModalAdicionarCategoria()"
+        >Adicionar categoria</ion-button
+      >
+      <ion-button class="btn-right" (click)="abrirModalAdicionarDivida()"
+        >Adicionar dívida</ion-button
+      >
+    </div>
+
+    <div class="painel-espaco" tabindex="-1"></div>
+  </div>
+
   <div class="tabs">
     <button
       [class.active]="abaAtual === 'pendentes'"
@@ -50,6 +121,27 @@
       Pagos
     </button>
   </div>
+</div>
+
+<!-- Bolinhas de indicação -->
+<div class="carrossel-indicadores">
+  <span
+    *ngFor="let i of [0,1,2]"
+    [class.ativo]="i === painelAtivoIndex"
+    (click)="scrollToCenter(i)"
+  ></span>
+</div>
+
+<ion-content #content fullscreen="true" class="content-home">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-down-outline"
+      refreshingSpinner="crescent"
+      pullingText="Puxe para atualizar"
+      refreshingText="Atualizando..."
+    >
+    </ion-refresher-content>
+  </ion-refresher>
 
   <ng-container *ngIf="!temCompromissos">
     <div class="content-vazio1">

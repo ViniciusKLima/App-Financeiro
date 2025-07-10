@@ -1,13 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
+} from '@angular/core';
 import { FinanceiroService } from '../services/financeiro.service';
-import { NavController } from '@ionic/angular';
+import { NavController, ModalController } from '@ionic/angular';
+import { DividaFormComponent } from '../components/divida-form/divida-form.component';
+import { CategoriaFormComponent } from '../components/categoria-form/categoria-form.component';
 
 interface Compromisso {
   id: string;
   nome: string;
   tipo: 'cartao' | 'divida';
   valor: number;
-  dia: number; // dia de vencimento ou pagamento
+  dia: number;
   cor: string;
   icone: string;
   foiPago?: boolean;
@@ -20,7 +28,11 @@ interface Compromisso {
   styleUrls: ['home.page.scss'],
   standalone: false,
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, AfterViewInit {
+  @ViewChild('scrollDiv', { static: false })
+  scrollDiv!: ElementRef<HTMLDivElement>;
+  @ViewChild('content', { static: false }) content!: ElementRef;
+
   abaAtual: 'pendentes' | 'pagos' = 'pendentes';
 
   compromissosPorDia: { [dia: number]: Compromisso[] } = {};
@@ -28,43 +40,75 @@ export class HomePage implements OnInit {
   compromissosAtrasados: Compromisso[] = [];
   public objectKeys = Object.keys;
 
+  painelAtivoIndex = 0;
+  scrollTimeout: any;
+
+  mostrarValor = true;
+  painelComSombra = false;
+
   constructor(
     public financeiroService: FinanceiroService,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private modalCtrl: ModalController
   ) {}
 
   ngOnInit() {
+    this.carregarMostrarValor();
     this.carregarCompromissos();
   }
 
-  getValorTotalPago(): number {
-    let total = 0;
-    Object.values(this.compromissosPagosPorDia).forEach((lista) => {
-      lista.forEach((comp) => {
-        total += Number(comp.valor) || 0;
+  ngAfterViewInit() {
+    setTimeout(() => this.scrollToCenter(this.painelAtivoIndex), 100);
+
+    const ionContent = this.content?.nativeElement;
+    if (ionContent) {
+      ionContent.addEventListener('scroll', () => {
+        this.painelComSombra = ionContent.scrollTop > 10;
       });
+    }
+  }
+
+  onScroll(event: any) {
+    if (this.scrollTimeout) clearTimeout(this.scrollTimeout);
+    this.scrollTimeout = setTimeout(() => {
+      this.snapToClosest();
+    }, 120);
+  }
+
+  snapToClosest() {
+    const scrollDiv = this.scrollDiv.nativeElement;
+    const boxes = Array.from(
+      scrollDiv.querySelectorAll('.painel-box')
+    ) as HTMLElement[];
+    const scrollCenter = scrollDiv.scrollLeft + scrollDiv.offsetWidth / 2;
+
+    let minDiff = Infinity;
+    let closest = 0;
+
+    boxes.forEach((box, i) => {
+      const boxCenter = box.offsetLeft + box.offsetWidth / 2;
+      const diff = Math.abs(scrollCenter - boxCenter);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closest = i;
+      }
     });
-    return total;
+
+    this.painelAtivoIndex = closest;
+    this.scrollToCenter(closest);
   }
 
-  getValorTotalPendente(): number {
-    const total = this.financeiroService.getValorTotalDividas();
-    const pago = this.getValorTotalPago();
-    return Math.max(0, total - pago);
-  }
-
-  async doRefresh(event: any) {
-    await this.carregarCompromissosAsync(); // Aguarda o carregamento dos dados
-    // Aguarda um pouco ANTES de fechar o refresher, para evitar o efeito do texto atrás
-    setTimeout(() => {
-      event.target.complete();
-    }, 1200); // Tente 1200ms ou até 1500ms para suavizar a experiência
-  }
-
-  // Exemplo de função async (ajuste conforme sua lógica)
-  async carregarCompromissosAsync() {
-    //await this.financeiroService.buscarDadosRemotos(); // sua chamada de API
-    this.carregarCompromissos(); // atualiza os dados locais
+  scrollToCenter(index: number) {
+    const scrollDiv = this.scrollDiv.nativeElement;
+    const boxes = Array.from(
+      scrollDiv.querySelectorAll('.painel-box')
+    ) as HTMLElement[];
+    if (!boxes[index]) return;
+    const box = boxes[index];
+    const scrollLeft =
+      box.offsetLeft - scrollDiv.offsetWidth / 2 + box.offsetWidth / 2;
+    scrollDiv.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+    this.painelAtivoIndex = index; // <-- Atualiza o painel ativo imediatamente
   }
 
   trocarAba(aba: 'pendentes' | 'pagos') {
@@ -211,6 +255,148 @@ export class HomePage implements OnInit {
   }
 
   irParaCarteira() {
+    this.navCtrl.navigateForward(['/nav/carteira']);
+  }
+
+  async doRefresh(event: any) {
+    await this.carregarCompromissosAsync();
+    setTimeout(() => {
+      event.target.complete();
+    }, 1200);
+  }
+
+  async carregarCompromissosAsync() {
+    this.carregarCompromissos();
+  }
+
+  get valorTotalDividas(): number {
+    // Some todas as dívidas de todas as categorias e cartões
+    return this.financeiroService.getValorTotalDividas?.() ?? 0;
+  }
+
+  get quantidadeDividas(): number {
+    // Some todas as dívidas de todas as categorias
+    let total = 0;
+    const categorias = this.financeiroService.getCategorias();
+    categorias.forEach((cat: any) => {
+      if (cat.dividas && Array.isArray(cat.dividas)) {
+        total += cat.dividas.length;
+      }
+    });
+    return total;
+  }
+
+  get valorTotalCartoes(): number {
+    return this.financeiroService.getValorTotalCartoes();
+  }
+
+  get quantidadeCartoes(): number {
+    return this.financeiroService.getQuantidadeCartoes();
+  }
+
+  irParaCartoes() {
+    this.navCtrl.navigateForward(['/cartoes']);
+  }
+
+  async abrirModalAdicionarCompra() {
+    const modal = await this.modalCtrl.create({
+      component: DividaFormComponent,
+      componentProps: {
+        modo: 'cartao',
+      },
+      breakpoints: [0, 0.8, 0.9],
+      initialBreakpoint: 0.9,
+      showBackdrop: true,
+      backdropDismiss: true,
+    });
+    modal.onDidDismiss().then(() => this.carregarCompromissos());
+    await modal.present();
+  }
+
+  async abrirModalAdicionarCartao() {
+    const modal = await this.modalCtrl.create({
+      component: CategoriaFormComponent,
+      componentProps: {
+        modo: 'cartao',
+      },
+      breakpoints: [0, 0.8, 0.9],
+      initialBreakpoint: 0.9,
+      showBackdrop: true,
+      backdropDismiss: true,
+    });
+    modal.onDidDismiss().then(() => this.carregarCompromissos());
+    await modal.present();
+  }
+
+  async abrirModalAdicionarCategoria() {
+    const modal = await this.modalCtrl.create({
+      component: CategoriaFormComponent,
+      componentProps: {
+        modo: 'categoria',
+      },
+      breakpoints: [0, 0.8, 0.9],
+      initialBreakpoint: 0.9,
+      showBackdrop: true,
+      backdropDismiss: true,
+    });
+    modal.onDidDismiss().then(() => this.carregarCompromissos());
+    await modal.present();
+  }
+
+  async abrirModalAdicionarDivida() {
+    const modal = await this.modalCtrl.create({
+      component: DividaFormComponent,
+      componentProps: {
+        modo: 'categoria',
+      },
+      breakpoints: [0, 0.8, 0.9],
+      initialBreakpoint: 0.9,
+      showBackdrop: true,
+      backdropDismiss: true,
+    });
+    modal.onDidDismiss().then(() => this.carregarCompromissos());
+    await modal.present();
+  }
+
+  get dataHojeFormatada(): string {
+    const meses = [
+      'Jan',
+      'Fev',
+      'Mar',
+      'Abr',
+      'Mai',
+      'Jun',
+      'Jul',
+      'Ago',
+      'Set',
+      'Out',
+      'Nov',
+      'Dez',
+    ];
+    const hoje = new Date();
+    return `${hoje.getDate()} de ${meses[hoje.getMonth()]}`;
+  }
+
+  carregarMostrarValor() {
+    const salvo = localStorage.getItem('mostrarValorPainel');
+    this.mostrarValor = salvo === null ? true : salvo === 'true';
+  }
+
+  alternarMostrarValor(event: Event) {
+    event.stopPropagation();
+    this.mostrarValor = !this.mostrarValor;
+    localStorage.setItem('mostrarValorPainel', String(this.mostrarValor));
+  }
+
+  get valorTotalCategorias(): number {
+    return this.financeiroService.getValorTotalCategorias();
+  }
+
+  get quantidadeCategorias(): number {
+    return this.financeiroService.getQuantidadeCategorias();
+  }
+
+  irParaCategorias() {
     this.navCtrl.navigateForward(['/nav/carteira']);
   }
 }

@@ -2,11 +2,11 @@
   .modal-wrapper {
     border-top-left-radius: 32px;
     border-top-right-radius: 32px;
-    background-color: var(--ion-background-color);
+    background-color: #fefefe;
   }
 
   ion-header {
-    --background: var(--ion-background-color);
+    --background: #fefefe !important;
     border: none;
     height: 64px;
     display: flex;
@@ -24,7 +24,7 @@
   }
 
   ion-content {
-    --background: var(--ion-background-color) !important;
+    --background: #fefefe !important;
   }
 
   form {

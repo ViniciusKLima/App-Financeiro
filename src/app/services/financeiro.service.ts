@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 export class FinanceiroService {
   // Cartões com detalhes e compras
   private cartoes: any[] = [
-    /* {
+    {
         id: '1',
         nome: 'Nubank',
         valor: 1532.2,
@@ -147,12 +147,12 @@ export class FinanceiroService {
             descricao: 'Combustível',
           },
         ],
-      },*/
+      },
   ];
 
   // Grupos de dívidas, cada um com suas dívidas
   private categorias: any[] = [
-    /*{
+    {
       id: '1',
       nome: 'Boletos',
       valor: '1532.20',
@@ -355,7 +355,7 @@ export class FinanceiroService {
           descricao: 'Compras eletrônicas',
         },
       ],
-    },*/
+    },
   ];
 
   getValorTotalDividas(): number {
@@ -473,6 +473,35 @@ export class FinanceiroService {
       (total: number, divida: any) => total + (divida.valor || 0),
       0
     );
+  }
+
+  /** Retorna o valor total somado de todos os cartões */
+  getValorTotalCartoes(): number {
+    if (!Array.isArray(this.cartoes) || this.cartoes.length === 0) return 0;
+    return this.cartoes.reduce(
+      (total: number, cartao: any) => total + (Number(cartao.valor) || 0),
+      0
+    );
+  }
+
+  /** Retorna a quantidade de cartões cadastrados */
+  getQuantidadeCartoes(): number {
+    return Array.isArray(this.cartoes) ? this.cartoes.length : 0;
+  }
+
+  /** Retorna o valor total somado de todas as categorias */
+  getValorTotalCategorias(): number {
+    if (!Array.isArray(this.categorias) || this.categorias.length === 0)
+      return 0;
+    return this.categorias.reduce(
+      (total: number, categoria: any) => total + (Number(categoria.valor) || 0),
+      0
+    );
+  }
+
+  /** Retorna a quantidade de categorias cadastradas */
+  getQuantidadeCategorias(): number {
+    return Array.isArray(this.categorias) ? this.categorias.length : 0;
   }
 
   generateGradient(baseColor: string): string {

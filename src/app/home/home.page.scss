@@ -1,74 +1,253 @@
-.painelValores {
+.painel-scroll-wrapper {
+  // ...seus estilos...
+  transition: box-shadow 0.3s;
+  box-shadow: none;
+
+  &.painel-shadow {
+    box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.18);
+  }
+}
+
+.painel-scroll-wrapper {
   padding-top: env(safe-area-inset-top);
-  height: 30vh;
-  width: 100%;
-  border-bottom-left-radius: 25px;
-  border-bottom-right-radius: 25px;
-  background: var(--cor-principal);
-  position: relative;
+  width: 100vw;
+  overflow: hidden;
   display: flex;
-  align-items: center;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.26);
+  justify-content: center;
+  flex-direction: column;
+  z-index: 100;
+  background: var(--ion-background-color, #fefefe) !important;
+  border-radius: 0 0 30px 30px;
 
-  .content-painelValores {
-    --background: none !important;
+  .painel-scroll {
+    background: var(--ion-background-color, #fefefe) !important;
     display: flex;
-    align-items: center;
-    padding: 0.5rem 1rem 1rem 1rem;
-    position: relative;
+    overflow-x: auto;
+    padding: 16px 0;
+    gap: 16px;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none; // Firefox
+    -ms-overflow-style: none; // IE 10+
+    z-index: 100;
 
-    .valorTotal {
-      color: white;
+    &::-webkit-scrollbar {
+      display: none; // Chrome/Safari
+    }
+
+    .painel-espaco {
+      min-width: 5vw;
+      pointer-events: none;
+      flex-shrink: 0;
+      scroll-snap-align: center;
+    }
+
+    .painel-box {
+      position: relative;
+      margin: 25px auto;
+      padding: 20px 30px;
+      width: 83vw;
+      max-width: 500px;
+      height: 50vw;
+      max-height: 320px;
+      flex: 0 0 83vw;
+      border-radius: 20px;
+      scroll-snap-align: center;
+      transition: transform 0.3s;
+      background-color: #6a9eda;
+      font-family: "Manrope", sans-serif !important;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      justify-content: center;
 
-      .tt-valorTotal {
-        font-size: 0.72rem;
+      &.ativo {
+        z-index: 2;
+        transform: scale(1.05);
       }
 
-      .num-valorTotal {
-        font-size: 2rem;
-        font-weight: 600;
-        font-family: "Manrope", Arial, sans-serif !important;
+      .data {
+        font-size: clamp(0.6rem, 1.5vw, 0.7rem);
+        position: absolute;
+        top: 8%;
+        left: 7.5%;
+        color: white;
+      }
+
+      .tt-painel {
+        font-size: clamp(1rem, 3vw, 1.2rem);
+        color: white;
+        font-weight: 300;
+        margin: 0;
+      }
+
+      .valor-painel {
+        font-size: clamp(1.1rem, 4vw, 1.5rem);
+        color: white;
+        font-weight: 700;
+      }
+
+      /*Painel 1*/
+      &.painel1 {
+        background: #0e4d96;
+
+        .quantDividas {
+          position: absolute;
+          bottom: 8%;
+          right: 4.5%;
+          color: white;
+
+          .tt-quantDividas {
+            font-size: 0.6rem;
+            text-align: end;
+            padding-right: 8px;
+            margin: 0;
+          }
+          .num-quantDividas {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            background-color: #2b66ac;
+            color: #82abdd;
+            border-radius: 7px 7px 15px 7px;
+          }
+        }
+      }
+
+      /*Painel 2 e 3*/
+      .btn-acesso {
+        position: absolute;
+        top: 4.5%;
+        right: 3.5%;
+        width: fit-content;
+        font-size: clamp(0.65rem, 2vw, 0.7rem);
+        padding: 0;
+        margin: 0;
+        --box-shadow: none;
+        --background: none;
+        --color: white;
+        --border-radius: 5px 5px 5px 15px;
+        text-transform: none !important;
+        letter-spacing: normal !important;
+
+        ion-icon {
+          font-size: 0.8rem;
+          margin-left: 5px;
+          color: white;
+        }
+      }
+
+      .quantCartoesCateg {
+        position: absolute;
+        top: 30%;
+        right: 4.5%;
+        left: 4.5%; // Adicione para ocupar toda a largura interna do painel
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end; // Alinha à direita, mas pode ajustar para center se preferir
+        color: white;
+        text-align: right;
+
+        .tt-quantCartoesCateg {
+          font-size: clamp(0.5rem, 1.2vw, 0.6rem);
+          text-align: end;
+          padding-right: 8px;
+          margin: 0;
+        }
+        .num-quantCartoesCateg {
+          font-size: clamp(1rem, 4vw, 1.5rem); // Responsivo!
+          font-weight: 700;
+          text-align: center;
+          max-height: 30%;
+          padding: 20px;
+          margin: 0;
+          background-color: #2b66ac;
+          color: #82abdd;
+          border-radius: 7px;
+          min-width: 60px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+
+      .btn-left {
+        position: absolute;
+        bottom: 8%;
+        left: 4.5%;
+        width: 45%;
+        font-size: clamp(0.65rem, 2vw, 0.7rem);
+        padding: 0;
+        margin: 0;
+        --box-shadow: none;
+        --background: #548aca;
+        --color: white;
+        --border-radius: 10px;
+        text-transform: none !important;
+        letter-spacing: normal !important;
+
+        ion-icon {
+          font-size: 0.8rem;
+          margin-left: 5px;
+          color: white;
+        }
+      }
+
+      .btn-right {
+        position: absolute;
+        bottom: 8%;
+        right: 4.5%;
+        width: 45%;
+        font-size: clamp(0.65rem, 2vw, 0.7rem);
+        padding: 0;
+        margin: 0;
+        --box-shadow: none;
+        --background: #548aca;
+        --color: white;
+        --border-radius: 10px;
+        text-transform: none !important;
+        letter-spacing: normal !important;
+
+        ion-icon {
+          font-size: 0.8rem;
+          margin-left: 5px;
+          color: white;
+        }
       }
     }
   }
 
-  .outrosValores {
-    width: 100%;
+  .tabs {
     display: flex;
-    justify-content: space-between;
-    position: absolute;
-    bottom: 0;
-    padding: 0 20px 20px 20px;
+    justify-content: center;
+    gap: 1rem;
+    margin: 0 0 1.5rem 0;
+  }
 
-    .tt-valorPago,
-    .tt-valorPendente {
-      color: white;
-      font-size: 0.65rem;
-      margin: 0;
-    }
+  .tabs button {
+    background: white;
+    color: #0e4d96;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    padding: 0.5rem 1.5rem;
+    cursor: pointer;
+    transition: border-color 0.3s;
+  }
 
-    .num-valorPago,
-    .num-valorPendente {
-      color: white;
-      font-size: 0.8rem;
-      margin: 0;
-      font-weight: 600;
-      font-family: "Manrope", Arial, sans-serif !important;
-    }
+  .tabs button.active {
+    background-color: #0e4d96;
+    color: white;
+  }
 
-    .num-valorPago {
-      color: var(--cor-pago);
-    }
+  .slide {
+    display: none;
 
-    .num-valorPendente {
-      color: #ffae00;
-    }
-
-    .tt-valorPendente {
-      text-align: right;
+    &.active {
+      display: flex;
+      flex-direction: column;
+      gap: 1.6rem;
     }
   }
 }
@@ -110,7 +289,7 @@
 
   p {
     font-size: 115%;
-    span{
+    span {
       font-size: 70%;
       opacity: 0.7;
     }
@@ -143,22 +322,22 @@
 ::ng-deep ion-refresher-content .refresher-pulling-text,
 ::ng-deep ion-refresher-content span {
   font-size: 0.8rem !important;
-  color: #ccc !important;
-  fill: #ccc !important;
+  color: #565656 !important;
+  fill: #565656 !important;
 }
 
 ::ng-deep ion-refresher-content .refresher-pulling-icon,
 ::ng-deep ion-refresher-content .refresher-refreshing-icon,
 ::ng-deep ion-refresher-content svg {
-  color: #ccc !important;
-  fill: #ccc !important;
+  color: #565656 !important;
+  fill: #565656 !important;
   font-size: 1.4rem !important;
 }
 
 /* filepath: c:\app-financas\controle-financeiro\src\app\home\home.page.scss */
 ion-refresher-content {
-  --ion-color-primary: #ccc; /* Cor do seu app, troque se quiser */
-  --color: #ccc; /* Cor do texto "Atualizando..." */
+  --ion-color-primary: #565656; /* Cor do seu app, troque se quiser */
+  --color: #565656; /* Cor do texto "Atualizando..." */
 }
 
 .tabs {
@@ -170,7 +349,7 @@ ion-refresher-content {
 
 .tabs button {
   background: white;
-  color: var(--cor-principal);
+  color: #0e4d96;
   border: none;
   border-radius: 10px;
   font-size: 1rem;
@@ -180,7 +359,7 @@ ion-refresher-content {
 }
 
 .tabs button.active {
-  background-color: var(--cor-principal);
+  background-color: #0e4d96;
   color: white;
 }
 
