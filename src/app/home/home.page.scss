@@ -66,7 +66,7 @@
       }
 
       .data {
-        font-size: clamp(0.6rem, 1.5vw, 0.7rem);
+        font-size: clamp(0.65rem, 1vw, 0.75rem);
         position: absolute;
         top: 8%;
         left: 7.5%;
@@ -88,7 +88,7 @@
 
       /*Painel 1*/
       &.painel1 {
-        background: #0e4d96;
+        background: var(--cor-principal);
 
         .quantDividas {
           position: absolute;
@@ -108,8 +108,8 @@
             text-align: center;
             padding: 20px;
             margin: 0;
-            background-color: #2b66ac;
-            color: #82abdd;
+            background-color: #174dd8;
+            color: #6b95ff;
             border-radius: 7px 7px 15px 7px;
           }
         }
@@ -227,7 +227,7 @@
 
   .tabs button {
     background: white;
-    color: #0e4d96;
+    color: var(--cor-principal);
     border: none;
     border-radius: 10px;
     font-size: 1rem;
@@ -237,7 +237,7 @@
   }
 
   .tabs button.active {
-    background-color: #0e4d96;
+    background-color: var(--cor-principal);
     color: white;
   }
 
@@ -469,4 +469,12 @@ ion-checkbox {
       }
     }
   }
+}
+
+.valor-painel ion-icon,
+.valor-painel [role="button"] {
+  position: relative;
+  z-index: 10;
+  cursor: pointer;
+  pointer-events: auto;
 }

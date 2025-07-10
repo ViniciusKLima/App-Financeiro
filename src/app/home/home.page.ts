@@ -98,7 +98,10 @@ export class HomePage implements OnInit, AfterViewInit {
     this.scrollToCenter(closest);
   }
 
-  scrollToCenter(index: number) {
+  scrollToCenter(index: number, event?: Event) {
+    if (event && (event.target as HTMLElement).closest('ion-icon')) {
+      return; // Não faz nada se clicou no olho
+    }
     const scrollDiv = this.scrollDiv.nativeElement;
     const boxes = Array.from(
       scrollDiv.querySelectorAll('.painel-box')
@@ -108,7 +111,7 @@ export class HomePage implements OnInit, AfterViewInit {
     const scrollLeft =
       box.offsetLeft - scrollDiv.offsetWidth / 2 + box.offsetWidth / 2;
     scrollDiv.scrollTo({ left: scrollLeft, behavior: 'smooth' });
-    this.painelAtivoIndex = index; // <-- Atualiza o painel ativo imediatamente
+    this.painelAtivoIndex = index;
   }
 
   trocarAba(aba: 'pendentes' | 'pagos') {

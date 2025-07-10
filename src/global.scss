@@ -25,6 +25,14 @@
 @import "@fontsource/manrope/600.css";
 @import "@fontsource/manrope/700.css";
 @import "@fontsource/manrope/800.css";
+@import "@fontsource/mulish/200.css";
+@import "@fontsource/mulish/300.css";
+@import "@fontsource/mulish/400.css";
+@import "@fontsource/mulish/500.css";
+@import "@fontsource/mulish/600.css";
+@import "@fontsource/mulish/700.css";
+@import "@fontsource/mulish/800.css";
+@import "@fontsource/mulish/900.css";
 // Importe outros pesos se quiser
 
 @import "swiper/swiper-bundle.min.css";
@@ -57,7 +65,7 @@ body,
 ion-app,
 ion-content,
 * {
-  font-family: "Inter", sans-serif !important;
+  font-family: "Mulish", sans-serif !important;
   -webkit-text-size-adjust: 100% !important;
   -ms-text-size-adjust: 100% !important;
   text-size-adjust: 100% !important;

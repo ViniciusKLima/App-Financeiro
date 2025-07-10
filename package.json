@@ -29,6 +29,7 @@
     "@capacitor/keyboard": "^7.0.1",
     "@fontsource/inter": "^5.2.6",
     "@fontsource/manrope": "^5.2.6",
+    "@fontsource/mulish": "^5.2.6",
     "@ionic/angular": "^8.6.3",
     "@types/swiper": "^5.4.3",
     "chart.js": "^4.5.0",

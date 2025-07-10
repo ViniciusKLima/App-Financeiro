@@ -1,11 +1,14 @@
 <div class="painel-scroll-wrapper" [class.painel-shadow]="painelComSombra">
+  <!-- Template oculto global para todos os painéis -->
+  <ng-template #oculto> R$ -- -- </ng-template>
   <div class="painel-scroll" #scrollDiv (scroll)="onScroll($event)">
     <div class="painel-espaco" tabindex="-1"></div>
 
+    <!-- Painel 1 -->
     <div
       class="painel-box painel1"
       [class.ativo]="painelAtivoIndex === 0"
-      (click)="painelAtivoIndex !== 0 && scrollToCenter(0)"
+      (click)="painelAtivoIndex !== 0 && scrollToCenter(0, $event)"
     >
       <span class="data">{{ dataHojeFormatada }}</span>
       <h3 class="tt-painel">Total em dívidas</h3>
@@ -13,11 +16,12 @@
         <ng-container *ngIf="mostrarValor; else oculto">
           R$ {{ valorTotalDividas | number:'1.2-2' }}
         </ng-container>
-        <ng-template #oculto> R$ -- -- </ng-template>
         <ion-icon
           [name]="mostrarValor ? 'eye-outline' : 'eye-off-outline'"
           (click)="alternarMostrarValor($event)"
-          style="margin-left: 8px; cursor: pointer"
+          tabindex="0"
+          role="button"
+          style="margin-left: 8px; cursor: pointer; pointer-events: auto"
         ></ion-icon>
       </p>
       <div class="quantDividas">
@@ -26,10 +30,11 @@
       </div>
     </div>
 
+    <!-- Painel 2 -->
     <div
       class="painel-box painel2-3"
       [class.ativo]="painelAtivoIndex === 1"
-      (click)="painelAtivoIndex !== 1 && scrollToCenter(1)"
+      (click)="painelAtivoIndex !== 1 && scrollToCenter(1, $event)"
     >
       <span class="data">Cartões</span>
       <ion-button (click)="irParaCartoes()" class="btn-acesso">
@@ -37,25 +42,21 @@
       </ion-button>
       <h3 class="tt-painel">Total em cartões</h3>
       <p class="valor-painel" style="position: relative">
-        <ng-container *ngIf="mostrarValor; else ocultoCartoes">
+        <ng-container *ngIf="mostrarValor; else oculto">
           R$ {{ valorTotalCartoes | number:'1.2-2' }}
         </ng-container>
-        <ng-template #ocultoCartoes>
-          R$ {{ valorTotalCartoes | number:'1.2-2' }}
-          <div class="valor-coberto"></div>
-        </ng-template>
         <ion-icon
           [name]="mostrarValor ? 'eye-outline' : 'eye-off-outline'"
           (click)="alternarMostrarValor($event)"
-          style="margin-left: 8px; cursor: pointer"
+          tabindex="0"
+          role="button"
+          style="margin-left: 8px; cursor: pointer; pointer-events: auto"
         ></ion-icon>
       </p>
-
       <div class="quantCartoesCateg">
         <p class="tt-quantCartoesCateg">Cartões</p>
         <h2 class="num-quantCartoesCateg">{{ quantidadeCartoes }}</h2>
       </div>
-
       <ion-button class="btn-left" (click)="abrirModalAdicionarCompra()"
         >Adicionar Compra</ion-button
       >
@@ -64,10 +65,11 @@
       >
     </div>
 
+    <!-- Painel 3 -->
     <div
       class="painel-box painel2-3"
       [class.ativo]="painelAtivoIndex === 2"
-      (click)="painelAtivoIndex !== 2 && scrollToCenter(2)"
+      (click)="painelAtivoIndex !== 2 && scrollToCenter(2, $event)"
     >
       <span class="data">Categorias</span>
       <ion-button (click)="irParaCategorias()" class="btn-acesso">
@@ -75,25 +77,21 @@
       </ion-button>
       <h3 class="tt-painel">Total em categorias</h3>
       <p class="valor-painel" style="position: relative">
-        <ng-container *ngIf="mostrarValor; else ocultoCategorias">
+        <ng-container *ngIf="mostrarValor; else oculto">
           R$ {{ valorTotalCategorias | number:'1.2-2' }}
         </ng-container>
-        <ng-template #ocultoCategorias>
-          R$ {{ valorTotalCategorias | number:'1.2-2' }}
-          <div class="valor-coberto"></div>
-        </ng-template>
         <ion-icon
           [name]="mostrarValor ? 'eye-outline' : 'eye-off-outline'"
           (click)="alternarMostrarValor($event)"
-          style="margin-left: 8px; cursor: pointer"
+          tabindex="0"
+          role="button"
+          style="margin-left: 8px; cursor: pointer; pointer-events: auto"
         ></ion-icon>
       </p>
-
       <div class="quantCartoesCateg">
         <p class="tt-quantCartoesCateg">Categorias</p>
         <h2 class="num-quantCartoesCateg">{{ quantidadeCategorias }}</h2>
       </div>
-
       <ion-button class="btn-left" (click)="abrirModalAdicionarCategoria()"
         >Adicionar categoria</ion-button
       >
