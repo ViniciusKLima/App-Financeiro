@@ -3,6 +3,7 @@
     border-top-left-radius: 32px;
     border-top-right-radius: 32px;
     background-color: #fefefe;
+    box-shadow: none !important;
   }
 
   ion-header {
@@ -10,8 +11,11 @@
     border: none;
     height: 64px;
     display: flex;
-    align-items: flex-end;
+    align-items: center !important;
+    justify-content: center !important;
     margin: 32px 0 10px 0;
+    text-align: center !important;
+    box-shadow: none !important;
 
     ion-title {
       font-size: 1.22rem;
