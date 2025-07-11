@@ -1,0 +1,148 @@
+body.page-perfil ion-tab-bar {
+  display: none !important;
+}
+
+ion-content.input-focus{
+  --padding-bottom: 45vh;
+}
+
+ion-header {
+  padding-top: 12%;
+  display: flex;
+  align-items: center;
+  height: 10vh;
+  font-family: "Nunito", sans-serif;
+  font-weight: 700;
+  color: #34a853;
+  padding-bottom: 10px;
+  background: var(--background);
+
+  ion-title {
+    font-weight: 700;
+    color: #34a853;
+    font-size: 1.1rem;
+  }
+
+  ion-button {
+    --background: #34a853;
+    --border-radius: 10px;
+    --box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+    height: 35px;
+    margin-right: 1.2rem;
+  }
+}
+
+form {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+
+  ion-item {
+    width: 100%;
+    --background: transparent;
+    --border-width: 0;
+    --inner-border-width: 0;
+    --inner-padding-end: 0;
+    --padding-end: 20px;
+
+    ion-label {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #34a853 !important;
+      margin-bottom: 0.4rem;
+      margin-left: 5px;
+    }
+
+    ion-input {
+      width: 100%;
+      --padding-start: 0.5rem;
+      font-size: 1rem;
+      font-family: "Open Sans", sans-serif;
+      color: var(--place-color);
+      border: 2px solid var(--cinza-dark);
+      border-radius: 5px;
+    }
+  }
+}
+
+.imc-resultados {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 60%;
+  margin: 15% auto 0 auto;
+  height: auto;
+
+  .imc-dados {
+    display: flex;
+    justify-content: space-around;
+    align-items: stretch;
+    width: 100%;
+    background: transparent;
+  }
+
+  .imc-ideal{
+    color: #0faed6;
+  }
+
+  .imc-atual,
+  .imc-ideal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4%;
+
+    h6 {
+      font-family: "Nunito", sans-serif;
+      margin: 5px 0 0 0;
+    }
+
+    p {
+      font-family: "Open Sans", sans-serif;
+      font-weight: 700;
+      font-size: 2rem;
+    }
+  }
+
+  .imc-classificacao {
+    margin-top: 5%;
+    font-family: "Open Sans", sans-serif;
+  }
+
+  .divisoria-verti {
+    width: 2px;
+    background-color: var(--cinza-dark);
+    align-self: stretch;
+    border: none;
+  }
+
+  .divisoria-horiz {
+    width: 100%;
+    height: 2px;
+    background-color: var(--cinza-dark);
+    border: none;
+  }
+}
+
+.imc-abaixo {
+  color: #2196f3; /* azul */
+}
+.imc-normal {
+  color: #4caf50; /* verde */
+}
+.imc-sobrepeso {
+  color: #ff9800; /* laranja */
+}
+.imc-obesidade1 {
+  color: #ff5722; /* laranja escuro */
+}
+.imc-obesidade2 {
+  color: #f44336; /* vermelho */
+}
+.imc-obesidade3 {
+  color: #b71c1c; /* vermelho escuro */
+}

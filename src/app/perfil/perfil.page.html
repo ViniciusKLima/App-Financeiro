@@ -1,0 +1,169 @@
+<ion-header class="header-perfil">
+  <ion-buttons slot="start">
+    <ion-back-button defaultHref="/nav/config"></ion-back-button>
+  </ion-buttons>
+  <ion-title>Editar Informações</ion-title>
+  <ion-button
+    (click)="salvarPerfil()"
+    [disabled]="!houveAlteracao() || form.invalid"
+  >
+    Salvar
+  </ion-button>
+</ion-header>
+
+<ion-content
+  [fullscreen]="true"
+  class="content"
+  [class.input-focus]="inputEmFoco"
+>
+
+  <!-- Form Perfil -->
+  <form #form="ngForm" (ngSubmit)="salvarPerfil()">
+
+    <!-- Nome -->
+    <ion-item>
+      <ion-label position="floating">Nome</ion-label>
+      <ion-input
+        [(ngModel)]="nome"
+        name="nome"
+        [placeholder]="nome || 'Digite seu nome'"
+        required
+        #nomeInput="ngModel"
+        (ionFocus)="inputEmFoco = true"
+        (ionBlur)="inputEmFoco = false"
+      ></ion-input>
+    </ion-item>
+
+    <!-- Verifica preenchimento -->
+    <ion-text color="warning" *ngIf="nomeInput.invalid && nomeInput.touched">
+      <small>Preencha este campo</small>
+    </ion-text>
+
+    <!-- Data de nascimento -->
+    <ion-item>
+      <ion-label position="floating">Data de Nascimento</ion-label>
+      <ion-input
+        [(ngModel)]="dataNascimento"
+        name="dataNascimento"
+        type="date"
+        required
+        #dataNascimentoInput="ngModel"
+        (ionFocus)="inputEmFoco = true"
+        (ionBlur)="inputEmFoco = false"
+      ></ion-input>
+    </ion-item>
+
+    <!-- Verifica preenchimento -->
+    <ion-text
+      color="warning"
+      *ngIf="dataNascimentoInput.invalid && dataNascimentoInput.touched"
+    >
+      <small>Preencha este campo</small>
+    </ion-text>
+
+    <!-- Email -->
+    <ion-item>
+      <ion-label position="floating">Email</ion-label>
+      <ion-input
+        [(ngModel)]="email"
+        name="email"
+        type="email"
+        [placeholder]="email || 'Digite seu email'"
+        required
+        #emailInput="ngModel"
+        (ionFocus)="inputEmFoco = true"
+        (ionBlur)="inputEmFoco = false"
+      ></ion-input>
+    </ion-item>
+
+    <!-- Verifica preenchimento -->
+    <ion-text color="warning" *ngIf="emailInput.invalid && emailInput.touched">
+      <small>Preencha este campo com um email válido</small>
+    </ion-text>
+
+    <!-- Meta de água -->
+    <ion-item>
+      <ion-label position="floating">Meta de água por dia (ml)</ion-label>
+      <ion-input
+        type="number"
+        [(ngModel)]="metaAgua"
+        name="metaAgua"
+        [placeholder]="metaAgua !== null ? metaAgua : 'Ex: 2000'"
+        required
+        #metaAguaInput="ngModel"
+        (ionFocus)="inputEmFoco = true"
+        (ionBlur)="inputEmFoco = false"
+      ></ion-input>
+    </ion-item>
+
+    <!-- Verifica preenchimento -->
+    <ion-text
+      color="warning"
+      *ngIf="metaAguaInput.invalid && metaAguaInput.touched"
+    >
+      <small>Preencha este campo</small>
+    </ion-text>
+
+    <!-- Peso -->
+    <ion-item>
+      <ion-label position="floating">Peso (kg)</ion-label>
+      <ion-input
+        type="number"
+        [(ngModel)]="peso"
+        name="peso"
+        [placeholder]="peso !== null ? peso : 'Ex: 73.5'"
+        required
+        #pesoInput="ngModel"
+        (ionFocus)="inputEmFoco = true"
+        (ionBlur)="inputEmFoco = false"
+      ></ion-input>
+    </ion-item>
+
+    <!-- Verifica preenchimento -->
+    <ion-text color="warning" *ngIf="pesoInput.invalid && pesoInput.touched">
+      <small>Preencha este campo</small>
+    </ion-text>
+
+    <!-- Altura -->
+    <ion-item>
+      <ion-label position="floating">Altura (cm)</ion-label>
+      <ion-input
+        type="number"
+        [(ngModel)]="altura"
+        name="altura"
+        [placeholder]="altura !== null ? altura : 'Digite sua altura'"
+        required
+        #alturaInput="ngModel"
+        (ionFocus)="inputEmFoco = true"
+        (ionBlur)="inputEmFoco = false"
+      ></ion-input>
+    </ion-item>
+
+    <!-- Verifica preenchimento -->
+    <ion-text
+      color="warning"
+      *ngIf="alturaInput.invalid && alturaInput.touched"
+    >
+      <small>Preencha este campo</small>
+    </ion-text>
+  </form>
+
+  <!-- Div IMC -->
+  <div class="imc-resultados" *ngIf="imc !== null">
+    <div class="imc-dados">
+      <div class="imc-atual">
+        <h6 [ngClass]="getImcClass()">IMC Atual</h6>
+        <p [ngClass]="getImcClass()">{{ imc }}</p>
+      </div>
+      <div class="divisoria-verti"></div>
+      <div class="imc-ideal">
+        <h6>IMC Ideal</h6>
+        <p>{{ imcIdeal }}</p>
+      </div>
+    </div>
+    <div class="divisoria-horiz"></div>
+    <div class="imc-classificacao" [ngClass]="getImcClass()">
+      <p>{{ imcClassificacao }}</p>
+    </div>
+  </div>
+</ion-content>

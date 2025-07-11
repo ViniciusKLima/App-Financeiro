@@ -14,7 +14,7 @@
       <h3 class="tt-painel">Total em dívidas</h3>
       <p class="valor-painel">
         <ng-container *ngIf="mostrarValor; else oculto">
-          R$ {{ valorTotalDividas | number:'1.2-2' }}
+          R$ {{ valorTotalGeral | number:'1.2-2' }}
         </ng-container>
         <ion-icon
           [name]="mostrarValor ? 'eye-outline' : 'eye-off-outline'"
@@ -197,7 +197,7 @@
                   </h6>
                 </ng-container>
                 <ng-template #valorDividaAtrasado>
-                  <h6>R$ {{ compromisso.valor }}</h6>
+                  <h6>R$ {{ compromisso.valor | number:'1.2-2' }}</h6>
                 </ng-template>
               </ion-label>
             </div>
@@ -246,7 +246,7 @@
                   </h6>
                 </ng-container>
                 <ng-template #valorDividaPendente>
-                  <h6>R$ {{ compromisso.valor }}</h6>
+                  <h6>R$ {{ compromisso.valor | number:'1.2-2' }}</h6>
                 </ng-template>
               </ion-label>
             </div>
@@ -314,7 +314,7 @@
                   </h6>
                 </ng-container>
                 <ng-template #valorDividaPaga>
-                  <h6>R$ {{ compromisso.valor }}</h6>
+                  <h6>R$ {{ compromisso.valor | number:'1.2-2' }}</h6>
                 </ng-template>
               </ion-label>
             </div>

@@ -66,7 +66,8 @@
       }
 
       .data {
-        font-size: clamp(0.65rem, 1vw, 0.75rem);
+        font-size: clamp(0.6rem, 0.9vw, 0.7rem);
+        font-weight: 500;
         position: absolute;
         top: 8%;
         left: 7.5%;
@@ -74,14 +75,22 @@
       }
 
       .tt-painel {
-        font-size: clamp(1rem, 3vw, 1.2rem);
+        font-size: clamp(
+          0.95rem,
+          2.2vw,
+          1.1rem
+        ); // antes: clamp(1rem, 3vw, 1.2rem)
         color: white;
         font-weight: 300;
         margin: 0;
       }
 
       .valor-painel {
-        font-size: clamp(1.1rem, 4vw, 1.5rem);
+        font-size: clamp(
+          1rem,
+          3vw,
+          1.3rem
+        ); // antes: clamp(1.1rem, 4vw, 1.5rem)
         color: white;
         font-weight: 700;
       }
@@ -92,7 +101,8 @@
 
         .quantDividas {
           position: absolute;
-          bottom: 8%;
+          top: 50%;
+          transform: translateY(-50%);
           right: 4.5%;
           color: white;
 
@@ -100,7 +110,7 @@
             font-size: 0.6rem;
             text-align: end;
             padding-right: 8px;
-            margin: 0;
+            margin: 0 0 2px 0;
           }
           .num-quantDividas {
             font-size: 1.5rem;
@@ -150,13 +160,18 @@
         text-align: right;
 
         .tt-quantCartoesCateg {
-          font-size: clamp(0.5rem, 1.2vw, 0.6rem);
+          font-size: clamp(0.45rem, 1vw, 0.55rem);
+          margin: 0 0 2px 0;
           text-align: end;
           padding-right: 8px;
           margin: 0;
         }
         .num-quantCartoesCateg {
-          font-size: clamp(1rem, 4vw, 1.5rem); // Responsivo!
+          font-size: clamp(
+            0.95rem,
+            3vw,
+            1.2rem
+          ); // antes: clamp(1rem, 4vw, 1.5rem) ou 1.5rem fixo
           font-weight: 700;
           text-align: center;
           max-height: 30%;
@@ -230,7 +245,7 @@
     color: var(--cor-principal);
     border: none;
     border-radius: 10px;
-    font-size: 1rem;
+    font-size: clamp(0.8rem, 2vw, 1rem);
     padding: 0.5rem 1.5rem;
     cursor: pointer;
     transition: border-color 0.3s;
@@ -340,29 +355,6 @@ ion-refresher-content {
   --color: #565656; /* Cor do texto "Atualizando..." */
 }
 
-.tabs {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin: 1.5rem 0;
-}
-
-.tabs button {
-  background: white;
-  color: #0e4d96;
-  border: none;
-  border-radius: 10px;
-  font-size: 1rem;
-  padding: 0.5rem 1.5rem;
-  cursor: pointer;
-  transition: border-color 0.3s;
-}
-
-.tabs button.active {
-  background-color: #0e4d96;
-  color: white;
-}
-
 .slide {
   display: none;
 
@@ -408,6 +400,7 @@ ion-checkbox {
 }
 
 .cards-dividas {
+  margin-bottom: 0.7rem; // igual ao gap interno
   margin-bottom: 1rem;
   display: flex;
   flex-direction: column;

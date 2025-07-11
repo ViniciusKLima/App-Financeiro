@@ -12,6 +12,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import localePt from '@angular/common/locales/pt';
 import { registerLocaleData } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 
 registerLocaleData(localePt);
 
@@ -24,6 +25,7 @@ registerLocaleData(localePt);
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    HttpClientModule,
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },

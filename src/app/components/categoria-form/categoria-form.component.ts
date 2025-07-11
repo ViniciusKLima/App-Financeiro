@@ -18,6 +18,7 @@ export class CategoriaFormComponent {
     nome: '',
     cor: '#ffa600',
     icone: 'logo-usd',
+    somarAoTotal: true, // novo campo
   };
 
   novoCartao = {
@@ -26,6 +27,7 @@ export class CategoriaFormComponent {
     cor: '#2196f3',
     diaFechamento: null,
     diaVencimento: null,
+    somarAoTotal: true, // novo campo
   };
 
   formTouched = false;

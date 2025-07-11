@@ -1,0 +1,79 @@
+<ion-content class="content">
+  <div class="centraliza">
+    <div class="cadastro-wrapper">
+      <h2 class="titulo-cadastro">Cadastro</h2>
+
+      <!--Form Cadastro-->
+      <form class="form" (ngSubmit)="cadastrar()">
+        <!--Nome-->
+        <ion-item class="input-item">
+          <ion-icon name="person" slot="start"></ion-icon>
+
+          <ion-input
+            [(ngModel)]="nome"
+            name="nome"
+            placeholder="Nome completo"
+            (ionFocus)="inputEmFoco = true"
+            (ionBlur)="inputEmFoco = false"
+            required
+          ></ion-input>
+        </ion-item>
+
+        <!--Data de Nascimento-->
+        <ion-item class="input-item">
+          <ion-icon name="calendar" slot="start"></ion-icon>
+
+          <ion-input
+            [(ngModel)]="dataNascimento"
+            name="dataNascimento"
+            type="date"
+            placeholder="Data de nascimento"
+            (ionFocus)="inputEmFoco = true"
+            (ionBlur)="inputEmFoco = false"
+            required
+          ></ion-input>
+        </ion-item>
+
+        <!--Email-->
+        <ion-item class="input-item">
+          <ion-icon name="mail" slot="start"></ion-icon>
+
+          <ion-input
+            [(ngModel)]="email"
+            name="email"
+            type="email"
+            placeholder="E-mail"
+            (ionFocus)="inputEmFoco = true"
+            (ionBlur)="inputEmFoco = false"
+            required
+          ></ion-input>
+        </ion-item>
+
+        <!--Senha-->
+        <ion-item class="input-item">
+          <ion-icon name="key" slot="start"></ion-icon>
+
+          <ion-input
+            [(ngModel)]="senha"
+            name="senha"
+            type="password"
+            placeholder="Senha"
+            (ionFocus)="inputEmFoco = true"
+            (ionBlur)="inputEmFoco = false"
+            required
+          ></ion-input>
+        </ion-item>
+
+        <!--Botão-->
+        <ion-button expand="block" type="button" (click)="cadastrar()"
+          >Cadastrar</ion-button
+        >
+      </form>
+
+      <!-- Rota para Login-->
+      <div class="login-link" (click)="irParaLogin()">
+        Já tem conta? <span>Entrar</span>
+      </div>
+    </div>
+  </div>
+</ion-content>

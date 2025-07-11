@@ -272,11 +272,6 @@ export class HomePage implements OnInit, AfterViewInit {
     this.carregarCompromissos();
   }
 
-  get valorTotalDividas(): number {
-    // Some todas as dívidas de todas as categorias e cartões
-    return this.financeiroService.getValorTotalDividas?.() ?? 0;
-  }
-
   get quantidadeDividas(): number {
     // Some todas as dívidas de todas as categorias
     let total = 0;
@@ -401,5 +396,12 @@ export class HomePage implements OnInit, AfterViewInit {
 
   irParaCategorias() {
     this.navCtrl.navigateForward(['/nav/carteira']);
+  }
+
+  get valorTotalGeral(): number {
+    return (
+      this.financeiroService.getValorTotalCartoes() +
+      this.financeiroService.getValorTotalCategorias()
+    );
   }
 }

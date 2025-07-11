@@ -40,11 +40,20 @@
   .input-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-between !important;
     margin-bottom: 12px;
     border-bottom: #e0e0e0 1px solid;
     padding-right: 6px;
     min-height: 50px;
+
+    ion-label,
+    ion-input,
+    ion-toggle,
+    ion-icon {
+      align-items: center;
+      display: flex;
+      height: 100%;
+    }
 
     .input-direita {
       width: 65%;
@@ -54,7 +63,20 @@
       font-size: 0.98rem;
       background: transparent;
       border: none;
+      display: flex;
+      align-items: center;
+      height: 100%;
     }
+  }
+
+  .input-row ion-label {
+    width: auto; // Remove largura fixa
+    min-width: 0; // Permite encolher
+    text-align: left; // Alinha à esquerda
+    margin-right: 8px; // Espaço entre label e input/toggle
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
 
   ion-label {
@@ -81,7 +103,7 @@
     grid-template-columns: repeat(8, 1fr);
   }
 
-  .input-cor{
+  .input-cor {
     width: 40px;
     padding: 0;
     margin: 0;

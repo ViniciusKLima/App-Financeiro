@@ -7,147 +7,147 @@ export class FinanceiroService {
   // Cartões com detalhes e compras
   private cartoes: any[] = [
     {
-        id: '1',
-        nome: 'Nubank',
-        valor: 1532.2,
-        diaFechamento: 5,
-        diaVencimento: 10,
-        cor: '#8A05BE', // Roxo Nubank
-        gradient: '',
-        compras: [
-          {
-            nome: 'Amazon Alexa',
-            parcelaAtual: 3,
-            totalParcelas: 10,
-            valor: 100.0,
-            descricao: 'Assinatura mensal da Alexa',
-          },
-          {
-            nome: 'Netflix',
-            parcelaAtual: 1,
-            totalParcelas: 1,
-            valor: 55.9,
-            descricao: 'Plano básico mensal',
-          },
-          {
-            nome: 'Uber',
-            parcelaAtual: 1,
-            totalParcelas: 1,
-            valor: 32.5,
-            descricao: 'Corrida Uber',
-          },
-          {
-            nome: 'Farmácia',
-            parcelaAtual: 1,
-            totalParcelas: 2,
-            valor: 80.0,
-            descricao: 'Medicamentos',
-          },
-        ],
-      },
-      {
-        id: '2',
-        nome: 'PicPay',
-        valor: 6244.0,
-        diaFechamento: 15,
-        diaVencimento: 8,
-        cor: '#21C25E', // Verde PicPay
-        gradient: '',
-        compras: [
-          {
-            nome: 'Curso Udemy',
-            parcelaAtual: 5,
-            totalParcelas: 5,
-            valor: 45.5,
-            descricao: 'Curso online de programação',
-          },
-          {
-            nome: 'Spotify',
-            parcelaAtual: 2,
-            totalParcelas: 12,
-            valor: 19.9,
-            descricao: 'Assinatura música',
-          },
-          {
-            nome: 'Livraria',
-            parcelaAtual: 1,
-            totalParcelas: 1,
-            valor: 120.0,
-            descricao: 'Compra de livros',
-          },
-          {
-            nome: 'Padaria',
-            parcelaAtual: 1,
-            totalParcelas: 1,
-            valor: 18.0,
-            descricao: 'Pães e lanches',
-          },
-        ],
-      },
-      {
-        id: '3',
-        nome: 'Master',
-        valor: 800.0,
-        diaFechamento: 20,
-        diaVencimento: 25,
-        cor: '#F79E1B', // Laranja MasterCard
-        gradient: '',
-        compras: [
-          {
-            nome: 'Livro',
-            parcelaAtual: 1,
-            totalParcelas: 3,
-            valor: 60.0,
-            descricao: 'Livro técnico',
-          },
-          {
-            nome: 'Restaurante',
-            parcelaAtual: 1,
-            totalParcelas: 1,
-            valor: 150.0,
-            descricao: 'Almoço com amigos',
-          },
-          {
-            nome: 'Cinema',
-            parcelaAtual: 1,
-            totalParcelas: 1,
-            valor: 40.0,
-            descricao: 'Ingresso de cinema',
-          },
-        ],
-      },
-      {
-        id: '4',
-        nome: 'Neon',
-        valor: 1200.0,
-        diaFechamento: 8,
-        diaVencimento: 13,
-        cor: '#00E1E6', // Azul Neon
-        gradient: '',
-        compras: [
-          {
-            nome: 'iFood',
-            parcelaAtual: 1,
-            totalParcelas: 1,
-            valor: 60.0,
-            descricao: 'Pedido de comida',
-          },
-          {
-            nome: 'Assinatura Deezer',
-            parcelaAtual: 2,
-            totalParcelas: 12,
-            valor: 19.9,
-            descricao: 'Música online',
-          },
-          {
-            nome: 'Posto',
-            parcelaAtual: 1,
-            totalParcelas: 1,
-            valor: 120.0,
-            descricao: 'Combustível',
-          },
-        ],
-      },
+      id: '1',
+      nome: 'Nubank',
+      valor: 1532.2,
+      diaFechamento: 5,
+      diaVencimento: 10,
+      cor: '#8A05BE',
+      gradient: '',
+      somarAoTotal: true, // <-- adicione aqui
+      compras: [
+        {
+          nome: 'Amazon Alexa',
+          parcelaAtual: 3,
+          totalParcelas: 10,
+          valor: 100.0,
+          descricao: 'Assinatura mensal da Alexa',
+        },
+        {
+          nome: 'Netflix',
+          parcelaAtual: 1,
+          totalParcelas: 1,
+          valor: 55.9,
+          descricao: 'Plano básico mensal',
+        },
+        {
+          nome: 'Uber',
+          parcelaAtual: 1,
+          totalParcelas: 1,
+          valor: 32.5,
+          descricao: 'Corrida Uber',
+        },
+        {
+          nome: 'Farmácia',
+          parcelaAtual: 1,
+          totalParcelas: 2,
+          valor: 80.0,
+          descricao: 'Medicamentos',
+        },
+      ],
+    },
+    {
+      id: '2',
+      nome: 'PicPay',
+      valor: 6244.0,
+      diaFechamento: 15,
+      diaVencimento: 8,
+      cor: '#21C25E', // Verde PicPay
+      gradient: '',
+      somarAoTotal: true, // <-- adicione aqui
+      compras: [
+        {
+          nome: 'Curso Udemy',
+          parcelaAtual: 5,
+          totalParcelas: 5,
+          valor: 45.5,
+          descricao: 'Curso online de programação',
+        },
+        {
+          nome: 'Spotify',
+          parcelaAtual: 2,
+          totalParcelas: 12,
+          valor: 19.9,
+          descricao: 'Assinatura música',
+        },
+        {
+          totalParcelas: 1,
+          valor: 120.0,
+          descricao: 'Compra de livros',
+        },
+        {
+          nome: 'Padaria',
+          parcelaAtual: 1,
+          totalParcelas: 1,
+          valor: 18.0,
+          descricao: 'Pães e lanches',
+        },
+      ],
+    },
+    {
+      id: '3',
+      nome: 'Master',
+      valor: 800.0,
+      diaFechamento: 20,
+      diaVencimento: 25,
+      cor: '#F79E1B', // Laranja MasterCard
+      gradient: '',
+      compras: [
+        {
+          nome: 'Livro',
+          parcelaAtual: 1,
+          totalParcelas: 3,
+          valor: 60.0,
+          descricao: 'Livro técnico',
+        },
+        {
+          nome: 'Restaurante',
+          parcelaAtual: 1,
+          totalParcelas: 1,
+          valor: 150.0,
+          descricao: 'Almoço com amigos',
+        },
+        {
+          nome: 'Cinema',
+          parcelaAtual: 1,
+          totalParcelas: 1,
+          valor: 40.0,
+          descricao: 'Ingresso de cinema',
+        },
+      ],
+    },
+    {
+      id: '4',
+      nome: 'Neon',
+      valor: 1200.0,
+      diaFechamento: 8,
+      diaVencimento: 13,
+      cor: '#00E1E6', // Azul Neon
+      gradient: '',
+      compras: [
+        {
+          nome: 'iFood',
+          parcelaAtual: 1,
+          totalParcelas: 1,
+          valor: 60.0,
+          descricao: 'Pedido de comida',
+        },
+        {
+          nome: 'Assinatura Deezer',
+          parcelaAtual: 2,
+          totalParcelas: 12,
+          valor: 19.9,
+          descricao: 'Música online',
+        },
+        {
+          nome: 'Posto',
+          parcelaAtual: 1,
+          totalParcelas: 1,
+          valor: 120.0,
+          descricao: 'Combustível',
+        },
+      ],
+    },
   ];
 
   // Grupos de dívidas, cada um com suas dívidas
@@ -159,6 +159,7 @@ export class FinanceiroService {
       quantDividas: 5,
       icone: 'document-text-outline',
       cor: '#666',
+      somarAoTotal: true, // <-- adicione aqui
       dividas: [
         {
           nome: 'Amazon Alexa',
@@ -478,10 +479,20 @@ export class FinanceiroService {
   /** Retorna o valor total somado de todos os cartões */
   getValorTotalCartoes(): number {
     if (!Array.isArray(this.cartoes) || this.cartoes.length === 0) return 0;
-    return this.cartoes.reduce(
-      (total: number, cartao: any) => total + (Number(cartao.valor) || 0),
-      0
-    );
+    return this.cartoes
+      .filter((cartao: any) => cartao.somarAoTotal !== false)
+      .reduce((total: number, cartao: any) => {
+        if (Array.isArray(cartao.compras)) {
+          return (
+            total +
+            cartao.compras.reduce(
+              (soma: number, compra: any) => soma + (Number(compra.valor) || 0),
+              0
+            )
+          );
+        }
+        return total;
+      }, 0);
   }
 
   /** Retorna a quantidade de cartões cadastrados */
@@ -493,10 +504,20 @@ export class FinanceiroService {
   getValorTotalCategorias(): number {
     if (!Array.isArray(this.categorias) || this.categorias.length === 0)
       return 0;
-    return this.categorias.reduce(
-      (total: number, categoria: any) => total + (Number(categoria.valor) || 0),
-      0
-    );
+    return this.categorias
+      .filter((categoria: any) => categoria.somarAoTotal !== false)
+      .reduce((total: number, categoria: any) => {
+        if (Array.isArray(categoria.dividas)) {
+          return (
+            total +
+            categoria.dividas.reduce(
+              (soma: number, divida: any) => soma + (Number(divida.valor) || 0),
+              0
+            )
+          );
+        }
+        return total;
+      }, 0);
   }
 
   /** Retorna a quantidade de categorias cadastradas */
@@ -529,5 +550,9 @@ export class FinanceiroService {
   removerCartao(id: string) {
     if (!Array.isArray(this.cartoes)) return;
     this.cartoes = this.cartoes.filter((cartao: any) => cartao.id !== id);
+  }
+
+  getValorTotalGeral(): number {
+    return this.getValorTotalCartoes() + this.getValorTotalCategorias();
   }
 }

@@ -1,0 +1,71 @@
+<ion-content class="login-content" [class.input-focus]="inputEmFoco">
+  <div class="alerta-popup" *ngIf="mensagemErro">
+    <ion-icon name="information-circle-outline"></ion-icon>
+    <span>{{ mensagemErro }}</span>
+  </div>
+  <img
+        src="../../assets/imagens/controle-financeiro-logo.png"
+        alt="Logo"
+        class="logo"
+      />
+  <div class="login-wrapper">
+    <div class="card-login">
+
+      <!-- Form Login -->
+      <form class="form" (ngSubmit)="logar()">
+        <div class="titulo-login">Entrar</div>
+
+        <!-- Email -->
+        <ion-item
+          lines="inset"
+          class="input-item"
+          [ngClass]="{'input-erro': erroCampos && !email}"
+        >
+          <ion-icon name="mail" slot="start"></ion-icon>
+          <ion-input
+            [(ngModel)]="email"
+            name="email"
+            type="email"
+            placeholder="Email"
+            required
+            (ionFocus)="inputEmFoco = true"
+            (ionBlur)="inputEmFoco = false"
+          ></ion-input>
+        </ion-item>
+
+        <!-- Senha -->
+        <ion-item
+          lines="inset"
+          class="input-item"
+          [ngClass]="{'input-erro': erroCampos && !senha}"
+        >
+          <ion-icon name="key" slot="start"></ion-icon>
+          <ion-input
+            [(ngModel)]="senha"
+            name="senha"
+            type="password"
+            placeholder="Senha"
+            required
+            (ionFocus)="inputEmFoco = true"
+            (ionBlur)="inputEmFoco = false"
+          ></ion-input>
+        </ion-item>
+
+        <!-- Rota para recuperação de senha -->
+        <div class="esqueceu-senha" (click)="irParaEsqueceuSenha()">
+          Esqueceu a senha?
+        </div>
+
+        <!-- Botão para executar login-->
+        <ion-button expand="block" type="button" (click)="logar()">
+          Entrar
+        </ion-button>
+      </form>
+
+      <!-- Rota para cadastro -->
+      <div class="cadastro-link">
+        Não tem conta? <span (click)="irParaCadastro()">Cadastre-se</span>
+      </div>
+    </div>
+  </div>
+</ion-content>

@@ -45,6 +45,15 @@
           ></button>
         </div>
       </div>
+      <div class="input-row">
+        <ion-label>Incluir na soma total</ion-label>
+        <ion-toggle
+          slot="end"
+          [(ngModel)]="novaCategoria.somarAoTotal"
+          name="somarAoTotalCategoria"
+          mode="ios"
+        ></ion-toggle>
+      </div>
       <ion-label
         class="label-icone ion-margin-top ion-margin-start"
         position="stacked"
@@ -121,6 +130,15 @@
           max="31"
           placeholder="Ex: 17"
         ></ion-input>
+      </div>
+      <div class="input-row">
+        <ion-label>Incluir na soma total</ion-label>
+        <ion-toggle
+          slot="end"
+          [(ngModel)]="novoCartao.somarAoTotal"
+          name="somarAoTotalCartao"
+          mode="ios"
+        ></ion-toggle>
       </div>
       <div class="input-row input-cor">
         <ion-label position="fixed"

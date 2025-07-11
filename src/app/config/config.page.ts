@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { AlertController, NavController } from '@ionic/angular';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-config',
@@ -10,13 +12,34 @@ export class ConfigPage {
   notificacoesAtivas = false;
   modoNoturno = false;
 
-  constructor() {}
+  constructor(
+    private navCtrl: NavController,
+    private router: Router,
+    private alertController: AlertController
+  ) {}
 
   alterarDadosConta() {
     // lógica para alterar dados
   }
 
-  sair() {
-    // lógica para sair
+  // Função logout
+  async sair() {
+    const alert = await this.alertController.create({
+      header: 'Sair',
+      message: 'Tem certeza que deseja sair?',
+      cssClass: 'alert-sair-custom',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Sair',
+          handler: () => {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('email');
+            this.router.navigateByUrl('/login', { replaceUrl: true });
+          },
+        },
+      ],
+    });
+    await alert.present();
   }
 }
