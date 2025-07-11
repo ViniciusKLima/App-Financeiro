@@ -305,6 +305,7 @@ export class CartoesPage implements AfterViewInit {
       agora.getMonth() + 1
     ).padStart(2, '0')}`;
 
+    cartao.faturaAtualizada = true; // Marca como atualizada
     this.financeiroService.updateCartao(cartao);
 
     const novosCartoes = this.financeiroService.getCartoes().map((c: any) => ({
@@ -345,13 +346,24 @@ export class CartoesPage implements AfterViewInit {
       hoje.getMonth() + 1
     ).padStart(2, '0')}`;
 
-    // Só mostra se HOJE for maior que o dia de vencimento,
-    // houver compras e ainda não foi atualizado neste ciclo
-    return (
+    // Se passou do vencimento e ainda não atualizou neste ciclo,
+    // só altera para false se houver compras
+    if (
       diaHoje > cartao.diaVencimento &&
+      cartao.ultimaFaturaAtualizada !== cicloAtual &&
       cartao.compras &&
       cartao.compras.length > 0 &&
-      cartao.ultimaFaturaAtualizada !== cicloAtual
+      cartao.faturaAtualizada !== false
+    ) {
+      cartao.faturaAtualizada = false;
+      this.financeiroService.updateCartao(cartao);
+    }
+
+    // Só mostra se faturaAtualizada for false e houver compras
+    return (
+      cartao.compras &&
+      cartao.compras.length > 0 &&
+      cartao.faturaAtualizada === false
     );
   }
 }

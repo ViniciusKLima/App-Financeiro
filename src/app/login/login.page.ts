@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastController, LoadingController } from '@ionic/angular';
-import { PerfilService } from '../services/perfil.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +18,7 @@ export class LoginPage {
 
   constructor(
     private router: Router,
-    private perfilService: PerfilService,
+    private authService: AuthService,
     private toastCtrl: ToastController,
     private loadingCtrl: LoadingController
   ) {}
@@ -56,6 +56,12 @@ export class LoginPage {
       return;
     }
 
+    // Valida formato do email
+    const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailLimpo);
+    if (!emailValido) {
+      this.mostrarToast('Digite um email válido.');
+      return;
+    }
 
     // Chama loading para verificação
     const loading = await this.loadingCtrl.create({
@@ -65,33 +71,24 @@ export class LoginPage {
     await loading.present();
 
     try {
-      const usuarios = await this.perfilService
-        .getUsuarioPorEmail(emailLimpo)
-        .toPromise();
-
+      // Tenta logar
+      await this.authService.login(emailLimpo, senhaDigitada);
       await loading.dismiss();
-
-      // Verifica email
-      if (usuarios && usuarios.length > 0) {
-        const usuario = usuarios[0];
-
-        // Verifica senha
-        if (usuario.senha?.trim() === senhaDigitada) {
-          localStorage.setItem('isLoggedIn', 'true');
-          localStorage.setItem('email', emailLimpo);
-          this.email = '';
-          this.senha = '';
-          this.router.navigate(['/nav/home']); // Se tudo 'Ok', envia para o Home
-        } else {
-          this.mostrarToast('Senha incorreta.'); // Senha inválida
-        }
-      } else {
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('email', emailLimpo);
+      this.email = '';
+      this.senha = '';
+      this.router.navigate(['/nav/home']); // Se tudo 'Ok', envia para o Home
+    } catch (error: any) {
+      await loading.dismiss();
+      // Trata erros específicos do Firebase
+      if (error.code === 'auth/user-not-found') {
         this.mostrarToast('Email não encontrado.'); // Email não existe
+      } else if (error.code === 'auth/wrong-password') {
+        this.mostrarToast('Senha incorreta.'); // Senha inválida
+      } else {
+        this.mostrarToast('Erro ao conectar ao servidor.'); // Outros erros
       }
-    } catch (error) { // Se não conseguir conectar ou achar a API, retorna o erro
-      await loading.dismiss();
-      console.error('Erro ao fazer login:', error);
-      this.mostrarToast('Erro ao conectar ao servidor.');
     }
   }
 }

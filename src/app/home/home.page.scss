@@ -398,18 +398,23 @@ ion-checkbox {
     border: 1px solid var(--cor-pago);
   }
 }
+.cards-dividas > h2 {
+  text-align: left;
+  width: 100%;
+  margin-left: 10px;
+}
 
 .cards-dividas {
   margin-bottom: 0.7rem; // igual ao gap interno
   margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 0.7rem;
 
   .h2-pendente {
     color: #3f3f3f;
     font-size: 0.8rem;
-    margin: 0;
   }
 
   .itens-dividas {
@@ -428,6 +433,8 @@ ion-checkbox {
     font-size: 0.85rem;
     font-weight: 500;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.13);
+    width: 100%;
+    max-width: 450px;
 
     .top-divida {
       display: flex;

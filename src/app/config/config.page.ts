@@ -27,7 +27,7 @@ export class ConfigPage {
     const alert = await this.alertController.create({
       header: 'Sair',
       message: 'Tem certeza que deseja sair?',
-      cssClass: 'alert-sair-custom',
+      cssClass: 'custom-alert',
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         {

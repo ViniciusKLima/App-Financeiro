@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { PerfilService } from '../services/perfil.service';
+import { AuthService } from '../services/auth.service';
 import { LoadingController, ToastController } from '@ionic/angular';
+import { FinanceiroService } from '../services/financeiro.service';
 
 @Component({
   selector: 'app-cadastro',
@@ -13,26 +14,16 @@ export class CadastroPage {
   nome: string = '';
   email: string = '';
   senha: string = '';
-  peso: number | null = null;
-  altura: number | null = null;
-  metaAgua: number | null = null;
   dataNascimento: string = '';
-  dieta: string = '';
   inputEmFoco = false;
 
   corPopup: string = 'erro';
   mensagemErro: string = '';
 
-  dietas = [
-    { nome: 'Perder Peso', descricao: '...', indice: 0 },
-    { nome: 'Manter Peso', descricao: '...', indice: 1 },
-    { nome: 'Ganhar Peso', descricao: '...', indice: 2 },
-  ];
-  dietaSelecionada = 0;
-
   constructor(
     private router: Router,
-    private perfilService: PerfilService,
+    private authService: AuthService,
+    private financeiroService: FinanceiroService,
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController
   ) {}
@@ -51,14 +42,13 @@ export class CadastroPage {
       !this.nome.trim() ||
       !emailLimpo ||
       !this.senha.trim() ||
-      !this.dataNascimento.trim() ||
-      !this.peso ||
-      !this.altura ||
-      !this.metaAgua
+      !this.dataNascimento.trim()
     ) {
       this.corPopup = 'erro';
       this.mensagemErro = 'Preencha todos os campos obrigatórios.';
-      setTimeout(() => { this.mensagemErro = ''; }, 3000);
+      setTimeout(() => {
+        this.mensagemErro = '';
+      }, 3000);
       return;
     }
 
@@ -67,43 +57,31 @@ export class CadastroPage {
     if (!emailValido) {
       this.corPopup = 'erro';
       this.mensagemErro = 'Digite um email válido.';
-      setTimeout(() => { this.mensagemErro = ''; }, 3000);
+      setTimeout(() => {
+        this.mensagemErro = '';
+      }, 3000);
       return;
     }
 
     // Loading enquanto busca na API
     const loading = await this.loadingCtrl.create({
-      message: 'Verificando...',
+      message: 'Cadastrando...',
       spinner: 'crescent',
     });
     await loading.present();
 
-    // Verificação se já existe
     try {
-      const usuarios = await this.perfilService.getUsuarioPorEmail(emailLimpo).toPromise();
-      if (usuarios && usuarios.length > 0) {
-        await loading.dismiss();
-        this.corPopup = 'erro';
-        this.mensagemErro = 'Já existe um usuário com esse email.';
-        setTimeout(() => { this.mensagemErro = ''; }, 3000);
-        return;
+      const user = await this.authService.cadastrar(
+        emailLimpo,
+        this.senha.trim()
+      );
+      if (user && user.uid) {
+        await this.financeiroService.salvarDadosUsuario(user.uid, {
+          nome: this.nome,
+          email: emailLimpo,
+          dataNascimento: this.dataNascimento,
+        });
       }
-
-      // Cria o usuário
-      const usuario = {
-        nome: this.nome.trim(),
-        email: emailLimpo,
-        senha: this.senha,
-        dataNascimento: this.dataNascimento,
-        peso: this.peso,
-        altura: this.altura,
-        metaAgua: this.metaAgua,
-        dieta: this.dietas[this.dietaSelecionada].nome,
-        dietaIndice: this.dietaSelecionada,
-      };
-
-      // Usa a função do service para enviar à API
-      const resultado = await this.perfilService.criarUsuario(usuario).toPromise();
       await loading.dismiss();
 
       this.corPopup = 'sucesso';
@@ -112,13 +90,17 @@ export class CadastroPage {
         this.mensagemErro = '';
         this.router.navigate(['/login']);
       }, 1500);
-
-    } catch (error) { // Se não conseguir conectar ou achar API, retorna o erro
+    } catch (error: any) {
       await loading.dismiss();
-      console.error('Erro ao cadastrar:', error);
       this.corPopup = 'erro';
-      this.mensagemErro = 'Erro ao cadastrar. Verifique sua conexão.';
-      setTimeout(() => { this.mensagemErro = ''; }, 3000);
+      if (error.code === 'auth/email-already-in-use') {
+        this.mensagemErro = 'Já existe um usuário com esse email.';
+      } else {
+        this.mensagemErro = 'Erro ao cadastrar. Verifique sua conexão.';
+      }
+      setTimeout(() => {
+        this.mensagemErro = '';
+      }, 3000);
       this.mostrarToast(this.mensagemErro, 'danger');
     }
   }
@@ -135,4 +117,3 @@ export class CadastroPage {
     await toast.present();
   }
 }
-

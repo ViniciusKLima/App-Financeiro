@@ -1,363 +1,34 @@
 import { Injectable } from '@angular/core';
+import { Firestore, doc, setDoc } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FinanceiroService {
   // Cartões com detalhes e compras
-  private cartoes: any[] = [
-    {
-      id: '1',
-      nome: 'Nubank',
-      valor: 1532.2,
-      diaFechamento: 5,
-      diaVencimento: 10,
-      cor: '#8A05BE',
-      gradient: '',
-      somarAoTotal: true, // <-- adicione aqui
-      compras: [
-        {
-          nome: 'Amazon Alexa',
-          parcelaAtual: 3,
-          totalParcelas: 10,
-          valor: 100.0,
-          descricao: 'Assinatura mensal da Alexa',
-        },
-        {
-          nome: 'Netflix',
-          parcelaAtual: 1,
-          totalParcelas: 1,
-          valor: 55.9,
-          descricao: 'Plano básico mensal',
-        },
-        {
-          nome: 'Uber',
-          parcelaAtual: 1,
-          totalParcelas: 1,
-          valor: 32.5,
-          descricao: 'Corrida Uber',
-        },
-        {
-          nome: 'Farmácia',
-          parcelaAtual: 1,
-          totalParcelas: 2,
-          valor: 80.0,
-          descricao: 'Medicamentos',
-        },
-      ],
-    },
-    {
-      id: '2',
-      nome: 'PicPay',
-      valor: 6244.0,
-      diaFechamento: 15,
-      diaVencimento: 8,
-      cor: '#21C25E', // Verde PicPay
-      gradient: '',
-      somarAoTotal: true, // <-- adicione aqui
-      compras: [
-        {
-          nome: 'Curso Udemy',
-          parcelaAtual: 5,
-          totalParcelas: 5,
-          valor: 45.5,
-          descricao: 'Curso online de programação',
-        },
-        {
-          nome: 'Spotify',
-          parcelaAtual: 2,
-          totalParcelas: 12,
-          valor: 19.9,
-          descricao: 'Assinatura música',
-        },
-        {
-          totalParcelas: 1,
-          valor: 120.0,
-          descricao: 'Compra de livros',
-        },
-        {
-          nome: 'Padaria',
-          parcelaAtual: 1,
-          totalParcelas: 1,
-          valor: 18.0,
-          descricao: 'Pães e lanches',
-        },
-      ],
-    },
-    {
-      id: '3',
-      nome: 'Master',
-      valor: 800.0,
-      diaFechamento: 20,
-      diaVencimento: 25,
-      cor: '#F79E1B', // Laranja MasterCard
-      gradient: '',
-      compras: [
-        {
-          nome: 'Livro',
-          parcelaAtual: 1,
-          totalParcelas: 3,
-          valor: 60.0,
-          descricao: 'Livro técnico',
-        },
-        {
-          nome: 'Restaurante',
-          parcelaAtual: 1,
-          totalParcelas: 1,
-          valor: 150.0,
-          descricao: 'Almoço com amigos',
-        },
-        {
-          nome: 'Cinema',
-          parcelaAtual: 1,
-          totalParcelas: 1,
-          valor: 40.0,
-          descricao: 'Ingresso de cinema',
-        },
-      ],
-    },
-    {
-      id: '4',
-      nome: 'Neon',
-      valor: 1200.0,
-      diaFechamento: 8,
-      diaVencimento: 13,
-      cor: '#00E1E6', // Azul Neon
-      gradient: '',
-      compras: [
-        {
-          nome: 'iFood',
-          parcelaAtual: 1,
-          totalParcelas: 1,
-          valor: 60.0,
-          descricao: 'Pedido de comida',
-        },
-        {
-          nome: 'Assinatura Deezer',
-          parcelaAtual: 2,
-          totalParcelas: 12,
-          valor: 19.9,
-          descricao: 'Música online',
-        },
-        {
-          nome: 'Posto',
-          parcelaAtual: 1,
-          totalParcelas: 1,
-          valor: 120.0,
-          descricao: 'Combustível',
-        },
-      ],
-    },
-  ];
+  private cartoes: any[] = [];
 
   // Grupos de dívidas, cada um com suas dívidas
-  private categorias: any[] = [
-    {
-      id: '1',
-      nome: 'Boletos',
-      valor: '1532.20',
-      quantDividas: 5,
-      icone: 'document-text-outline',
-      cor: '#666',
-      somarAoTotal: true, // <-- adicione aqui
-      dividas: [
-        {
-          nome: 'Amazon Alexa',
-          diaPagamento: 3,
-          valor: 104.0,
-          descricao: 'Assinatura Alexa',
-        },
-        {
-          nome: 'Lanche',
-          diaPagamento: 4,
-          valor: 100.0,
-          descricao: 'Lanche do dia',
-        },
-        {
-          nome: 'Água',
-          diaPagamento: 7,
-          valor: 80.0,
-          descricao: 'Conta de água',
-        },
-        {
-          nome: 'Luz',
-          diaPagamento: 10,
-          valor: 200.0,
-          descricao: 'Conta de energia',
-        },
-        {
-          nome: 'Internet',
-          diaPagamento: 12,
-          valor: 120.0,
-          descricao: 'Plano internet',
-        },
-      ],
-    },
-    {
-      id: '2',
-      nome: 'Trabalho',
-      valor: '6244.00',
-      quantDividas: 4,
-      icone: 'card-outline',
-      cor: '#007BFF',
-      dividas: [
-        {
-          nome: 'Curso Udemy',
-          diaPagamento: 10,
-          valor: 200.0,
-          descricao: 'Curso profissionalizante',
-        },
-        {
-          nome: 'Notebook',
-          diaPagamento: 15,
-          valor: 3000.0,
-          descricao: 'Parcelamento notebook',
-        },
-        {
-          nome: 'Mouse',
-          diaPagamento: 18,
-          valor: 150.0,
-          descricao: 'Mouse gamer',
-        },
-        {
-          nome: 'Cadeira',
-          diaPagamento: 20,
-          valor: 400.0,
-          descricao: 'Cadeira ergonômica',
-        },
-      ],
-    },
-    {
-      id: '3',
-      nome: 'Casa',
-      valor: '2065.38',
-      quantDividas: 6,
-      icone: 'home-outline',
-      cor: '#08a708',
-      dividas: [
-        {
-          nome: 'Aluguel',
-          diaPagamento: 5,
-          valor: 1200.0,
-          descricao: 'Aluguel mensal',
-        },
-        {
-          nome: 'Energia',
-          diaPagamento: 10,
-          valor: 250.0,
-          descricao: 'Conta de energia',
-        },
-        {
-          nome: 'Condomínio',
-          diaPagamento: 8,
-          valor: 300.0,
-          descricao: 'Taxa condomínio',
-        },
-        {
-          nome: 'Gás',
-          diaPagamento: 12,
-          valor: 100.0,
-          descricao: 'Botijão de gás',
-        },
-        {
-          nome: 'Mercado',
-          diaPagamento: 15,
-          valor: 150.0,
-          descricao: 'Compras de supermercado',
-        },
-        {
-          nome: 'Manutenção',
-          diaPagamento: 25,
-          valor: 65.38,
-          descricao: 'Manutenção casa',
-        },
-      ],
-    },
-    {
-      id: '4',
-      nome: 'Carro',
-      valor: '3231.60',
-      quantDividas: 3,
-      icone: 'car-outline',
-      cor: '#ffa600',
-      dividas: [
-        {
-          nome: 'IPVA',
-          diaPagamento: 20,
-          valor: 900.0,
-          descricao: 'IPVA anual',
-        },
-        {
-          nome: 'Seguro',
-          diaPagamento: 15,
-          valor: 350.0,
-          descricao: 'Seguro do veículo',
-        },
-        {
-          nome: 'Combustível',
-          diaPagamento: 22,
-          valor: 1981.6,
-          descricao: 'Abastecimento',
-        },
-      ],
-    },
-    {
-      id: '5',
-      nome: 'Lazer',
-      valor: '205.76',
-      quantDividas: 3,
-      icone: 'football-outline',
-      cor: '#6F42C1',
-      dividas: [
-        {
-          nome: 'Cinema',
-          diaPagamento: 12,
-          valor: 50.0,
-          descricao: 'Ingresso de cinema',
-        },
-        {
-          nome: 'Restaurante',
-          diaPagamento: 18,
-          valor: 80.0,
-          descricao: 'Jantar',
-        },
-        {
-          nome: 'Viagem',
-          diaPagamento: 28,
-          valor: 75.76,
-          descricao: 'Passeio de final de semana',
-        },
-      ],
-    },
-    {
-      id: '6',
-      nome: 'Compras Diversas',
-      valor: '500.00',
-      quantDividas: 3,
-      icone: 'cart-outline',
-      cor: '#FF1493',
-      dividas: [
-        {
-          nome: 'Roupas',
-          diaPagamento: 8,
-          valor: 200.0,
-          descricao: 'Compra de roupas',
-        },
-        {
-          nome: 'Presentes',
-          diaPagamento: 22,
-          valor: 150.0,
-          descricao: 'Presentes para família',
-        },
-        {
-          nome: 'Eletrônicos',
-          diaPagamento: 28,
-          valor: 150.0,
-          descricao: 'Compras eletrônicas',
-        },
-      ],
-    },
-  ];
+  private categorias: any[] = [];
+
+  private LOCAL_KEY = 'dadosFinanceiros';
+
+  private salvarLocal() {
+    const dados = {
+      cartoes: this.cartoes,
+      categorias: this.categorias,
+    };
+    localStorage.setItem(this.LOCAL_KEY, JSON.stringify(dados));
+  }
+
+  private carregarLocal() {
+    const dados = localStorage.getItem(this.LOCAL_KEY);
+    if (dados) {
+      const obj = JSON.parse(dados);
+      this.cartoes = obj.cartoes || [];
+      this.categorias = obj.categorias || [];
+    }
+  }
 
   getValorTotalDividas(): number {
     let total = 0;
@@ -554,5 +225,20 @@ export class FinanceiroService {
 
   getValorTotalGeral(): number {
     return this.getValorTotalCartoes() + this.getValorTotalCategorias();
+  }
+
+  constructor(private firestore: Firestore) {}
+
+  async salvarFirebase(userId: string) {
+    if (navigator.onLine) {
+      await setDoc(doc(this.firestore, 'financeiro', userId), {
+        cartoes: this.cartoes,
+        categorias: this.categorias,
+      });
+    }
+  }
+
+  async salvarDadosUsuario(uid: string, dados: any) {
+    await setDoc(doc(this.firestore, 'usuarios', uid), dados);
   }
 }
