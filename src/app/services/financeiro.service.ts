@@ -1,5 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Firestore, doc, setDoc } from '@angular/fire/firestore';
+import {
+  Firestore,
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+} from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +19,9 @@ export class FinanceiroService {
 
   private LOCAL_KEY = 'dadosFinanceiros';
 
+  constructor(private firestore: Firestore) {}
+
+  // Salva dados no localStorage
   private salvarLocal() {
     const dados = {
       cartoes: this.cartoes,
@@ -21,7 +30,8 @@ export class FinanceiroService {
     localStorage.setItem(this.LOCAL_KEY, JSON.stringify(dados));
   }
 
-  private carregarLocal() {
+  // Carrega dados do localStorage
+  carregarLocal() {
     const dados = localStorage.getItem(this.LOCAL_KEY);
     if (dados) {
       const obj = JSON.parse(dados);
@@ -30,39 +40,50 @@ export class FinanceiroService {
     }
   }
 
-  getValorTotalDividas(): number {
-    let total = 0;
-    // Soma todas as dívidas de todas as categorias
-    if (Array.isArray(this.categorias) && this.categorias.length > 0) {
-      this.categorias.forEach((cat: any) => {
-        if (
-          cat.dividas &&
-          Array.isArray(cat.dividas) &&
-          cat.dividas.length > 0
-        ) {
-          cat.dividas.forEach((divida: any) => {
-            total += Number(divida.valor) || 0;
-          });
-        }
+  // Salva dados no Firestore
+  async salvarFirebase(userId: string) {
+    if (navigator.onLine) {
+      await setDoc(doc(this.firestore, 'financeiro', userId), {
+        cartoes: this.cartoes,
+        categorias: this.categorias,
       });
+      this.salvarLocal();
     }
-    // Soma todas as compras de todos os cartões
-    if (Array.isArray(this.cartoes) && this.cartoes.length > 0) {
-      this.cartoes.forEach((cartao: any) => {
-        if (
-          cartao.compras &&
-          Array.isArray(cartao.compras) &&
-          cartao.compras.length > 0
-        ) {
-          cartao.compras.forEach((compra: any) => {
-            total += Number(compra.valor) || 0;
-          });
-        }
-      });
-    }
-    return total;
   }
 
+  // Carrega dados do Firestore
+  async carregarFirebase(userId: string) {
+    if (navigator.onLine) {
+      const docRef = doc(this.firestore, 'financeiro', userId);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const dados = docSnap.data();
+        this.cartoes = dados['cartoes'] || [];
+        this.categorias = dados['categorias'] || [];
+        this.salvarLocal();
+      } else {
+        this.cartoes = [];
+        this.categorias = [];
+        this.salvarLocal();
+      }
+    } else {
+      this.carregarLocal();
+    }
+  }
+
+  // Salva dados extras do usuário
+  async salvarDadosUsuario(uid: string, dados: any) {
+    await setDoc(doc(this.firestore, 'usuarios', uid), dados);
+  }
+
+  // Carrega dados extras do usuário
+  async carregarDadosUsuario(uid: string) {
+    const docRef = doc(this.firestore, 'usuarios', uid);
+    const docSnap = await getDoc(docRef);
+    return docSnap.exists() ? docSnap.data() : null;
+  }
+
+  // Métodos de acesso e manipulação dos dados
   getCartoes() {
     return Array.isArray(this.cartoes) ? this.cartoes : [];
   }
@@ -78,22 +99,7 @@ export class FinanceiroService {
     cartao.id = (Math.random() * 100000).toFixed(0);
     cartao.compras = [];
     this.cartoes.push({ ...cartao });
-  }
-
-  addCategoria(categoria: any) {
-    if (!Array.isArray(this.categorias)) return;
-    categoria.id = (Math.random() * 100000).toFixed(0);
-    this.categorias.push({ ...categoria, dividas: [] });
-  }
-
-  updateCategoria(categoriaEditada: any) {
-    if (!Array.isArray(this.categorias) || this.categorias.length === 0) return;
-    const idx = this.categorias.findIndex(
-      (cat) => cat.id === categoriaEditada.id
-    );
-    if (idx !== -1) {
-      this.categorias[idx] = { ...this.categorias[idx], ...categoriaEditada };
-    }
+    this.salvarLocal();
   }
 
   updateCartao(cartaoEditado: any) {
@@ -103,6 +109,16 @@ export class FinanceiroService {
     );
     if (idx !== -1) {
       this.cartoes[idx] = { ...this.cartoes[idx], ...cartaoEditado };
+      this.salvarLocal();
+    }
+  }
+
+  removerCartao(id: string, uid?: string) {
+    if (!Array.isArray(this.cartoes)) return;
+    this.cartoes = this.cartoes.filter((cartao: any) => cartao.id !== id);
+    this.salvarLocal();
+    if (uid) {
+      this.salvarFirebase(uid); // Salva no Firestore após remover
     }
   }
 
@@ -114,6 +130,72 @@ export class FinanceiroService {
     return Array.isArray(this.categorias) && this.categorias.length > 0
       ? this.categorias.find((cat) => cat.id === id)
       : undefined;
+  }
+
+  addCategoria(categoria: any) {
+    if (!Array.isArray(this.categorias)) return;
+    categoria.id = (Math.random() * 100000).toFixed(0);
+    this.categorias.push({ ...categoria, dividas: [] });
+    this.salvarLocal();
+  }
+
+  updateCategoria(categoriaEditada: any) {
+    if (!Array.isArray(this.categorias) || this.categorias.length === 0) return;
+    const idx = this.categorias.findIndex(
+      (cat) => cat.id === categoriaEditada.id
+    );
+    if (idx !== -1) {
+      this.categorias[idx] = { ...this.categorias[idx], ...categoriaEditada };
+      this.salvarLocal();
+    }
+  }
+
+  async excluirCategoria(uid: string, categoriaId: string) {
+    // Remove do array local
+    this.categorias = this.categorias.filter(
+      (cat: any) => cat.id !== categoriaId
+    );
+    this.salvarLocal();
+    // Salva no Firestore
+    await this.salvarFirebase(uid);
+  }
+
+  removerCategoria(id: string) {
+    if (!Array.isArray(this.categorias)) return;
+    this.categorias = this.categorias.filter((cat: any) => cat.id !== id);
+    this.salvarLocal();
+  }
+
+  // Métodos de cálculo e utilitários
+  getValorTotalDividas(): number {
+    let total = 0;
+    if (Array.isArray(this.categorias) && this.categorias.length > 0) {
+      this.categorias.forEach((cat: any) => {
+        if (
+          cat.dividas &&
+          Array.isArray(cat.dividas) &&
+          cat.dividas.length > 0
+        ) {
+          cat.dividas.forEach((divida: any) => {
+            total += Number(divida.valor) || 0;
+          });
+        }
+      });
+    }
+    if (Array.isArray(this.cartoes) && this.cartoes.length > 0) {
+      this.cartoes.forEach((cartao: any) => {
+        if (
+          cartao.compras &&
+          Array.isArray(cartao.compras) &&
+          cartao.compras.length > 0
+        ) {
+          cartao.compras.forEach((compra: any) => {
+            total += Number(compra.valor) || 0;
+          });
+        }
+      });
+    }
+    return total;
   }
 
   getValorTotalCartao(cartaoId: string): number {
@@ -147,7 +229,6 @@ export class FinanceiroService {
     );
   }
 
-  /** Retorna o valor total somado de todos os cartões */
   getValorTotalCartoes(): number {
     if (!Array.isArray(this.cartoes) || this.cartoes.length === 0) return 0;
     return this.cartoes
@@ -166,12 +247,10 @@ export class FinanceiroService {
       }, 0);
   }
 
-  /** Retorna a quantidade de cartões cadastrados */
   getQuantidadeCartoes(): number {
     return Array.isArray(this.cartoes) ? this.cartoes.length : 0;
   }
 
-  /** Retorna o valor total somado de todas as categorias */
   getValorTotalCategorias(): number {
     if (!Array.isArray(this.categorias) || this.categorias.length === 0)
       return 0;
@@ -191,7 +270,6 @@ export class FinanceiroService {
       }, 0);
   }
 
-  /** Retorna a quantidade de categorias cadastradas */
   getQuantidadeCategorias(): number {
     return Array.isArray(this.categorias) ? this.categorias.length : 0;
   }
@@ -218,27 +296,19 @@ export class FinanceiroService {
     );
   }
 
-  removerCartao(id: string) {
-    if (!Array.isArray(this.cartoes)) return;
-    this.cartoes = this.cartoes.filter((cartao: any) => cartao.id !== id);
-  }
-
   getValorTotalGeral(): number {
     return this.getValorTotalCartoes() + this.getValorTotalCategorias();
   }
 
-  constructor(private firestore: Firestore) {}
-
-  async salvarFirebase(userId: string) {
-    if (navigator.onLine) {
-      await setDoc(doc(this.firestore, 'financeiro', userId), {
-        cartoes: this.cartoes,
-        categorias: this.categorias,
-      });
+  async carregarCategoriasDoFirebase(uid: string) {
+    const docRef = doc(this.firestore, 'financeiro', uid);
+    const snap = await getDoc(docRef);
+    if (snap.exists()) {
+      const data = snap.data();
+      this.categorias = data['categorias'] || [];
+      this.salvarLocal(); // Atualiza o localStorage também
+      return this.categorias;
     }
-  }
-
-  async salvarDadosUsuario(uid: string, dados: any) {
-    await setDoc(doc(this.firestore, 'usuarios', uid), dados);
+    return [];
   }
 }

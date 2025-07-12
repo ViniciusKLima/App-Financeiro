@@ -35,6 +35,7 @@ export class ConfigPage {
           handler: () => {
             localStorage.removeItem('isLoggedIn');
             localStorage.removeItem('email');
+            localStorage.removeItem('uid'); // Remover o UID
             this.router.navigateByUrl('/login', { replaceUrl: true });
           },
         },

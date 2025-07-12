@@ -34,6 +34,17 @@ export class CartoesPage implements AfterViewInit {
     );
   }
 
+  async ngOnInit() {
+    const uid = localStorage.getItem('uid');
+    if (uid) {
+      await this.financeiroService.carregarFirebase(uid);
+      this.cartoes = this.financeiroService.getCartoes().map((cartao: any) => ({
+        ...cartao,
+        gradient: this.financeiroService.generateGradient(cartao.cor),
+      }));
+    }
+  }
+
   ngAfterViewInit() {
     setTimeout(() => this.scrollToCenter(this.cartaoAtivoIndex), 100);
   }
@@ -215,7 +226,8 @@ export class CartoesPage implements AfterViewInit {
 
   // Excluir cartão da lista
   excluirCartao(id: string) {
-    this.financeiroService.removerCartao(id);
+    const uid = localStorage.getItem('uid') ?? undefined;
+    this.financeiroService.removerCartao(id, uid);
     this.cartoes = this.cartoes.filter((cartao) => cartao.id !== id);
 
     // Ajusta o cartão ativo se necessário

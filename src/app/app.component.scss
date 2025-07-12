@@ -1,0 +1,25 @@
+.custom-splash {
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #1b57be; // azul principal
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.5s;
+}
+
+.splash-logo {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 32px;
+}
+
+.splash-spinner {
+  margin-bottom: 18px;
+  color: #fff;
+}

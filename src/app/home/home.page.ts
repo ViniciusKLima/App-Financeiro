@@ -52,7 +52,11 @@ export class HomePage implements OnInit, AfterViewInit {
     private modalCtrl: ModalController
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    const uid = localStorage.getItem('uid');
+    if (uid) {
+      await this.financeiroService.carregarFirebase(uid); // Garante que os dados estão carregados
+    }
     this.carregarMostrarValor();
     this.carregarCompromissos();
   }
@@ -137,7 +141,7 @@ export class HomePage implements OnInit, AfterViewInit {
         id,
         nome: cartao.nome,
         tipo: 'cartao',
-        valor: cartao.valor,
+        valor: this.financeiroService.getValorTotalCartao(cartao.id), // <-- aqui!
         dia: cartao.diaVencimento,
         cor: cartao.cor,
         icone: 'card-outline',
@@ -273,15 +277,18 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   get quantidadeDividas(): number {
-    // Some todas as dívidas de todas as categorias
-    let total = 0;
+    let totalDividas = 0;
+    // Soma dívidas das categorias
     const categorias = this.financeiroService.getCategorias();
     categorias.forEach((cat: any) => {
       if (cat.dividas && Array.isArray(cat.dividas)) {
-        total += cat.dividas.length;
+        totalDividas += cat.dividas.length;
       }
     });
-    return total;
+    // Soma cartões (cada cartão conta como 1 dívida)
+    const cartoes = this.financeiroService.getCartoes();
+    totalDividas += cartoes.length;
+    return totalDividas;
   }
 
   get valorTotalCartoes(): number {

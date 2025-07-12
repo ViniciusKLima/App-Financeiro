@@ -18,7 +18,6 @@ export class RecuperarSenhaPage {
     private auth: Auth
   ) {}
 
-  // Pop-up para erros
   async presentToast(message: string, color: 'success' | 'danger' = 'danger') {
     const toast = await this.toastController.create({
       message,

@@ -72,13 +72,13 @@ export class LoginPage {
 
     try {
       // Tenta logar
-      await this.authService.login(emailLimpo, senhaDigitada);
+      const user = await this.authService.login(emailLimpo, senhaDigitada);
+      if (user && user.uid) {
+        localStorage.setItem('uid', user.uid); // Salva o UID
+        localStorage.setItem('isLoggedIn', 'true'); // Flag de login
+        this.router.navigate(['/nav/home']);
+      }
       await loading.dismiss();
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('email', emailLimpo);
-      this.email = '';
-      this.senha = '';
-      this.router.navigate(['/nav/home']); // Se tudo 'Ok', envia para o Home
     } catch (error: any) {
       await loading.dismiss();
       // Trata erros específicos do Firebase

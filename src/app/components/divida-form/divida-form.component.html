@@ -269,7 +269,8 @@
           modo === 'cartao' ? cartaoSelecionado?.cor : categoriaSelecionada?.cor
         "
         [disabled]="
-          modo === 'cartao' ? !cartaoSelecionado : !categoriaSelecionada
+          salvando ||
+          (modo === 'cartao' ? !cartaoSelecionado : !categoriaSelecionada)
         "
         expand="block"
       >

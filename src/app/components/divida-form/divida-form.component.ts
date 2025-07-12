@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ModalController } from '@ionic/angular';
 import { FinanceiroService } from '../../services/financeiro.service';
+import { AuthService } from '../../services/auth.service'; // Adicione este import
 
 @Component({
   selector: 'app-divida-form',
@@ -27,11 +28,13 @@ export class DividaFormComponent implements OnInit {
   valorDividaFormatado = 'R$ 0,00';
 
   formTouched = false;
+  public salvando = false;
 
   constructor(
     private financeiroService: FinanceiroService,
     private fb: FormBuilder,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private authService: AuthService // Adicione aqui
   ) {}
 
   ngOnInit() {
@@ -181,13 +184,17 @@ export class DividaFormComponent implements OnInit {
   }
 
   async salvar() {
+    if (this.salvando) return; // Evita duplo disparo
+    this.salvando = true;
     this.formTouched = true;
     if (this.formCompra.invalid) {
       Object.values(this.formCompra.controls).forEach((control) => {
         control.markAsTouched();
       });
+      this.salvando = false;
       return;
     }
+    const uid = this.authService.usuarioAtual?.uid;
     if (this.modo === 'cartao') {
       const novaCompra = this.formCompra.value;
       const cartao = this.financeiroService.getCartaoById(novaCompra.cartaoId);
@@ -202,6 +209,7 @@ export class DividaFormComponent implements OnInit {
       if (this.compraIndex !== undefined && cartao) {
         // Edição
         cartao.compras[this.compraIndex] = compraEditada;
+        if (uid) await this.financeiroService.salvarFirebase(uid);
         await this.modalCtrl.dismiss({
           tipo: 'cartao',
           compraEditada,
@@ -210,6 +218,7 @@ export class DividaFormComponent implements OnInit {
       } else if (cartao) {
         // Nova compra
         cartao.compras.push(compraEditada);
+        if (uid) await this.financeiroService.salvarFirebase(uid);
         await this.modalCtrl.dismiss({
           tipo: 'cartao',
           compra: compraEditada,
@@ -237,21 +246,25 @@ export class DividaFormComponent implements OnInit {
           categoria.dividas.push(novaDivida);
         }
       }
+      if (uid) await this.financeiroService.salvarFirebase(uid);
       await this.modalCtrl.dismiss({
         tipo: 'categoria',
         divida: novaDivida,
         categoriaId: categoria?.id,
       });
     }
+    this.salvando = false;
   }
 
   async excluir() {
+    const uid = this.authService.usuarioAtual?.uid;
     if (this.modo === 'cartao') {
       const cartao = this.financeiroService.getCartaoById(
         this.formCompra.value.cartaoId
       );
       if (cartao && this.compraIndex !== undefined) {
         cartao.compras.splice(this.compraIndex, 1);
+        if (uid) await this.financeiroService.salvarFirebase(uid);
         await this.modalCtrl.dismiss({ excluido: true, cartaoId: cartao.id });
       }
     } else {
@@ -260,6 +273,7 @@ export class DividaFormComponent implements OnInit {
       );
       if (categoria && this.compraIndex !== undefined) {
         categoria.dividas.splice(this.compraIndex, 1);
+        if (uid) await this.financeiroService.salvarFirebase(uid);
         await this.modalCtrl.dismiss({
           excluido: true,
           categoriaId: categoria.id,

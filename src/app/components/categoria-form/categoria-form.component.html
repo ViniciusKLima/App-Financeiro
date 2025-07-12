@@ -77,7 +77,10 @@
       >
         Preencha todos os campos
       </div>
-      <ion-button (click)="salvar()" class="btn-salvar ion-margin-top"
+      <ion-button
+        (click)="salvar()"
+        class="btn-salvar ion-margin-top"
+        [disabled]="formTouched && !novaCategoria.nome.trim()"
         >Salvar</ion-button
       >
     </ng-container>

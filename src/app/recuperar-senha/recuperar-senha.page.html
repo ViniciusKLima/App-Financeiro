@@ -3,8 +3,7 @@
     <div class="recuperar-wrapper">
       <h2 class="titulo-recuperar">Recuperar Senha</h2>
 
-      <!-- Form verificação -->
-      <form *ngIf="!mostrarFormSenha" class="form">
+      <form class="form">
         <!-- Email -->
         <ion-item class="input-item">
           <ion-icon name="mail-outline" slot="start"></ion-icon>
@@ -17,53 +16,9 @@
           ></ion-input>
         </ion-item>
 
-        <!-- Data de nascimento -->
-        <ion-item class="input-item">
-          <ion-icon name="calendar-outline" slot="start"></ion-icon>
-          <ion-input
-            [(ngModel)]="dataNascimento"
-            name="dataNascimento"
-            type="date"
-            placeholder="Data de Nascimento"
-            required
-          ></ion-input>
-        </ion-item>
-
-        <!-- Chama função para verificar dados -->
+        <!-- Botão para recuperar senha -->
         <ion-button expand="block" (click)="recuperarSenha()">
           Recuperar Senha
-        </ion-button>
-      </form>
-
-      <!-- Form para mudar senha (Caso os dados sejam válidos) -->
-      <form *ngIf="mostrarFormSenha" class="form">
-        <!-- Nova senha -->
-        <ion-item class="input-item">
-          <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
-          <ion-input
-            [(ngModel)]="novaSenha"
-            name="novaSenha"
-            type="password"
-            placeholder="Digite sua nova senha"
-            required
-          ></ion-input>
-        </ion-item>
-
-        <!-- Confirmar nova senha -->
-        <ion-item class="input-item">
-          <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
-          <ion-input
-            [(ngModel)]="confirmarSenha"
-            name="confirmarSenha"
-            type="password"
-            placeholder="Confirme sua nova senha"
-            required
-          ></ion-input>
-        </ion-item>
-
-        <!-- Altera senha -->
-        <ion-button expand="block" (click)="alterarSenha()">
-          Alterar Senha
         </ion-button>
       </form>
 

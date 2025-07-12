@@ -37,29 +37,33 @@ export class CadastroPage {
   async cadastrar() {
     const emailLimpo = this.email.trim(); //limpa o email
 
-    // Verificação de Preenchimento dos Inputs
+    // Validação dos campos obrigatórios
     if (
       !this.nome.trim() ||
       !emailLimpo ||
       !this.senha.trim() ||
       !this.dataNascimento.trim()
     ) {
-      this.corPopup = 'erro';
       this.mensagemErro = 'Preencha todos os campos obrigatórios.';
-      setTimeout(() => {
-        this.mensagemErro = '';
-      }, 3000);
+      this.corPopup = 'erro';
+      this.mostrarToast(this.mensagemErro, 'danger');
       return;
     }
 
-    // Verificação de email válido
+    // Validação do email
     const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailLimpo);
     if (!emailValido) {
-      this.corPopup = 'erro';
       this.mensagemErro = 'Digite um email válido.';
-      setTimeout(() => {
-        this.mensagemErro = '';
-      }, 3000);
+      this.corPopup = 'erro';
+      this.mostrarToast(this.mensagemErro, 'danger');
+      return;
+    }
+
+    // Validação da senha (mínimo 6 caracteres)
+    if (this.senha.trim().length < 6) {
+      this.mensagemErro = 'A senha deve ter pelo menos 6 caracteres.';
+      this.corPopup = 'erro';
+      this.mostrarToast(this.mensagemErro, 'danger');
       return;
     }
 
@@ -86,6 +90,7 @@ export class CadastroPage {
 
       this.corPopup = 'sucesso';
       this.mensagemErro = 'Cadastro realizado com sucesso!';
+      this.mostrarToast(this.mensagemErro, 'success');
       setTimeout(() => {
         this.mensagemErro = '';
         this.router.navigate(['/login']);
@@ -98,9 +103,6 @@ export class CadastroPage {
       } else {
         this.mensagemErro = 'Erro ao cadastrar. Verifique sua conexão.';
       }
-      setTimeout(() => {
-        this.mensagemErro = '';
-      }, 3000);
       this.mostrarToast(this.mensagemErro, 'danger');
     }
   }

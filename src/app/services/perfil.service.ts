@@ -1,38 +1,32 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import {
+  Firestore,
+  doc,
+  getDoc,
+  setDoc,
+  deleteDoc,
+} from '@angular/fire/firestore';
 
 @Injectable({ providedIn: 'root' })
 export class PerfilService {
-  private api = 'https://68360978664e72d28e3faf8c.mockapi.io/api/v1/usuarios';
+  constructor(private firestore: Firestore) {}
 
-  constructor(private http: HttpClient) {}
-
-  getUsuarioPorEmail(email: string): Observable<any[]> {
-    const url = `${this.api}?email=${encodeURIComponent(email)}`;
-    return this.http.get<any[]>(url).pipe(
-      catchError((error) => {
-        console.error('Erro ao buscar usuário:', error);
-        // Se der 404 ou erro qualquer, retorna array vazio pra seguir com o cadastro
-        return of([]);
-      })
-    );
+  // Busca perfil pelo UID do usuário logado
+  async getPerfilPorUid(uid: string): Promise<any> {
+    const docRef = doc(this.firestore, 'usuarios', uid);
+    const docSnap = await getDoc(docRef);
+    return docSnap.exists() ? docSnap.data() : null;
   }
 
-  getPerfilPorId(id: string): Observable<any> {
-    return this.http.get<any>(`${this.api}/${id}`);
+  // Atualiza dados do perfil do usuário logado
+  async atualizarPerfil(uid: string, dados: any): Promise<void> {
+    const docRef = doc(this.firestore, 'usuarios', uid);
+    await setDoc(docRef, dados, { merge: true });
   }
 
-  criarUsuario(usuario: any): Observable<any> {
-    return this.http.post(this.api, usuario);
-  }
-
-  atualizarUsuario(id: string, dados: any): Observable<any> {
-    return this.http.put(`${this.api}/${id}`, dados);
-  }
-
-  deletarUsuario(id: string): Observable<any> {
-    return this.http.delete(`${this.api}/${id}`);
+  // Deleta perfil do usuário logado
+  async deletarPerfil(uid: string): Promise<void> {
+    const docRef = doc(this.firestore, 'usuarios', uid);
+    await deleteDoc(docRef);
   }
 }

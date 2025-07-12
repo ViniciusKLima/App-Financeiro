@@ -33,9 +33,13 @@ export class CarteiraPage {
     }));
   }
 
-  carregarCategorias() {
-    this.categorias = this.financeiroService.getCategorias();
-    this.ordenarCategoriasPorValor();
+  async carregarCategorias() {
+    const uid = localStorage.getItem('uid');
+    if (uid) {
+      this.categorias =
+        await this.financeiroService.carregarCategoriasDoFirebase(uid);
+      this.ordenarCategoriasPorValor();
+    }
   }
 
   ordenarCategoriasPorValor() {
@@ -90,8 +94,10 @@ export class CarteiraPage {
   }
 
   adicionarNovaCategoria(novaCat: any) {
-    novaCat.id = Date.now().toString();
-    this.categorias.push(novaCat);
+    // Remova a linha abaixo!
+    // novaCat.id = Date.now().toString();
+    // this.categorias.push(novaCat);
+    this.carregarCategorias(); // Só recarrega do service
     this.ordenarCategoriasPorValor();
   }
 
@@ -148,8 +154,12 @@ export class CarteiraPage {
     await alert.present();
   }
 
-  excluirCategoria(id: string) {
-    this.categorias = this.categorias.filter((cat) => cat.id !== id);
+  async excluirCategoria(id: string) {
+    const uid = localStorage.getItem('uid');
+    if (uid) {
+      await this.financeiroService.excluirCategoria(uid, id);
+      this.carregarCategorias(); // Atualiza a lista local
+    }
   }
 
   doRefresh(event: any) {

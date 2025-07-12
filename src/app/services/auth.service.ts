@@ -5,27 +5,52 @@ import {
   createUserWithEmailAndPassword,
   signOut,
   User,
+  UserCredential,
 } from '@angular/fire/auth';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   constructor(private auth: Auth) {}
 
+  // Login
   async login(email: string, senha: string): Promise<User | null> {
-    const cred = await signInWithEmailAndPassword(this.auth, email, senha);
-    return cred.user;
+    try {
+      const cred: UserCredential = await signInWithEmailAndPassword(
+        this.auth,
+        email,
+        senha
+      );
+      return cred.user;
+    } catch (error) {
+      throw error;
+    }
   }
 
+  // Cadastro
   async cadastrar(email: string, senha: string): Promise<User | null> {
-    const cred = await createUserWithEmailAndPassword(this.auth, email, senha);
-    return cred.user;
+    try {
+      const cred: UserCredential = await createUserWithEmailAndPassword(
+        this.auth,
+        email,
+        senha
+      );
+      return cred.user;
+    } catch (error) {
+      throw error;
+    }
   }
 
-  async logout() {
-    await signOut(this.auth);
+  // Logout
+  async logout(): Promise<void> {
+    try {
+      await signOut(this.auth);
+    } catch (error) {
+      throw error;
+    }
   }
 
-  get usuarioAtual() {
+  // Usuário atual
+  get usuarioAtual(): User | null {
     return this.auth.currentUser;
   }
 }

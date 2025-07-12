@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { FinanceiroService } from 'src/app/services/financeiro.service';
+import { AuthService } from 'src/app/services/auth.service'; // Adicione este import
 
 @Component({
   selector: 'app-categoria-form',
@@ -89,9 +90,12 @@ export class CategoriaFormComponent {
     'gift-outline',
   ];
 
+  public salvando = false;
+
   constructor(
     private modalCtrl: ModalController,
-    private financeiroService: FinanceiroService
+    private financeiroService: FinanceiroService,
+    private authService: AuthService // Adicione aqui
   ) {}
 
   ngOnInit() {
@@ -111,25 +115,31 @@ export class CategoriaFormComponent {
     this.novaCategoria.icone = icon;
   }
 
-  salvar() {
+  async salvar() {
+    if (this.salvando) return; // Evita duplo disparo
+    this.salvando = true;
     this.formTouched = true;
 
+    const uid = this.authService.usuarioAtual?.uid;
     if (this.modo === 'categoria') {
       if (!this.novaCategoria.nome.trim()) {
+        this.salvando = false;
         return;
       }
       if (this.novaCategoria.id) {
         this.financeiroService.updateCategoria(this.novaCategoria);
-        this.modalCtrl.dismiss(this.novaCategoria);
       } else {
-        this.modalCtrl.dismiss(this.novaCategoria);
+        this.financeiroService.addCategoria(this.novaCategoria);
       }
+      if (uid) await this.financeiroService.salvarFirebase(uid);
+      this.modalCtrl.dismiss(this.novaCategoria);
     } else {
       if (
         !this.novoCartao.nome.trim() ||
         !this.novoCartao.diaFechamento ||
         !this.novoCartao.diaVencimento
       ) {
+        this.salvando = false;
         return;
       }
       if (this.novoCartao.id) {
@@ -137,7 +147,9 @@ export class CategoriaFormComponent {
       } else {
         this.financeiroService.addCartao(this.novoCartao);
       }
+      if (uid) await this.financeiroService.salvarFirebase(uid);
       this.modalCtrl.dismiss(this.novoCartao);
     }
+    this.salvando = false;
   }
 }
