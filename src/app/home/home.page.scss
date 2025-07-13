@@ -1,38 +1,50 @@
-.painel-scroll-wrapper {
-  // ...seus estilos...
-  transition: box-shadow 0.3s;
-  box-shadow: none;
+* {
+  --background: var(--ion-background-color) !important;
+}
 
-  &.painel-shadow {
-    box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.18);
-  }
+.content-home {
+  --background: none !important;
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .painel-scroll-wrapper {
   padding-top: env(safe-area-inset-top);
-  width: 100vw;
+  width: 100%;
   overflow: hidden;
   display: flex;
   justify-content: center;
   flex-direction: column;
   z-index: 100;
-  background: var(--ion-background-color, #fefefe) !important;
+  background: var(--ion-background-color) !important;
   border-radius: 0 0 30px 30px;
+  transition: box-shadow 0.3s;
+  box-shadow: none;
+  flex-shrink: 0; // ✅ Não encolhe
+
+  &.painel-shadow {
+    box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.18);
+  }
 
   .painel-scroll {
     background: var(--ion-background-color, #fefefe) !important;
     display: flex;
     overflow-x: auto;
-    padding: 16px 0;
+    padding: 16px 0 0 0;
     gap: 16px;
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
-    scrollbar-width: none; // Firefox
-    -ms-overflow-style: none; // IE 10+
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     z-index: 100;
 
     &::-webkit-scrollbar {
-      display: none; // Chrome/Safari
+      display: none;
     }
 
     .painel-espaco {
@@ -65,6 +77,7 @@
         transform: scale(1.05);
       }
 
+      // ✅ Mantém todos os estilos dos painéis iguais
       .data {
         font-size: clamp(0.6rem, 0.9vw, 0.7rem);
         font-weight: 500;
@@ -75,22 +88,14 @@
       }
 
       .tt-painel {
-        font-size: clamp(
-          0.95rem,
-          2.2vw,
-          1.1rem
-        ); // antes: clamp(1rem, 3vw, 1.2rem)
+        font-size: clamp(0.95rem, 2.2vw, 1.1rem);
         color: white;
         font-weight: 300;
         margin: 0;
       }
 
       .valor-painel {
-        font-size: clamp(
-          1rem,
-          3vw,
-          1.3rem
-        ); // antes: clamp(1.1rem, 4vw, 1.5rem)
+        font-size: clamp(1rem, 3vw, 1.3rem);
         color: white;
         font-weight: 700;
       }
@@ -135,7 +140,7 @@
         padding: 0;
         margin: 0;
         --box-shadow: none;
-        --background: none;
+        --background: none !important;
         --color: white;
         --border-radius: 5px 5px 5px 15px;
         text-transform: none !important;
@@ -152,10 +157,10 @@
         position: absolute;
         top: 30%;
         right: 4.5%;
-        left: 4.5%; // Adicione para ocupar toda a largura interna do painel
+        left: 4.5%;
         display: flex;
         flex-direction: column;
-        align-items: flex-end; // Alinha à direita, mas pode ajustar para center se preferir
+        align-items: flex-end;
         color: white;
         text-align: right;
 
@@ -167,11 +172,7 @@
           margin: 0;
         }
         .num-quantCartoesCateg {
-          font-size: clamp(
-            0.95rem,
-            3vw,
-            1.2rem
-          ); // antes: clamp(1rem, 4vw, 1.5rem) ou 1.5rem fixo
+          font-size: clamp(0.95rem, 3vw, 1.2rem);
           font-weight: 700;
           text-align: center;
           max-height: 30%;
@@ -196,7 +197,7 @@
         padding: 0;
         margin: 0;
         --box-shadow: none;
-        --background: #548aca;
+        --background: #548aca !important;
         --color: white;
         --border-radius: 10px;
         text-transform: none !important;
@@ -218,7 +219,7 @@
         padding: 0;
         margin: 0;
         --box-shadow: none;
-        --background: #548aca;
+        --background: #548aca !important;
         --color: white;
         --border-radius: 10px;
         text-transform: none !important;
@@ -232,49 +233,95 @@
       }
     }
   }
+}
+
+// ✅ Carrossel indicadores
+.carrossel-indicadores {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0; // ✅ Só padding inferior
+  height: auto; // ✅ Altura automática
+  background: var(--ion-background-color, #fefefe);
+
+  span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ddd;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &.ativo {
+      background: var(--cor-principal);
+      transform: scale(1.2);
+    }
+  }
+}
+
+// ✅ Tabs sticky
+.tabs-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  background: var(--ion-background-color, #fefefe);
+  border-bottom: 1px solid #eee;
+  flex-shrink: 0; // ✅ Não encolhe
 
   .tabs {
     display: flex;
     justify-content: center;
     gap: 1rem;
-    margin: 0 0 1.5rem 0;
-  }
+    padding: 16px 0; // ✅ Reduzido de 1rem para 16px
 
-  .tabs button {
-    background: white;
-    color: var(--cor-principal);
-    border: none;
-    border-radius: 10px;
-    font-size: clamp(0.8rem, 2vw, 1rem);
-    padding: 0.5rem 1.5rem;
-    cursor: pointer;
-    transition: border-color 0.3s;
-  }
+    button {
+      background: white;
+      color: var(--cor-principal);
+      border: none;
+      border-radius: 10px;
+      font-size: clamp(0.8rem, 2vw, 1rem);
+      padding: 8px 20px; // ✅ Reduzido
+      cursor: pointer;
+      transition: all 0.3s;
 
-  .tabs button.active {
-    background-color: var(--cor-principal);
-    color: white;
-  }
-
-  .slide {
-    display: none;
-
-    &.active {
-      display: flex;
-      flex-direction: column;
-      gap: 1.6rem;
+      &.active {
+        background-color: var(--cor-principal);
+        color: white;
+      }
     }
   }
 }
 
-//-----------------------------
+// ✅ Conteúdo das dividas - ocupa espaço restante
+.content-dividas {
+  flex: 1; // ✅ Ocupa todo o espaço restante
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px; // ✅ Sem padding inferior
+  background: var(--ion-background-color, #fefefe);
+  overflow-y: auto; // ✅ Scroll apenas vertical quando necessário
 
-.content-home {
-  --background: none !important;
-  --padding-start: 20px;
-  --padding-end: 20px;
+  .slider {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    .slide {
+      display: none;
+      flex: 1;
+
+      &.active {
+        display: flex;
+        flex-direction: column;
+        gap: 16px; // ✅ Reduzido de 1.6rem
+        padding: 20px 0; // ✅ Só padding vertical
+      }
+    }
+  }
 }
 
+// ✅ Conteúdo vazio - centralizado
 .content-vazio1 {
   position: relative;
   color: #ffffff;
@@ -285,12 +332,12 @@
   justify-content: center;
   border-radius: 20px;
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.062);
-  width: 90vw;
+  width: 100%;
   max-width: 400px;
-  height: 50vw;
-  max-height: 400px;
-  margin: 56px auto;
+  height: 300px; // ✅ Altura fixa menor
+  margin: 40px auto; // ✅ Margem reduzida
   padding: 20px;
+  align-self: center; // ✅ Centraliza
 
   .icone-top {
     color: white;
@@ -303,9 +350,10 @@
   }
 
   p {
-    font-size: 115%;
+    font-size: 1.1rem; // ✅ Tamanho fixo
+    text-align: center;
     span {
-      font-size: 70%;
+      font-size: 0.9rem;
       opacity: 0.7;
     }
   }
@@ -314,8 +362,8 @@
     position: absolute;
     bottom: 10px;
     left: 12px;
-    width: fit-content;
-    font-size: 70%;
+    width: calc(100% - 24px); // ✅ Largura responsiva
+    font-size: 0.8rem;
     --box-shadow: none;
     --background: #5086c1;
     --color: white;
@@ -329,115 +377,119 @@
   }
 }
 
-::ng-deep ion-refresher-content {
-  margin-top: 16px; /* ajuste o valor conforme desejar */
-}
-
-::ng-deep ion-refresher-content .refresher-refreshing-text,
-::ng-deep ion-refresher-content .refresher-pulling-text,
-::ng-deep ion-refresher-content span {
-  font-size: 0.8rem !important;
-  color: #565656 !important;
-  fill: #565656 !important;
-}
-
-::ng-deep ion-refresher-content .refresher-pulling-icon,
-::ng-deep ion-refresher-content .refresher-refreshing-icon,
-::ng-deep ion-refresher-content svg {
-  color: #565656 !important;
-  fill: #565656 !important;
-  font-size: 1.4rem !important;
-}
-
-/* filepath: c:\app-financas\controle-financeiro\src\app\home\home.page.scss */
-ion-refresher-content {
-  --ion-color-primary: #565656; /* Cor do seu app, troque se quiser */
-  --color: #565656; /* Cor do texto "Atualizando..." */
-}
-
-.slide {
-  display: none;
-
-  &.active {
-    display: flex;
-    flex-direction: column;
-    gap: 1.6rem;
-  }
-}
-
-ion-checkbox {
-  --size: 26px;
-  --checkbox-background-checked: var(--cor-pago);
-  --checkbox-background: #efefef;
-  --border-color: #7e7e7e;
-  --border-color-checked: var(--cor-pago);
-  --checkmark-color: white;
-}
-
-.card-atrasado {
-  h2 {
-    color: var(--cor-atraso);
-    font-size: 0.8rem;
-    margin: 0;
-  }
-
-  .item-atrasado {
-    border: 1px solid var(--cor-atraso);
-    box-shadow: 0 0 10px rgba(70, 4, 4, 0.13) !important;
-  }
-}
-
-.card-pago {
-  h2 {
-    color: var(--cor-pago);
-    font-size: 0.8rem;
-    margin: 0;
-  }
-
-  .item-pago {
-    border: 1px solid var(--cor-pago);
-  }
-}
-.cards-dividas > h2 {
-  text-align: left;
-  width: 100%;
-  margin-left: 10px;
-}
-
-.cards-dividas {
-  margin-bottom: 0.7rem; // igual ao gap interno
-  margin-bottom: 1rem;
+.content-vazio-pagas {
+  position: relative;
+  color: #ffffff;
+  background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.7rem;
+  justify-content: start;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(76, 175, 80, 0.3);
+  width: 100%;
+  max-width: 350px;
+  height: 200px; // ✅ Altura fixa menor
+  margin: 40px auto; // ✅ Margem reduzida
+  padding: 20px;
+  text-align: center;
+  align-self: center; // ✅ Centraliza
 
-  .h2-pendente {
-    color: #3f3f3f;
+  .icone-top-pagas {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 12px;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    border-radius: 50%;
+    font-size: 1rem;
+    backdrop-filter: blur(10px);
+  }
+
+  .mensagem-vazio-pagas {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin: 0 0 20px 0;
+
+    span {
+      font-size: 1.3rem;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    small {
+      font-size: 0.8rem;
+      opacity: 0.8;
+      font-style: italic;
+    }
+  }
+
+  .btn-ver-pagos {
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    right: 15px;
+    font-size: 0.9rem;
+    --background: rgb(65, 131, 65) !important;
+    --color: white;
+    --border-radius: 12px;
+    backdrop-filter: blur(10px);
+    border: none;
+    font-weight: 600;
+
+    ion-icon {
+      font-size: 1.1rem;
+      margin-left: 8px;
+    }
+
+    &:hover {
+      --background: rgba(255, 255, 255, 0.3);
+    }
+  }
+}
+
+// ✅ Cards das dívidas - sem espaços extras
+.cards-dividas {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px; // ✅ Reduzido
+  margin-bottom: 16px; // ✅ Reduzido
+
+  &:last-child {
+    margin-bottom: 0; // ✅ Remove margem do último
+  }
+
+  > h2 {
+    text-align: left;
+    width: 100%;
+    margin: 0 0 8px 10px; // ✅ Reduzido
     font-size: 0.8rem;
+
+    &.h2-pendente {
+      color: #3f3f3f;
+    }
   }
 
   .itens-dividas {
     background: white !important;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     border-radius: 18px;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 1rem;
+    padding: 16px; // ✅ Reduzido
     color: #2e2e2e;
     font-size: 0.85rem;
     font-weight: 500;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.13);
     width: 100%;
     max-width: 450px;
-
     transition: all 0.3s ease;
     overflow: hidden;
+    margin-bottom: 12px; // ✅ Reduzido
+
+    &:last-child {
+      margin-bottom: 0; // ✅ Remove margem do último
+    }
 
     &.animando {
       pointer-events: none;
@@ -452,7 +504,6 @@ ion-checkbox {
       }
     }
 
-    // Animação para pago (verde, direita)
     &.pago-animacao {
       background-color: #4caf50 !important;
       color: #fff !important;
@@ -471,7 +522,6 @@ ion-checkbox {
       }
     }
 
-    // Animação para despago (azul, esquerda)
     &.despago-animacao {
       background-color: #2196f3 !important;
       color: #fff !important;
@@ -493,9 +543,9 @@ ion-checkbox {
     .top-divida {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       width: 100%;
-      margin-block: 0.6rem;
-      padding-inline: 3px;
+      margin-bottom: 12px; // ✅ Reduzido
 
       ion-label {
         display: flex;
@@ -511,18 +561,76 @@ ion-checkbox {
       width: 100%;
       height: 1px;
       background-color: #ccc;
+      margin: 8px 0; // ✅ Reduzido
     }
 
     .bottom-divida {
       width: 100%;
-      padding-inline: 5px;
 
       ion-label {
         display: flex;
         justify-content: space-between;
+        align-items: center;
       }
     }
   }
+}
+
+// ✅ Estilos específicos para cards
+.card-atrasado {
+  h2 {
+    color: var(--cor-atraso);
+  }
+
+  .item-atrasado {
+    border: 1px solid var(--cor-atraso);
+    box-shadow: 0 0 10px rgba(70, 4, 4, 0.13) !important;
+  }
+}
+
+.card-pago {
+  h2 {
+    color: var(--cor-pago);
+  }
+
+  .item-pago {
+    border: 1px solid var(--cor-pago);
+  }
+}
+
+// ✅ Mantém estilos do refresher
+::ng-deep ion-refresher-content {
+  margin-top: 16px;
+}
+
+::ng-deep ion-refresher-content .refresher-refreshing-text,
+::ng-deep ion-refresher-content .refresher-pulling-text,
+::ng-deep ion-refresher-content span {
+  font-size: 0.8rem !important;
+  color: #565656 !important;
+  fill: #565656 !important;
+}
+
+::ng-deep ion-refresher-content .refresher-pulling-icon,
+::ng-deep ion-refresher-content .refresher-refreshing-icon,
+::ng-deep ion-refresher-content svg {
+  color: #565656 !important;
+  fill: #565656 !important;
+  font-size: 1.4rem !important;
+}
+
+ion-refresher-content {
+  --ion-color-primary: #565656;
+  --color: #565656;
+}
+
+ion-checkbox {
+  --size: 26px;
+  --checkbox-background-checked: var(--cor-pago);
+  --checkbox-background: #efefef;
+  --border-color: #7e7e7e;
+  --border-color-checked: var(--cor-pago);
+  --checkmark-color: white;
 }
 
 .valor-painel ion-icon,
@@ -570,5 +678,324 @@ ion-checkbox {
     &:last-child {
       margin-bottom: 0;
     }
+  }
+}
+
+// ✅ Skeleton dos painéis
+.painel-skeleton {
+  position: relative;
+  margin: 25px auto;
+  padding: 20px 30px;
+  width: 83vw;
+  max-width: 500px;
+  height: 50vw;
+  max-height: 320px;
+  flex: 0 0 83vw;
+  border-radius: 20px;
+  background: #a0a0a0; // ✅ Muito mais escuro
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  scroll-snap-align: center;
+  overflow: hidden;
+
+  // ✅ Gradiente animado de fundo - mais pronunciado
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.9) 35%,
+      rgba(255, 255, 255, 1) 50%,
+      rgba(255, 255, 255, 0.9) 65%,
+      transparent 100%
+    );
+    animation: shimmer-sweep 2s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .skeleton-buttons {
+    position: absolute;
+    bottom: 8%;
+    left: 4.5%;
+    right: 4.5%;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    z-index: 2;
+  }
+}
+
+// ✅ Skeleton dos tabs - Melhorado
+.tabs-skeleton {
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  background: var(--ion-background-color, #fefefe);
+  border-bottom: 1px solid #eee;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 16px 0;
+}
+
+// ✅ Skeleton do conteúdo - MUITO MAIS ESCURO
+.content-skeleton {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 20px;
+  background: var(--ion-background-color, #fefefe);
+
+  .card-skeleton {
+    padding: 16px;
+    border-radius: 18px;
+    background: #b8b8b8; // ✅ Muito mais escuro
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.13);
+    position: relative;
+    overflow: hidden;
+
+    // ✅ Gradiente animado para cards - mais pronunciado
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 200%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.8) 35%,
+        rgba(255, 255, 255, 0.95) 50%,
+        rgba(255, 255, 255, 0.8) 65%,
+        transparent 100%
+      );
+      animation: shimmer-sweep 2.5s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .item-skeleton {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 2;
+
+      .left-skeleton {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+    }
+
+    .bottom-skeleton {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+  }
+}
+
+// ✅ Loading inline para atualizações - Melhorado
+.loading-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px;
+  color: var(--cor-principal);
+  font-size: 0.9rem;
+  opacity: 0.8;
+
+  ion-spinner {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// ✅ Animação do skeleton - SUPER ESCURO E NÍTIDO
+ion-skeleton-text {
+  --background: #969696 !important; // ✅ Muito mais escuro
+  --background-rgb: 150, 150, 150;
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+
+  // ✅ Gradiente shimmer MUITO mais pronunciado
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.3) 15%,
+      rgba(255, 255, 255, 0.9) 35%,
+      rgba(255, 255, 255, 1) 50%,
+      rgba(255, 255, 255, 0.9) 65%,
+      rgba(255, 255, 255, 0.3) 85%,
+      transparent 100%
+    );
+    animation: shimmer-pass 1.8s ease-in-out infinite;
+    transform: skewX(-20deg);
+  }
+
+  // ✅ Sobrescrever estilos padrão do Ionic
+  &.skeleton-text {
+    --background: #969696 !important;
+    background: #969696 !important;
+  }
+}
+
+// ✅ Skeleton customizado para diferentes elementos - MAIS ESCURO
+.skeleton-circle {
+  --background: #969696 !important;
+  border-radius: 50% !important;
+
+  &::after {
+    border-radius: 50%;
+  }
+}
+
+.skeleton-button {
+  --background: #969696 !important;
+  border-radius: 10px !important;
+
+  &::after {
+    border-radius: 10px;
+  }
+}
+
+.skeleton-line {
+  --background: #969696 !important;
+  border-radius: 2px !important;
+
+  &::after {
+    border-radius: 2px;
+  }
+}
+
+// ✅ Pulse suave nos painéis skeleton - CORES MAIS ESCURAS
+.painel-skeleton {
+  animation: skeletonPulse 3s ease-in-out infinite;
+}
+
+@keyframes skeletonPulse {
+  0%,
+  100% {
+    background-color: #a0a0a0; // ✅ Muito mais escuro
+  }
+  50% {
+    background-color: #acacac; // ✅ Variação mais escura
+  }
+}
+
+// ✅ Efeito de "respiração" nos cards - CORES MAIS ESCURAS
+.card-skeleton {
+  animation: cardBreathing 4s ease-in-out infinite;
+}
+
+@keyframes cardBreathing {
+  0%,
+  100% {
+    background-color: #b8b8b8; // ✅ Muito mais escuro
+    transform: scale(1);
+  }
+  50% {
+    background-color: #c0c0c0; // ✅ Variação mais escura
+    transform: scale(1.005);
+  }
+}
+
+// ✅ Animações melhoradas - shimmer mais intenso
+@keyframes shimmer-sweep {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer-pass {
+  0% {
+    transform: translateX(-100%) skewX(-20deg);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(200%) skewX(-20deg);
+    opacity: 0;
+  }
+}
+
+// ✅ Versão alternativa ainda mais escura (opcional)
+.skeleton-dark {
+  --background: #808080 !important; // ✅ Extremamente escuro
+
+  &::after {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.4) 10%,
+      rgba(255, 255, 255, 0.95) 30%,
+      rgba(255, 255, 255, 1) 50%,
+      rgba(255, 255, 255, 0.95) 70%,
+      rgba(255, 255, 255, 0.4) 90%,
+      transparent 100%
+    );
+  }
+}
+
+// ✅ Skeleton com contraste máximo
+.skeleton-contrast {
+  --background: #707070 !important; // ✅ Contraste máximo
+
+  &::after {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.5) 5%,
+      rgba(255, 255, 255, 1) 25%,
+      rgba(255, 255, 255, 1) 75%,
+      rgba(255, 255, 255, 0.5) 95%,
+      transparent 100%
+    );
+    animation-duration: 1.5s;
   }
 }

@@ -11,7 +11,7 @@
       <ion-card class="fatura-card">
         <ion-card-header>
           <ion-card-title [style.color]="categoria?.cor">
-            R$ {{ financeiroFacade.getTotalDividasCategoria(categoria?.id) |
+            {{ financeiroFacade.getTotalDividasCategoria(categoria?.id) |
             currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
           </ion-card-title>
         </ion-card-header>
@@ -40,7 +40,7 @@
                   >{{ divida.diaPagamento }}</ion-col
                 >
                 <ion-col size="4" class="col-valor">
-                  {{ divida.valor | currency:'BRL':'symbol':'1.2-2' }}
+                  {{ divida.valor | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
                 </ion-col>
               </ion-row>
             </ng-container>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ✅ Suas cores do app -->
+    <color name="colorPrimary">#1b57be</color>
+    <color name="colorPrimaryDark">#1b57be</color>
+    <color name="colorAccent">#1b57be</color>
+    
+    <!-- ✅ Cores adicionais -->
+    <color name="statusBarColor">#1b57be</color>
+    <color name="toolbarColor">#1b57be</color>
+    <color name="navigationBarColor">#1b57be</color>
+    <color name="splashBackground">#1b57be</color>
+</resources>

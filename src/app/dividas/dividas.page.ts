@@ -76,20 +76,12 @@ export class DividasPage implements OnInit, OnDestroy {
     });
 
     modal.onDidDismiss().then(async (retorno) => {
-      if (retorno.data) {
-        const uid = localStorage.getItem('uid');
-        if (uid) {
-          try {
-            await this.financeiroFacade.adicionarDividaCategoria(
-              this.categoria?.id,
-              retorno.data,
-              uid
-            );
-            console.log('✅ Dívida adicionada com sucesso');
-          } catch (error) {
-            console.error('❌ Erro ao adicionar dívida:', error);
-          }
-        }
+      if (retorno.data && retorno.data.salvo) {
+        // ✅ NÃO salvar novamente - já foi salvo no modal
+        console.log(`${retorno.data.acao} dívida:`, retorno.data.divida);
+
+        // ✅ Apenas recarrega para atualizar a UI (opcional, o listener já faz isso)
+        // this.carregarDados(); // Comentado pois o listener já atualiza
       }
     });
 
@@ -102,7 +94,7 @@ export class DividasPage implements OnInit, OnDestroy {
       componentProps: {
         modo: 'categoria',
         categoriaId: this.categoria?.id,
-        compra: { ...divida },
+        compra: divida,
         compraIndex: index,
       },
       breakpoints: [0, 0.8, 0.9],
@@ -112,32 +104,12 @@ export class DividasPage implements OnInit, OnDestroy {
     });
 
     modal.onDidDismiss().then(async (retorno) => {
-      if (retorno.data) {
-        const uid = localStorage.getItem('uid');
-        if (uid) {
-          try {
-            if (retorno.data.divida) {
-              // Editando dívida
-              await this.financeiroFacade.editarDividaCategoria(
-                this.categoria?.id,
-                index,
-                retorno.data.divida,
-                uid
-              );
-              console.log('✅ Dívida editada com sucesso');
-            } else if (retorno.data.excluido) {
-              // Excluindo dívida
-              await this.financeiroFacade.removerDividaCategoria(
-                this.categoria?.id,
-                index,
-                uid
-              );
-              console.log('✅ Dívida excluída com sucesso');
-            }
-          } catch (error) {
-            console.error('❌ Erro ao processar dívida:', error);
-          }
-        }
+      if (retorno.data && retorno.data.salvo) {
+        // ✅ NÃO salvar novamente - já foi salvo no modal
+        console.log(`${retorno.data.acao} dívida:`, retorno.data.divida);
+      } else if (retorno.data && retorno.data.excluido) {
+        // ✅ NÃO salvar novamente - já foi excluído no modal
+        console.log('Dívida excluída:', retorno.data);
       }
     });
 

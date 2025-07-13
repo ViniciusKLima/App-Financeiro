@@ -213,7 +213,6 @@
 
     .fatura-header {
       font-weight: bold;
-      border-bottom: 1px solid rgba(161, 161, 161, 0.719);
     }
 
     ion-col {
@@ -341,4 +340,355 @@
   color: var(--cor-principal, #bbb);
   margin-bottom: 6px;
   opacity: 0.7;
+}
+
+// ✅ Skeleton do conteúdo vazio
+.cartao-empty-skeleton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 72vh;
+  margin-top: 0;
+
+  .cartao-empty-silhueta-skeleton {
+    border: 2.5px dashed #bbb;
+    border-radius: 24px;
+    width: 380px;
+    max-width: 92vw;
+    height: 240px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #bbb;
+    font-size: 1.25rem;
+    margin-bottom: 36px;
+    box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.04);
+    position: relative;
+    background: #f0f0f0;
+    overflow: hidden;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 200%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.7) 35%,
+        rgba(255, 255, 255, 0.9) 50%,
+        rgba(255, 255, 255, 0.7) 65%,
+        transparent 100%
+      );
+      animation: shimmer-sweep 2s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    > * {
+      position: relative;
+      z-index: 2;
+    }
+  }
+}
+
+// ✅ Skeleton dos cartões
+.cartoes-skeleton-wrapper {
+  width: 100vw;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .cartoes-skeleton-scroll {
+    display: flex;
+    overflow-x: auto;
+    padding: 16px 0;
+    gap: 16px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    width: 100%;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .cartao-skeleton-espaco {
+      min-width: 5vw;
+      pointer-events: none;
+      flex-shrink: 0;
+    }
+
+    .cartao-skeleton-box {
+      position: relative;
+      margin: 25px auto;
+      width: 83vw;
+      max-width: 500px;
+      height: 50vw;
+      max-height: 320px;
+      flex: 0 0 83vw;
+      border-radius: 20px;
+      background: #a0a0a0;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.24);
+      overflow: hidden;
+
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 200%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent 0%,
+          rgba(255, 255, 255, 0.9) 35%,
+          rgba(255, 255, 255, 1) 50%,
+          rgba(255, 255, 255, 0.9) 65%,
+          transparent 100%
+        );
+        animation: shimmer-sweep 2s ease-in-out infinite;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      > * {
+        position: relative;
+        z-index: 2;
+      }
+    }
+  }
+}
+
+// ✅ Skeleton da fatura
+.fatura-skeleton-card {
+  background: transparent;
+  margin-top: 15px;
+  padding: 20px;
+  border-radius: 16px;
+
+  .fatura-skeleton-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .fatura-skeleton-content {
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+
+    .fatura-skeleton-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 17px 0;
+      border-bottom: 1px solid rgba(150, 150, 150, 0.2);
+
+      &:first-child {
+        border-bottom: 2px solid rgba(150, 150, 150, 0.3);
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+}
+
+// ✅ Loading inline para atualizações
+.loading-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px;
+  color: var(--cor-principal);
+  font-size: 0.9rem;
+  opacity: 0.8;
+
+  ion-spinner {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// ✅ Skeleton customizado - aplicar os mesmos estilos das outras páginas
+ion-skeleton-text {
+  --background: #969696 !important;
+  --background-rgb: 150, 150, 150;
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.3) 15%,
+      rgba(255, 255, 255, 0.9) 35%,
+      rgba(255, 255, 255, 1) 50%,
+      rgba(255, 255, 255, 0.9) 65%,
+      rgba(255, 255, 255, 0.3) 85%,
+      transparent 100%
+    );
+    animation: shimmer-pass 1.8s ease-in-out infinite;
+    transform: skewX(-20deg);
+  }
+
+  &.skeleton-text {
+    --background: #969696 !important;
+    background: #969696 !important;
+  }
+}
+
+// ✅ Skeleton customizado para diferentes elementos
+.skeleton-circle {
+  --background: #969696 !important;
+  border-radius: 50% !important;
+
+  &::after {
+    border-radius: 50%;
+  }
+}
+
+.skeleton-button {
+  --background: #969696 !important;
+  border-radius: 10px !important;
+
+  &::after {
+    border-radius: 10px;
+  }
+}
+
+.skeleton-line {
+  --background: #969696 !important;
+  border-radius: 2px !important;
+
+  &::after {
+    border-radius: 2px;
+  }
+}
+
+// ✅ Velocidades variadas
+.skeleton-fast {
+  &::after {
+    animation-duration: 1.2s !important;
+  }
+}
+
+.skeleton-slow {
+  &::after {
+    animation-duration: 2.5s !important;
+  }
+}
+
+// ✅ Animações
+@keyframes shimmer-sweep {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer-pass {
+  0% {
+    transform: translateX(-100%) skewX(-20deg);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(200%) skewX(-20deg);
+    opacity: 0;
+  }
+}
+
+// ✅ Transições suaves
+.content:not(.loading) {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ✅ Efeito de "respiração" nos skeletons
+.cartao-skeleton-box {
+  animation: cardBreathing 4s ease-in-out infinite;
+}
+
+@keyframes cardBreathing {
+  0%,
+  100% {
+    background-color: #a0a0a0;
+    transform: scale(1);
+  }
+  50% {
+    background-color: #acacac;
+    transform: scale(1.005);
+  }
+}
+
+// ✅ Estilos dos indicadores do carrossel
+.carrossel-indicadores {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0;
+  margin-bottom: 20px;
+
+  span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ddd;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &.ativo {
+      background: var(--cor-principal);
+      transform: scale(1.2);
+    }
+  }
 }

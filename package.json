@@ -28,6 +28,8 @@
     "@capacitor/cli": "^7.4.1",
     "@capacitor/core": "^7.4.1",
     "@capacitor/keyboard": "^7.0.1",
+    "@capacitor/splash-screen": "^7.0.1",
+    "@capacitor/status-bar": "^7.0.1",
     "@fontsource/inter": "^5.2.6",
     "@fontsource/manrope": "^5.2.6",
     "@fontsource/mulish": "^5.2.6",

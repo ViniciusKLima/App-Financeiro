@@ -19,6 +19,10 @@ export class CarteiraPage implements OnInit, OnDestroy {
   categoriaMenuAberto: string | null = null;
   private dadosSubscription?: Subscription;
 
+  // ✅ Estados de loading
+  carregandoDados = true;
+  primeiraVezCarregando = true;
+
   constructor(
     public modalCtrl: ModalController,
     public alertCtrl: AlertController,
@@ -27,14 +31,24 @@ export class CarteiraPage implements OnInit, OnDestroy {
   ) {}
 
   async ngOnInit() {
+    this.carregandoDados = true;
+    this.primeiraVezCarregando = true;
+
     // Carrega dados iniciais
     await this.carregarCategorias();
 
+    // ✅ Finaliza o loading
+    this.carregandoDados = false;
+    this.primeiraVezCarregando = false;
+
     // ✅ Se inscreve para receber atualizações em tempo real
     this.dadosSubscription = this.financeiroFacade.dadosAtualizados$.subscribe(
-      (dados) => {
+      async (dados) => {
         console.log('📱 Carteira atualizada automaticamente');
-        this.carregarCategorias();
+        // ✅ Loading mais rápido para atualizações
+        this.carregandoDados = true;
+        await this.carregarCategorias();
+        this.carregandoDados = false;
       }
     );
   }
@@ -182,11 +196,13 @@ export class CarteiraPage implements OnInit, OnDestroy {
     }
   }
 
-  doRefresh(event: any) {
-    this.carregarCategorias();
+  async doRefresh(event: any) {
+    this.carregandoDados = true;
+    await this.carregarCategorias();
+    this.carregandoDados = false;
     setTimeout(() => {
       event.target.complete();
-    }, 600);
+    }, 300);
   }
 
   // Métodos de navegação:

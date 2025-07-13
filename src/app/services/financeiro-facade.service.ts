@@ -326,4 +326,10 @@ export class FinanceiroFacadeService {
   pararListenerFirebase() {
     this.firebaseService.pararListener();
   }
+
+  // ✅ Método para mostrar splash simples quando necessário
+  public mostrarSplashCarregamento() {
+    // Dispara evento para mostrar splash simples
+    document.dispatchEvent(new CustomEvent('mostrar-splash-simples'));
+  }
 }

@@ -105,14 +105,36 @@ export class CategoriaService {
         categoria.dividas = [];
       }
 
-      divida.id = (Math.random() * 100000).toFixed(0);
-      categoria.dividas.push(divida);
+      // ✅ Verificar se já existe para evitar duplicação
+      const existe = categoria.dividas.find(
+        (d: any) =>
+          d.nome === divida.nome &&
+          d.valor === divida.valor &&
+          d.diaPagamento === divida.diaPagamento
+      );
 
+      if (existe) {
+        console.warn('⚠️ Dívida já existe:', divida.nome);
+        return existe;
+      }
+
+      const novaDivida = {
+        id: this.gerarIdDivida(categoria.dividas),
+        nome: divida.nome,
+        valor: divida.valor,
+        diaPagamento: divida.diaPagamento,
+        descricao: divida.descricao || '',
+      };
+
+      categoria.dividas.push(novaDivida);
       this.salvarLocal();
 
       if (uid) {
         await this.salvarFirebase(uid);
       }
+
+      console.log('✅ Dívida adicionada:', novaDivida);
+      return novaDivida;
     } catch (error) {
       console.error('Erro ao adicionar dívida:', error);
       throw error;
@@ -135,13 +157,19 @@ export class CategoriaService {
       if (dividaIndex >= 0 && dividaIndex < categoria.dividas.length) {
         categoria.dividas[dividaIndex] = {
           ...categoria.dividas[dividaIndex],
-          ...dividaEditada,
+          nome: dividaEditada.nome,
+          valor: dividaEditada.valor,
+          diaPagamento: dividaEditada.diaPagamento,
+          descricao: dividaEditada.descricao || '',
         };
         this.salvarLocal();
 
         if (uid) {
           await this.salvarFirebase(uid);
         }
+
+        console.log('✅ Dívida editada:', categoria.dividas[dividaIndex]);
+        return categoria.dividas[dividaIndex];
       }
     } catch (error) {
       console.error('Erro ao editar dívida:', error);
@@ -158,12 +186,15 @@ export class CategoriaService {
       }
 
       if (dividaIndex >= 0 && dividaIndex < categoria.dividas.length) {
-        categoria.dividas.splice(dividaIndex, 1);
+        const dividaRemovida = categoria.dividas.splice(dividaIndex, 1)[0];
         this.salvarLocal();
 
         if (uid) {
           await this.salvarFirebase(uid);
         }
+
+        console.log('✅ Dívida removida:', dividaRemovida);
+        return dividaRemovida;
       }
     } catch (error) {
       console.error('Erro ao remover dívida:', error);
@@ -219,6 +250,15 @@ export class CategoriaService {
     do {
       id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
     } while (this.categorias.some((c) => c.id === id));
+    return id;
+  }
+
+  // ✅ Método para gerar ID único para dívida
+  private gerarIdDivida(dividas: any[]): string {
+    let id: string;
+    do {
+      id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+    } while (dividas.some((d) => d.id === id));
     return id;
   }
 }

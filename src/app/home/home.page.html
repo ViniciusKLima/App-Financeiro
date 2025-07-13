@@ -1,135 +1,3 @@
-<div class="painel-scroll-wrapper" [class.painel-shadow]="painelComSombra">
-  <!-- Template oculto global para todos os painéis -->
-  <ng-template #oculto> R$ -- -- </ng-template>
-  <div class="painel-scroll" #scrollDiv (scroll)="onScroll($event)">
-    <div class="painel-espaco" tabindex="-1"></div>
-
-    <!-- Painel 1 -->
-    <div
-      class="painel-box painel1"
-      [class.ativo]="painelAtivoIndex === 0"
-      (click)="painelAtivoIndex !== 0 && scrollToCenter(0, $event)"
-    >
-      <span class="data">{{ dataHojeFormatada }}</span>
-      <h3 class="tt-painel">Total em dívidas</h3>
-      <p class="valor-painel">
-        <ng-container *ngIf="mostrarValor; else oculto">
-          R$ {{ valorTotalGeral | number:'1.2-2' }}
-        </ng-container>
-        <ion-icon
-          [name]="mostrarValor ? 'eye-outline' : 'eye-off-outline'"
-          (click)="alternarMostrarValor($event)"
-          tabindex="0"
-          role="button"
-          style="margin-left: 8px; cursor: pointer; pointer-events: auto"
-        ></ion-icon>
-      </p>
-      <div class="quantDividas">
-        <p class="tt-quantDividas">Dívidas</p>
-        <h2 class="num-quantDividas">{{ quantidadeDividas }}</h2>
-      </div>
-    </div>
-
-    <!-- Painel 2 -->
-    <div
-      class="painel-box painel2-3"
-      [class.ativo]="painelAtivoIndex === 1"
-      (click)="painelAtivoIndex !== 1 && scrollToCenter(1, $event)"
-    >
-      <span class="data">Cartões</span>
-      <ion-button (click)="irParaCartoes()" class="btn-acesso">
-        Acessar cartões <ion-icon name="chevron-forward-outline"></ion-icon>
-      </ion-button>
-      <h3 class="tt-painel">Total em cartões</h3>
-      <p class="valor-painel" style="position: relative">
-        <ng-container *ngIf="mostrarValor; else oculto">
-          R$ {{ valorTotalCartoes | number:'1.2-2' }}
-        </ng-container>
-        <ion-icon
-          [name]="mostrarValor ? 'eye-outline' : 'eye-off-outline'"
-          (click)="alternarMostrarValor($event)"
-          tabindex="0"
-          role="button"
-          style="margin-left: 8px; cursor: pointer; pointer-events: auto"
-        ></ion-icon>
-      </p>
-      <div class="quantCartoesCateg">
-        <p class="tt-quantCartoesCateg">Cartões</p>
-        <h2 class="num-quantCartoesCateg">{{ quantidadeCartoes }}</h2>
-      </div>
-      <ion-button class="btn-left" (click)="abrirModalAdicionarCompra()"
-        >Adicionar Compra</ion-button
-      >
-      <ion-button class="btn-right" (click)="abrirModalAdicionarCartao()"
-        >Adicionar Cartão</ion-button
-      >
-    </div>
-
-    <!-- Painel 3 -->
-    <div
-      class="painel-box painel2-3"
-      [class.ativo]="painelAtivoIndex === 2"
-      (click)="painelAtivoIndex !== 2 && scrollToCenter(2, $event)"
-    >
-      <span class="data">Categorias</span>
-      <ion-button (click)="irParaCategorias()" class="btn-acesso">
-        Acessar categorias <ion-icon name="chevron-forward-outline"></ion-icon>
-      </ion-button>
-      <h3 class="tt-painel">Total em categorias</h3>
-      <p class="valor-painel" style="position: relative">
-        <ng-container *ngIf="mostrarValor; else oculto">
-          R$ {{ valorTotalCategorias | number:'1.2-2' }}
-        </ng-container>
-        <ion-icon
-          [name]="mostrarValor ? 'eye-outline' : 'eye-off-outline'"
-          (click)="alternarMostrarValor($event)"
-          tabindex="0"
-          role="button"
-          style="margin-left: 8px; cursor: pointer; pointer-events: auto"
-        ></ion-icon>
-      </p>
-      <div class="quantCartoesCateg">
-        <p class="tt-quantCartoesCateg">Categorias</p>
-        <h2 class="num-quantCartoesCateg">{{ quantidadeCategorias }}</h2>
-      </div>
-      <ion-button class="btn-left" (click)="abrirModalAdicionarCategoria()"
-        >Adicionar categoria</ion-button
-      >
-      <ion-button class="btn-right" (click)="abrirModalAdicionarDivida()"
-        >Adicionar dívida</ion-button
-      >
-    </div>
-
-    <div class="painel-espaco" tabindex="-1"></div>
-  </div>
-
-  <div class="tabs">
-    <button
-      [class.active]="abaAtual === 'pendentes'"
-      (click)="trocarAba('pendentes')"
-      class="btn-pendentes"
-    >
-      Próximas Dívidas
-    </button>
-    <button
-      [class.active]="abaAtual === 'pagos'"
-      (click)="trocarAba('pagos')"
-      class="btn-pagos"
-    >
-      Pagos
-    </button>
-  </div>
-</div>
-
-<!-- Bolinhas de indicação -->
-<div class="carrossel-indicadores">
-  <span
-    *ngFor="let i of [0,1,2]"
-    [class.ativo]="i === painelAtivoIndex"
-    (click)="scrollToCenter(i)"
-  ></span>
-</div>
-
 <ion-content #content fullscreen="true" class="content-home">
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content
@@ -141,198 +9,513 @@
     </ion-refresher-content>
   </ion-refresher>
 
-  <ng-container *ngIf="!temCompromissos">
-    <div class="content-vazio1">
-      <ion-icon name="cloud-offline-outline" class="icone-top"></ion-icon>
-      <p class="mensagem-vazio">
-        <span>Acompanhe seus gastos</span><br />
-        Você ainda não cadastrou nenhuma dívida ou compra.
-      </p>
-      <ion-button expand="block" (click)="irParaCarteira()"
-        >Ir para Carteira <ion-icon name="chevron-forward-outline"></ion-icon
-      ></ion-button>
-    </div>
-  </ng-container>
-
-  <div class="slider">
-    <div class="slide" [class.active]="abaAtual === 'pendentes'">
-      <!-- Atrasados -->
-      <ng-container *ngIf="compromissosAtrasados.length > 0">
-        <section class="cards-dividas card-atrasado">
-          <h2 class="h2-atrasado">Atrasados</h2>
-          <div
-            class="itens-dividas item-atrasado"
-            [attr.data-id]="compromisso.id"
-            *ngFor="let compromisso of compromissosAtrasados"
-          >
-            <div class="top-divida">
-              <ion-label [style.color]="compromisso.cor">
-                <ion-icon
-                  [name]="compromisso.tipo === 'cartao' ? 'card-outline' : compromisso.icone"
-                  [style.color]="compromisso.cor"
-                  style="margin-right: 8px"
-                ></ion-icon>
-                <!-- Aqui está a mudança: mostra nome + dia -->
-                {{ compromisso.nome }} - Dia {{ compromisso.dia }}
-              </ion-label>
-
-              <ion-checkbox
-                class="check"
-                slot="end"
-                [checked]="compromisso.foiPago"
-                (click)="alternarStatus(compromisso.id, $event)"
-                mode="ios"
-              ></ion-checkbox>
-            </div>
-            <hr class="linha-divida" />
-            <div class="bottom-divida">
-              <ion-label>
-                <h6>Valor</h6>
-                <ng-container
-                  *ngIf="compromisso.tipo === 'cartao'; else valorDividaAtrasado"
-                >
-                  <h6>
-                    R$ {{ getValorTotalCartao(compromisso.id.replace('cartao-',
-                    '')) | number:'1.2-2' }}
-                  </h6>
-                </ng-container>
-                <ng-template #valorDividaAtrasado>
-                  <h6>R$ {{ compromisso.valor | number:'1.2-2' }}</h6>
-                </ng-template>
-              </ion-label>
-            </div>
-          </div>
-        </section>
-      </ng-container>
-
-      <!-- Pendentes por Dia -->
-      <ng-container
-        *ngFor="let dia of objectKeys(compromissosPorDia)"
-        class="container-dividas"
-      >
-        <section class="cards-dividas">
-          <h2 class="h2-pendente">{{ formatarTituloDia(+dia) }}</h2>
-          <div
-            class="itens-dividas"
-            [attr.data-id]="compromisso.id"
-            [class.item-pagamento]="compromisso.foiPago"
-            *ngFor="let compromisso of compromissosPorDia[+dia]"
-          >
-            <div class="top-divida">
-              <ion-label [style.color]="compromisso.cor">
-                <ion-icon
-                  [name]="compromisso.tipo === 'cartao' ? 'card-outline' : compromisso.icone"
-                  [style.color]="compromisso.cor"
-                  style="margin-right: 8px"
-                ></ion-icon>
-                {{ compromisso.nome }}
-              </ion-label>
-              <!-- Para compromissos pendentes -->
-              <ion-checkbox
-                class="check"
-                slot="end"
-                [checked]="compromisso.foiPago"
-                (click)="alternarStatus(compromisso.id, $event)"
-                mode="ios"
-              ></ion-checkbox>
-            </div>
-            <hr class="linha-divida" />
-            <div class="bottom-divida">
-              <ion-label>
-                <h6>Valor</h6>
-                <ng-container
-                  *ngIf="compromisso.tipo === 'cartao'; else valorDividaPendente"
-                >
-                  <h6>
-                    R$ {{ getValorTotalCartao(compromisso.id.replace('cartao-',
-                    '')) | number:'1.2-2' }}
-                  </h6>
-                </ng-container>
-                <ng-template #valorDividaPendente>
-                  <h6>R$ {{ compromisso.valor | number:'1.2-2' }}</h6>
-                </ng-template>
-              </ion-label>
-            </div>
-          </div>
-        </section>
-      </ng-container>
-    </div>
-
-    <!-- Pagos -->
-    <div class="slide" [class.active]="abaAtual === 'pagos'">
-      <ng-container
-        *ngIf="objectKeys(compromissosPagosPorDia).length === 0 && temCompromissos"
-      >
-        <div
-          class="content-vazio"
-          style="
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 48px 0;
-          "
-        >
-          <ion-icon
-            name="checkmark-done-circle-outline"
-            style="font-size: 64px; color: #bdbdbd; margin-bottom: 10px"
-          ></ion-icon>
-          <p
-            class="mensagem-vazio"
-            style="color: #888; font-size: 1.1em; text-align: center"
-          >
-            Nenhuma dívida foi marcada como paga ainda.<br />
-            Marque suas dívidas como pagas para acompanhar aqui!
-          </p>
+  <!-- ✅ Skeleton dos painéis com classes específicas -->
+  <div
+    class="painel-scroll-wrapper"
+    *ngIf="carregandoDados && primeiraVezCarregando"
+  >
+    <div class="painel-scroll">
+      <div class="painel-espaco"></div>
+      <div class="painel-skeleton" *ngFor="let i of [1,2,3]">
+        <ion-skeleton-text
+          animated
+          class="skeleton-line skeleton-fast"
+          style="width: 40%; height: 12px; margin-bottom: 8px"
+        ></ion-skeleton-text>
+        <ion-skeleton-text
+          animated
+          class="skeleton-line"
+          style="width: 80%; height: 16px; margin-bottom: 12px"
+        ></ion-skeleton-text>
+        <ion-skeleton-text
+          animated
+          class="skeleton-line skeleton-slow"
+          style="width: 60%; height: 20px; margin-bottom: 16px"
+        ></ion-skeleton-text>
+        <div class="skeleton-buttons">
+          <ion-skeleton-text
+            animated
+            class="skeleton-button"
+            style="width: 45%; height: 32px"
+          ></ion-skeleton-text>
+          <ion-skeleton-text
+            animated
+            class="skeleton-button"
+            style="width: 45%; height: 32px"
+          ></ion-skeleton-text>
         </div>
-      </ng-container>
+      </div>
+      <div class="painel-espaco"></div>
+    </div>
+    <div class="carrossel-indicadores">
+      <ion-skeleton-text
+        animated
+        class="skeleton-circle"
+        style="width: 8px; height: 8px"
+      ></ion-skeleton-text>
+      <ion-skeleton-text
+        animated
+        class="skeleton-circle"
+        style="width: 8px; height: 8px"
+      ></ion-skeleton-text>
+      <ion-skeleton-text
+        animated
+        class="skeleton-circle"
+        style="width: 8px; height: 8px"
+      ></ion-skeleton-text>
+    </div>
+  </div>
 
-      <ng-container *ngFor="let dia of objectKeys(compromissosPagosPorDia)">
-        <section class="cards-dividas card-pago">
-          <h2 class="h2-pago">{{ formatarTituloDia(+dia) }}</h2>
-          <div
-            class="itens-dividas item-pago"
-            [attr.data-id]="compromisso.id"
-            *ngFor="let compromisso of compromissosPagosPorDia[+dia]"
+  <!-- ✅ Painéis reais -->
+  <div
+    class="painel-scroll-wrapper"
+    [class.painel-shadow]="painelComSombra"
+    *ngIf="!carregandoDados || !primeiraVezCarregando"
+  >
+    <!-- Template oculto global para todos os painéis -->
+    <ng-template #oculto> R$ -- -- </ng-template>
+    <div class="painel-scroll" #scrollDiv (scroll)="onScroll($event)">
+      <div class="painel-espaco" tabindex="-1"></div>
+
+      <!-- Painel 1 -->
+      <div
+        class="painel-box painel1"
+        [class.ativo]="painelAtivoIndex === 0"
+        (click)="painelAtivoIndex !== 0 && scrollToCenter(0, $event)"
+      >
+        <span class="data">{{ dataHojeFormatada }}</span>
+        <h3 class="tt-painel">Total em dívidas</h3>
+        <p class="valor-painel">
+          <ng-container *ngIf="mostrarValor; else oculto">
+            R$ {{ valorTotalGeral | number:'1.2-2' }}
+          </ng-container>
+          <ion-icon
+            [name]="mostrarValor ? 'eye-outline' : 'eye-off-outline'"
+            (click)="alternarMostrarValor($event)"
+            tabindex="0"
+            role="button"
+            style="margin-left: 8px; cursor: pointer; pointer-events: auto"
+          ></ion-icon>
+        </p>
+        <div class="quantDividas">
+          <p class="tt-quantDividas">Dívidas</p>
+          <h2 class="num-quantDividas">{{ quantidadeDividas }}</h2>
+        </div>
+      </div>
+
+      <!-- Painel 2 -->
+      <div
+        class="painel-box painel2-3"
+        [class.ativo]="painelAtivoIndex === 1"
+        (click)="painelAtivoIndex !== 1 && scrollToCenter(1, $event)"
+      >
+        <span class="data">Cartões</span>
+        <ion-button (click)="irParaCartoes()" class="btn-acesso">
+          Acessar cartões <ion-icon name="chevron-forward-outline"></ion-icon>
+        </ion-button>
+        <h3 class="tt-painel">Total em cartões</h3>
+        <p class="valor-painel" style="position: relative">
+          <ng-container *ngIf="mostrarValor; else oculto">
+            R$ {{ valorTotalCartoes | number:'1.2-2' }}
+          </ng-container>
+          <ion-icon
+            [name]="mostrarValor ? 'eye-outline' : 'eye-off-outline'"
+            (click)="alternarMostrarValor($event)"
+            tabindex="0"
+            role="button"
+            style="margin-left: 8px; cursor: pointer; pointer-events: auto"
+          ></ion-icon>
+        </p>
+        <div class="quantCartoesCateg">
+          <p class="tt-quantCartoesCateg">Cartões</p>
+          <h2 class="num-quantCartoesCateg">{{ quantidadeCartoes }}</h2>
+        </div>
+        <ion-button class="btn-left" (click)="abrirModalAdicionarCompra()"
+          >Adicionar Compra</ion-button
+        >
+        <ion-button class="btn-right" (click)="abrirModalAdicionarCartao()"
+          >Adicionar Cartão</ion-button
+        >
+      </div>
+
+      <!-- Painel 3 -->
+      <div
+        class="painel-box painel2-3"
+        [class.ativo]="painelAtivoIndex === 2"
+        (click)="painelAtivoIndex !== 2 && scrollToCenter(2, $event)"
+      >
+        <span class="data">Categorias</span>
+        <ion-button (click)="irParaCategorias()" class="btn-acesso">
+          Acessar categorias
+          <ion-icon name="chevron-forward-outline"></ion-icon>
+        </ion-button>
+        <h3 class="tt-painel">Total em categorias</h3>
+        <p class="valor-painel" style="position: relative">
+          <ng-container *ngIf="mostrarValor; else oculto">
+            R$ {{ valorTotalCategorias | number:'1.2-2' }}
+          </ng-container>
+          <ion-icon
+            [name]="mostrarValor ? 'eye-outline' : 'eye-off-outline'"
+            (click)="alternarMostrarValor($event)"
+            tabindex="0"
+            role="button"
+            style="margin-left: 8px; cursor: pointer; pointer-events: auto"
+          ></ion-icon>
+        </p>
+        <div class="quantCartoesCateg">
+          <p class="tt-quantCartoesCateg">Categorias</p>
+          <h2 class="num-quantCartoesCateg">{{ quantidadeCategorias }}</h2>
+        </div>
+        <ion-button class="btn-left" (click)="abrirModalAdicionarCategoria()"
+          >Adicionar categoria</ion-button
+        >
+        <ion-button class="btn-right" (click)="abrirModalAdicionarDivida()"
+          >Adicionar dívida</ion-button
+        >
+      </div>
+
+      <div class="painel-espaco" tabindex="-1"></div>
+    </div>
+
+    <!-- Bolinhas de indicação -->
+    <div class="carrossel-indicadores">
+      <span
+        *ngFor="let i of [0,1,2]"
+        [class.ativo]="i === painelAtivoIndex"
+        (click)="scrollToCenter(i)"
+      ></span>
+    </div>
+  </div>
+
+  <!-- ✅ Skeleton dos tabs com classes específicas -->
+  <div class="tabs-skeleton" *ngIf="carregandoDados && primeiraVezCarregando">
+    <ion-skeleton-text
+      animated
+      class="skeleton-button skeleton-fast"
+      style="width: 120px; height: 36px"
+    ></ion-skeleton-text>
+    <ion-skeleton-text
+      animated
+      class="skeleton-button skeleton-fast"
+      style="width: 80px; height: 36px"
+    ></ion-skeleton-text>
+  </div>
+
+  <!-- ✅ Tabs reais -->
+  <div class="tabs-sticky" *ngIf="!carregandoDados || !primeiraVezCarregando">
+    <div class="tabs">
+      <button
+        [class.active]="abaAtual === 'pendentes'"
+        (click)="trocarAba('pendentes')"
+        class="btn-pendentes"
+      >
+        Próximas Dívidas
+      </button>
+      <button
+        [class.active]="abaAtual === 'pagos'"
+        (click)="trocarAba('pagos')"
+        class="btn-pagos"
+      >
+        Pagos
+      </button>
+    </div>
+  </div>
+
+  <!-- ✅ Skeleton do conteúdo com classes específicas -->
+  <div
+    class="content-skeleton"
+    *ngIf="carregandoDados && primeiraVezCarregando"
+  >
+    <div class="card-skeleton" *ngFor="let i of [1,2,3]">
+      <ion-skeleton-text
+        animated
+        class="skeleton-line skeleton-fast"
+        style="width: 60px; height: 12px; margin-bottom: 12px"
+      ></ion-skeleton-text>
+      <div class="item-skeleton">
+        <div class="left-skeleton">
+          <ion-skeleton-text
+            animated
+            class="skeleton-circle"
+            style="width: 24px; height: 24px"
+          ></ion-skeleton-text>
+          <ion-skeleton-text
+            animated
+            class="skeleton-line"
+            style="width: 150px; height: 16px"
+          ></ion-skeleton-text>
+        </div>
+        <ion-skeleton-text
+          animated
+          class="skeleton-button skeleton-slow"
+          style="width: 24px; height: 24px"
+        ></ion-skeleton-text>
+      </div>
+      <ion-skeleton-text
+        animated
+        class="skeleton-line"
+        style="width: 100%; height: 1px; margin: 12px 0"
+      ></ion-skeleton-text>
+      <div class="bottom-skeleton">
+        <ion-skeleton-text
+          animated
+          class="skeleton-line skeleton-fast"
+          style="width: 40px; height: 12px"
+        ></ion-skeleton-text>
+        <ion-skeleton-text
+          animated
+          class="skeleton-line skeleton-slow"
+          style="width: 80px; height: 16px"
+        ></ion-skeleton-text>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ Conteúdo real -->
+  <div
+    class="content-dividas"
+    *ngIf="!carregandoDados || !primeiraVezCarregando"
+  >
+    <!-- ✅ Primeira condição: Não tem compromissos nenhum -->
+    <ng-container *ngIf="!temCompromissos">
+      <div class="content-vazio1">
+        <ion-icon name="cloud-offline-outline" class="icone-top"></ion-icon>
+        <p class="mensagem-vazio">
+          <span>Acompanhe seus gastos</span><br />
+          Você ainda não cadastrou nenhuma dívida ou compra.
+        </p>
+        <ion-button expand="block" (click)="irParaCarteira()"
+          >Ir para Carteira <ion-icon name="chevron-forward-outline"></ion-icon
+        ></ion-button>
+      </div>
+    </ng-container>
+
+    <!-- ✅ Segunda condição: Tem compromissos mas todos estão pagos -->
+    <ng-container
+      *ngIf="temCompromissos && todasDividasPagas && abaAtual === 'pendentes'"
+    >
+      <div class="content-vazio-pagas">
+        <ion-icon
+          name="checkmark-done-circle"
+          class="icone-top-pagas"
+        ></ion-icon>
+        <p class="mensagem-vazio-pagas">
+          <span>Parabéns!</span><br />
+          Todas as suas dívidas foram marcadas como pagas.<br />
+          <small>Vá para a aba "Pagos" para ver o histórico.</small>
+        </p>
+        <ion-button
+          expand="block"
+          (click)="trocarAba('pagos')"
+          class="btn-ver-pagos"
+        >
+          Ver Pagos <ion-icon name="checkmark-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </ng-container>
+
+    <div class="slider">
+      <div class="slide" [class.active]="abaAtual === 'pendentes'">
+        <!-- ✅ Loading inline para atualizações -->
+        <div
+          class="loading-inline"
+          *ngIf="carregandoDados && !primeiraVezCarregando"
+        >
+          <ion-spinner name="crescent" color="primary"></ion-spinner>
+          <span>Atualizando...</span>
+        </div>
+
+        <!-- Atrasados -->
+        <ng-container *ngIf="compromissosAtrasados.length > 0">
+          <section class="cards-dividas card-atrasado">
+            <h2 class="h2-atrasado">Atrasados</h2>
+            <div
+              class="itens-dividas item-atrasado"
+              [attr.data-id]="compromisso.id"
+              *ngFor="let compromisso of compromissosAtrasados"
+            >
+              <div class="top-divida">
+                <ion-label [style.color]="compromisso.cor">
+                  <ion-icon
+                    [name]="compromisso.tipo === 'cartao' ? 'card-outline' : compromisso.icone"
+                    [style.color]="compromisso.cor"
+                    style="margin-right: 8px"
+                  ></ion-icon>
+                  {{ compromisso.nome }} - Dia {{ compromisso.dia }}
+                </ion-label>
+
+                <ion-checkbox
+                  class="check"
+                  slot="end"
+                  [checked]="compromisso.foiPago"
+                  (click)="alternarStatus(compromisso.id, $event)"
+                  mode="ios"
+                ></ion-checkbox>
+              </div>
+              <hr class="linha-divida" />
+              <div class="bottom-divida">
+                <ion-label>
+                  <h6>Valor</h6>
+                  <ng-container
+                    *ngIf="compromisso.tipo === 'cartao'; else valorDividaAtrasado"
+                  >
+                    <h6>
+                      R$ {{
+                      getValorTotalCartao(compromisso.id.replace('cartao-', ''))
+                      | number:'1.2-2' }}
+                    </h6>
+                  </ng-container>
+                  <ng-template #valorDividaAtrasado>
+                    <h6>R$ {{ compromisso.valor | number:'1.2-2' }}</h6>
+                  </ng-template>
+                </ion-label>
+              </div>
+            </div>
+          </section>
+        </ng-container>
+
+        <!-- Pendentes por Dia -->
+        <ng-container
+          *ngFor="let dia of objectKeys(compromissosPorDia)"
+          class="container-dividas"
+        >
+          <section
+            class="cards-dividas"
+            *ngIf="(compromissosPorDia[+dia] || []).length > 0"
           >
-            <div class="top-divida">
-              <ion-label [style.color]="compromisso.cor">
-                <ion-icon
-                  [name]="compromisso.tipo === 'cartao' ? 'card-outline' : compromisso.icone"
-                  [style.color]="compromisso.cor"
-                  style="margin-right: 8px"
-                ></ion-icon>
-                {{ compromisso.nome }}
-              </ion-label>
+            <h2 class="h2-pendente">{{ formatarTituloDia(+dia) }}</h2>
+            <div
+              class="itens-dividas"
+              [attr.data-id]="compromisso.id"
+              [class.item-pagamento]="compromisso.foiPago"
+              *ngFor="let compromisso of (compromissosPorDia[+dia] || [])"
+            >
+              <div class="top-divida">
+                <ion-label [style.color]="compromisso.cor">
+                  <ion-icon
+                    [name]="compromisso.tipo === 'cartao' ? 'card-outline' : compromisso.icone"
+                    [style.color]="compromisso.cor"
+                    style="margin-right: 8px"
+                  ></ion-icon>
+                  {{ compromisso.nome }}
+                </ion-label>
+                <ion-checkbox
+                  class="check"
+                  slot="end"
+                  [checked]="compromisso.foiPago"
+                  (click)="alternarStatus(compromisso.id, $event)"
+                  mode="ios"
+                ></ion-checkbox>
+              </div>
+              <hr class="linha-divida" />
+              <div class="bottom-divida">
+                <ion-label>
+                  <h6>Valor</h6>
+                  <ng-container
+                    *ngIf="compromisso.tipo === 'cartao'; else valorDividaPendente"
+                  >
+                    <h6>
+                      R$ {{
+                      getValorTotalCartao(compromisso.id.replace('cartao-', ''))
+                      | number:'1.2-2' }}
+                    </h6>
+                  </ng-container>
+                  <ng-template #valorDividaPendente>
+                    <h6>R$ {{ compromisso.valor | number:'1.2-2' }}</h6>
+                  </ng-template>
+                </ion-label>
+              </div>
+            </div>
+          </section>
+        </ng-container>
+      </div>
 
-              <ion-checkbox
-                class="check"
-                slot="end"
-                [checked]="compromisso.foiPago"
-                (click)="alternarStatus(compromisso.id, $event)"
-                mode="ios"
-              ></ion-checkbox>
-            </div>
-            <hr class="linha-divida" />
-            <div class="bottom-divida">
-              <ion-label>
-                <h6>Valor</h6>
-                <ng-container
-                  *ngIf="compromisso.tipo === 'cartao'; else valorDividaPaga"
-                >
-                  <h6>
-                    R$ {{ getValorTotalCartao(compromisso.id.replace('cartao-',
-                    '')) | number:'1.2-2' }}
-                  </h6>
-                </ng-container>
-                <ng-template #valorDividaPaga>
-                  <h6>R$ {{ compromisso.valor | number:'1.2-2' }}</h6>
-                </ng-template>
-              </ion-label>
-            </div>
+      <!-- Pagos -->
+      <div class="slide" [class.active]="abaAtual === 'pagos'">
+        <!-- ✅ Loading inline para atualizações -->
+        <div
+          class="loading-inline"
+          *ngIf="carregandoDados && !primeiraVezCarregando"
+        >
+          <ion-spinner name="crescent" color="primary"></ion-spinner>
+          <span>Atualizando...</span>
+        </div>
+
+        <ng-container
+          *ngIf="objectKeys(compromissosPagosPorDia).length === 0 && temCompromissos"
+        >
+          <div
+            class="content-vazio"
+            style="
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              padding: 48px 0;
+            "
+          >
+            <ion-icon
+              name="checkmark-done-circle-outline"
+              style="font-size: 64px; color: #bdbdbd; margin-bottom: 10px"
+            ></ion-icon>
+            <p
+              class="mensagem-vazio"
+              style="color: #888; font-size: 1.1em; text-align: center"
+            >
+              Nenhuma dívida foi marcada como paga ainda.<br />
+              Marque suas dívidas como pagas para acompanhar aqui!
+            </p>
           </div>
-        </section>
-      </ng-container>
+        </ng-container>
+
+        <ng-container *ngFor="let dia of objectKeys(compromissosPagosPorDia)">
+          <section class="cards-dividas card-pago">
+            <h2 class="h2-pago">{{ formatarTituloDia(+dia) }}</h2>
+            <div
+              class="itens-dividas item-pago"
+              [attr.data-id]="compromisso.id"
+              *ngFor="let compromisso of (compromissosPagosPorDia[+dia] || [])"
+            >
+              <div class="top-divida">
+                <ion-label [style.color]="compromisso.cor">
+                  <ion-icon
+                    [name]="compromisso.tipo === 'cartao' ? 'card-outline' : compromisso.icone"
+                    [style.color]="compromisso.cor"
+                    style="margin-right: 8px"
+                  ></ion-icon>
+                  {{ compromisso.nome }}
+                </ion-label>
+
+                <ion-checkbox
+                  class="check"
+                  slot="end"
+                  [checked]="compromisso.foiPago"
+                  (click)="alternarStatus(compromisso.id, $event)"
+                  mode="ios"
+                ></ion-checkbox>
+              </div>
+              <hr class="linha-divida" />
+              <div class="bottom-divida">
+                <ion-label>
+                  <h6>Valor</h6>
+                  <ng-container
+                    *ngIf="compromisso.tipo === 'cartao'; else valorDividaPaga"
+                  >
+                    <h6>
+                      R$ {{
+                      getValorTotalCartao(compromisso.id.replace('cartao-', ''))
+                      | number:'1.2-2' }}
+                    </h6>
+                  </ng-container>
+                  <ng-template #valorDividaPaga>
+                    <h6>R$ {{ compromisso.valor | number:'1.2-2' }}</h6>
+                  </ng-template>
+                </ion-label>
+              </div>
+            </div>
+          </section>
+        </ng-container>
+      </div>
     </div>
   </div>
 </ion-content>

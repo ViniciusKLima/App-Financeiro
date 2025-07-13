@@ -7,7 +7,7 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { FinanceiroFacadeService } from '../services/financeiro-facade.service'; // ✅ Novo
+import { FinanceiroFacadeService } from '../services/financeiro-facade.service';
 import { ModalController, AlertController } from '@ionic/angular';
 import { DividaFormComponent } from '../components/divida-form/divida-form.component';
 import { CategoriaFormComponent } from '../components/categoria-form/categoria-form.component';
@@ -29,45 +29,57 @@ export class CartoesPage implements AfterViewInit, OnInit, OnDestroy {
   cartaoMenuAberto: string | null = null;
   private dadosSubscription?: Subscription;
 
+  // ✅ Estados de loading
+  carregandoDados = true;
+  primeiraVezCarregando = true;
+
   constructor(
-    public financeiroFacade: FinanceiroFacadeService, // ✅ Troca aqui
+    public financeiroFacade: FinanceiroFacadeService,
     private modalCtrl: ModalController,
     private navCtrl: NavController,
     private alertCtrl: AlertController
-  ) {
-    this.cartoes = this.ordenarCartoesPorVencimento(
-      this.financeiroFacade.getCartoes().map((cartao: any) => ({
-        ...cartao,
-        gradient: this.financeiroFacade.generateGradient(cartao.cor),
-      }))
-    );
-  }
+  ) {}
 
   async ngOnInit() {
+    this.carregandoDados = true;
+    this.primeiraVezCarregando = true;
+
+    // Carrega dados iniciais
     const uid = localStorage.getItem('uid');
     if (uid) {
       await this.financeiroFacade.carregarFirebase(uid);
       this.atualizarCartoes();
     }
 
+    // ✅ Finaliza o loading
+    this.carregandoDados = false;
+    this.primeiraVezCarregando = false;
+
     // ✅ Se inscreve para receber atualizações em tempo real
     this.dadosSubscription = this.financeiroFacade.dadosAtualizados$.subscribe(
       (dados) => {
         console.log('📱 Cartões atualizados automaticamente');
+        // ✅ Loading mais rápido para atualizações
+        this.carregandoDados = true;
         this.atualizarCartoes();
+        this.carregandoDados = false;
       }
     );
   }
 
   ngOnDestroy() {
-    // Para a subscription quando sair da página
     if (this.dadosSubscription) {
       this.dadosSubscription.unsubscribe();
     }
   }
 
   ngAfterViewInit() {
-    setTimeout(() => this.scrollToCenter(this.cartaoAtivoIndex), 100);
+    // ✅ Só executa após o loading inicial
+    setTimeout(() => {
+      if (!this.carregandoDados || !this.primeiraVezCarregando) {
+        this.scrollToCenter(this.cartaoAtivoIndex);
+      }
+    }, 100);
   }
 
   voltar() {
@@ -315,15 +327,13 @@ export class CartoesPage implements AfterViewInit, OnInit, OnDestroy {
     }
   }
 
-  doRefresh(event: any) {
-    // Atualize a lista de cartões
-    this.cartoes = this.financeiroFacade.getCartoes().map((cartao: any) => ({
-      ...cartao,
-      gradient: this.financeiroFacade.generateGradient(cartao.cor),
-    }));
+  async doRefresh(event: any) {
+    this.carregandoDados = true;
+    this.atualizarCartoes();
+    this.carregandoDados = false;
     setTimeout(() => {
       event.target.complete();
-    }, 600); // tempo para simular carregamento, ajuste se quiser
+    }, 300);
   }
 
   async editarCompra(compra: any, index: number) {
@@ -332,7 +342,7 @@ export class CartoesPage implements AfterViewInit, OnInit, OnDestroy {
       componentProps: {
         modo: 'cartao',
         cartaoId: this.cartaoAtivo?.id,
-        compra: { ...compra }, // passa uma cópia da compra
+        compra: { ...compra },
         compraIndex: index,
       },
       breakpoints: [0, 0.8, 0.9],
@@ -343,9 +353,7 @@ export class CartoesPage implements AfterViewInit, OnInit, OnDestroy {
 
     modal.onDidDismiss().then((retorno) => {
       if (retorno.data && retorno.data.compraEditada) {
-        // Atualiza a compra editada no array do cartão ativo
         this.cartaoAtivo.compras[index] = retorno.data.compraEditada;
-        // Atualize a lista de cartões se necessário
         this.cartoes = this.financeiroFacade
           .getCartoes()
           .map((cartao: any) => ({
@@ -375,7 +383,6 @@ export class CartoesPage implements AfterViewInit, OnInit, OnDestroy {
     await alert.present();
   }
 
-  // Corrigir o método atualizarFaturaCartao
   async atualizarFaturaCartao() {
     const cartao = this.cartaoAtivo;
     if (!cartao || !cartao.compras) return;
@@ -471,5 +478,25 @@ export class CartoesPage implements AfterViewInit, OnInit, OnDestroy {
       cartao.compras.length > 0 &&
       cartao.faturaAtualizada === false
     );
+  }
+
+  // ✅ Método para formatar texto das parcelas
+  getParcelasTexto(compra: any): string {
+    if (!compra) return 'À vista';
+
+    if (compra.compraFixa) {
+      return 'Fixa';
+    }
+
+    if (
+      compra.parcelaAtual &&
+      compra.totalParcelas &&
+      compra.parcelaAtual > 0 &&
+      compra.totalParcelas > 0
+    ) {
+      return `${compra.parcelaAtual} de ${compra.totalParcelas}`;
+    }
+
+    return 'À vista';
   }
 }

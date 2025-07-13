@@ -37,9 +37,11 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
 
   abaAtual: 'pendentes' | 'pagos' = 'pendentes';
 
+  // ✅ Inicializar com valores padrão
   compromissosPorDia: { [dia: number]: Compromisso[] } = {};
   compromissosPagosPorDia: { [dia: number]: Compromisso[] } = {};
   compromissosAtrasados: Compromisso[] = [];
+
   public objectKeys = Object.keys;
 
   painelAtivoIndex = 0;
@@ -50,27 +52,42 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
 
   private dadosSubscription?: Subscription;
 
+  // ✅ Adicione estas propriedades
+  carregandoDados = true;
+  primeiraVezCarregando = true;
+
   constructor(
-    // public financeiroService: FinanceiroService, // ❌ Remover depois
-    public financeiroFacade: FinanceiroFacadeService, // ✅ Novo
+    public financeiroFacade: FinanceiroFacadeService,
     private navCtrl: NavController,
     private modalCtrl: ModalController
-  ) {}
+  ) {
+    // ✅ Garantir inicialização no construtor também
+    this.compromissosPorDia = {};
+    this.compromissosPagosPorDia = {};
+    this.compromissosAtrasados = [];
+  }
 
   async ngOnInit() {
+    this.carregandoDados = true;
+    this.primeiraVezCarregando = true;
+
     const uid = localStorage.getItem('uid');
     if (uid) {
-      // await this.financeiroService.carregarFirebase(uid); // ❌ Antigo
-      await this.financeiroFacade.inicializar(uid); // ✅ Novo
-      this.carregarCompromissos();
+      await this.financeiroFacade.inicializar(uid);
+      await this.carregarCompromissos();
     }
 
-    // this.dadosSubscription = this.financeiroService.dadosAtualizados$.subscribe( // ❌ Antigo
+    // ✅ Finaliza o loading
+    this.carregandoDados = false;
+    this.primeiraVezCarregando = false;
+
     this.dadosSubscription = this.financeiroFacade.dadosAtualizados$.subscribe(
-      // ✅ Novo
-      (dados) => {
+      async (dados) => {
         console.log('📱 Home atualizada automaticamente');
-        this.carregarCompromissos();
+        // ✅ Loading mais rápido para atualizações
+        this.carregandoDados = true;
+        await this.carregarCompromissos();
+        this.carregandoDados = false;
       }
     );
   }
@@ -143,32 +160,71 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   formatarTituloDia(dia: number): string {
+    // ✅ Verificar se o dia é um número válido
+    if (isNaN(dia) || dia === null || dia === undefined) {
+      console.warn('Dia inválido recebido:', dia);
+      return 'Dia inválido';
+    }
+
     const hoje = new Date().getDate();
-    if (dia === hoje) return 'Hoje';
-    if (dia === hoje + 1) return 'Amanhã';
-    return `Dia ${dia}`;
+
+    // ✅ Converter para número inteiro se necessário
+    const diaNumero = parseInt(dia.toString(), 10);
+
+    if (isNaN(diaNumero)) {
+      console.warn('Não foi possível converter dia para número:', dia);
+      return 'Dia inválido';
+    }
+
+    if (diaNumero === hoje) return 'Hoje';
+    if (diaNumero === hoje + 1) return 'Amanhã';
+    if (diaNumero === hoje - 1) return 'Ontem';
+
+    // ✅ Validar se o dia está entre 1 e 31
+    if (diaNumero < 1 || diaNumero > 31) {
+      console.warn('Dia fora do range válido:', diaNumero);
+      return `Dia ${diaNumero}`;
+    }
+
+    return `Dia ${diaNumero}`;
   }
 
   async carregarCompromissos() {
     const hoje = new Date().getDate();
     const compromissos: Compromisso[] = [];
 
-    // ✅ Corrigir método
     const uid = localStorage.getItem('uid');
     if (uid) {
       await this.financeiroFacade.carregarStatusPagamentos(uid);
     }
 
+    // ✅ Verificar se os serviços retornam dados válidos
+    const cartoes = this.financeiroFacade.getCartoes() || [];
+    const categorias = this.financeiroFacade.getCategorias() || [];
+
     // Adiciona cartões
-    this.financeiroFacade.getCartoes().forEach((cartao) => {
+    cartoes.forEach((cartao) => {
+      if (!cartao || !cartao.id) return;
+
+      // ✅ Validar diaVencimento
+      const diaVencimento = parseInt(cartao.diaVencimento);
+      if (isNaN(diaVencimento) || diaVencimento < 1 || diaVencimento > 31) {
+        console.warn(
+          'Dia de vencimento inválido no cartão:',
+          cartao.nome,
+          diaVencimento
+        );
+        return; // Pula este cartão
+      }
+
       const id = 'cartao-' + cartao.id;
       compromissos.push({
         id,
-        nome: cartao.nome,
+        nome: cartao.nome || 'Cartão sem nome',
         tipo: 'cartao',
-        valor: this.financeiroFacade.getValorTotalCartao(cartao.id),
-        dia: cartao.diaVencimento,
-        cor: cartao.cor,
+        valor: this.financeiroFacade.getValorTotalCartao(cartao.id) || 0,
+        dia: diaVencimento, // ✅ Usar valor validado
+        cor: cartao.cor || '#2196f3',
         icone: 'card-outline',
         foiPago: this.getStatusPago(id),
         dataPagamento: this.getDataPagamento(id),
@@ -176,18 +232,33 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     });
 
     // Adiciona dívidas
-    this.financeiroFacade.getCategorias().forEach((cat) => {
-      if (cat.dividas && cat.dividas.length > 0) {
+    categorias.forEach((cat) => {
+      if (!cat || !cat.id) return;
+
+      if (cat.dividas && Array.isArray(cat.dividas) && cat.dividas.length > 0) {
         cat.dividas.forEach((divida: any, idx: number) => {
+          if (!divida) return;
+
+          // ✅ Validar diaPagamento
+          const diaPagamento = parseInt(divida.diaPagamento);
+          if (isNaN(diaPagamento) || diaPagamento < 1 || diaPagamento > 31) {
+            console.warn(
+              'Dia de pagamento inválido na dívida:',
+              divida.nome,
+              diaPagamento
+            );
+            return; // Pula esta dívida
+          }
+
           const id = `divida-${cat.id}-${idx}`;
           compromissos.push({
             id,
-            nome: divida.nome,
+            nome: divida.nome || 'Dívida sem nome',
             tipo: 'divida',
-            valor: divida.valor,
-            dia: divida.diaPagamento,
-            cor: cat.cor,
-            icone: cat.icone,
+            valor: divida.valor || 0,
+            dia: diaPagamento, // ✅ Usar valor validado
+            cor: cat.cor || '#757575',
+            icone: cat.icone || 'logo-usd',
             foiPago: this.getStatusPago(id),
             dataPagamento: this.getDataPagamento(id),
           });
@@ -195,24 +266,30 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    // Separar por status
+    // ✅ Resetar arrays antes de popular
     this.compromissosPorDia = {};
     this.compromissosPagosPorDia = {};
     this.compromissosAtrasados = [];
 
+    // Separar por status
     compromissos.forEach((comp) => {
+      // ✅ Validar o dia do compromisso antes de processar
+      if (isNaN(comp.dia) || comp.dia < 1 || comp.dia > 31) {
+        console.warn('Compromisso com dia inválido ignorado:', comp);
+        return;
+      }
+
       if (comp.foiPago) {
-        // Se está pago, vai para aba pagos
-        if (!this.compromissosPagosPorDia[comp.dia])
+        if (!this.compromissosPagosPorDia[comp.dia]) {
           this.compromissosPagosPorDia[comp.dia] = [];
+        }
         this.compromissosPagosPorDia[comp.dia].push(comp);
       } else if (comp.dia < hoje) {
-        // Se não está pago e está atrasado
         this.compromissosAtrasados.push(comp);
       } else {
-        // Se não está pago e não está atrasado
-        if (!this.compromissosPorDia[comp.dia])
+        if (!this.compromissosPorDia[comp.dia]) {
           this.compromissosPorDia[comp.dia] = [];
+        }
         this.compromissosPorDia[comp.dia].push(comp);
       }
     });
@@ -222,24 +299,55 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     this.ordenarCompromissos();
   }
 
+  // ✅ Adicione no método ordenarCompromissos para debug
   ordenarCompromissos() {
+    console.log(
+      '🔍 Debug - Compromissos por dia antes da ordenação:',
+      this.compromissosPorDia
+    );
+
     const ordenadoPendentes: { [dia: number]: Compromisso[] } = {};
     Object.keys(this.compromissosPorDia)
-      .map((k) => parseInt(k, 10))
-      .sort((a, b) => a - b)
+      .map((k) => {
+        const num = parseInt(k, 10);
+        if (isNaN(num)) {
+          console.warn('⚠️ Chave inválida encontrada:', k);
+          return null;
+        }
+        return num;
+      })
+      .filter((num) => num !== null) // Remove valores nulos
+      .sort((a, b) => a! - b!)
       .forEach((dia) => {
-        ordenadoPendentes[dia] = this.compromissosPorDia[dia];
+        if (dia !== null) {
+          ordenadoPendentes[dia] = this.compromissosPorDia[dia];
+        }
       });
+
     this.compromissosPorDia = ordenadoPendentes;
 
+    // Mesmo para compromissos pagos
     const ordenadoPagos: { [dia: number]: Compromisso[] } = {};
     Object.keys(this.compromissosPagosPorDia)
-      .map((k) => parseInt(k, 10))
-      .sort((a, b) => a - b)
+      .map((k) => {
+        const num = parseInt(k, 10);
+        if (isNaN(num)) {
+          console.warn('⚠️ Chave inválida encontrada em pagos:', k);
+          return null;
+        }
+        return num;
+      })
+      .filter((num) => num !== null)
+      .sort((a, b) => a! - b!)
       .forEach((dia) => {
-        ordenadoPagos[dia] = this.compromissosPagosPorDia[dia];
+        if (dia !== null) {
+          ordenadoPagos[dia] = this.compromissosPagosPorDia[dia];
+        }
       });
+
     this.compromissosPagosPorDia = ordenadoPagos;
+
+    console.log('✅ Debug - Compromissos ordenados:', this.compromissosPorDia);
   }
 
   getValorTotalCartao(cartaoId: string): number {
@@ -355,11 +463,27 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   get temCompromissos(): boolean {
-    return (
-      Object.values(this.compromissosPorDia).some((arr) => arr.length > 0) ||
-      this.compromissosAtrasados.length > 0 ||
-      Object.values(this.compromissosPagosPorDia).some((arr) => arr.length > 0)
-    );
+    try {
+      // ✅ Verificação segura com fallback
+      const pendentes = this.compromissosPorDia || {};
+      const atrasados = this.compromissosAtrasados || [];
+      const pagos = this.compromissosPagosPorDia || {};
+
+      const temPendentes = Object.values(pendentes).some(
+        (arr) => Array.isArray(arr) && arr.length > 0
+      );
+
+      const temAtrasados = Array.isArray(atrasados) && atrasados.length > 0;
+
+      const temPagos = Object.values(pagos).some(
+        (arr) => Array.isArray(arr) && arr.length > 0
+      );
+
+      return temPendentes || temAtrasados || temPagos;
+    } catch (error) {
+      console.error('Erro ao verificar compromissos:', error);
+      return false;
+    }
   }
 
   irParaCarteira() {
@@ -367,10 +491,12 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async doRefresh(event: any) {
+    this.carregandoDados = true;
     await this.carregarCompromissosAsync();
+    this.carregandoDados = false;
     setTimeout(() => {
       event.target.complete();
-    }, 1200);
+    }, 300);
   }
 
   async carregarCompromissosAsync() {
@@ -511,5 +637,33 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
       this.financeiroFacade.getValorTotalCartoes() +
       this.financeiroFacade.getValorTotalCategorias()
     );
+  }
+
+  get todasDividasPagas(): boolean {
+    try {
+      // ✅ Verifica se tem compromissos mas todos estão pagas
+      const temPendentes = Object.values(this.compromissosPorDia || {}).some(
+        (arr) => Array.isArray(arr) && arr.length > 0
+      );
+
+      const temAtrasados =
+        Array.isArray(this.compromissosAtrasados) &&
+        this.compromissosAtrasados.length > 0;
+
+      const temPagos = Object.values(this.compromissosPagosPorDia || {}).some(
+        (arr) => Array.isArray(arr) && arr.length > 0
+      );
+
+      // ✅ Todas as dívidas foram pagas se:
+      // - Não há pendentes nem atrasados
+      // - Mas há compromissos pagos
+      return !temPendentes && !temAtrasados && temPagos;
+    } catch (error) {
+      console.error(
+        'Erro ao verificar se todas as dívidas estão pagas:',
+        error
+      );
+      return false;
+    }
   }
 }

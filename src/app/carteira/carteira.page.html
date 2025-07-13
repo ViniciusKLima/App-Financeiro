@@ -2,7 +2,25 @@
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
-  <ion-header>
+
+  <!-- ✅ Header skeleton -->
+  <ion-header *ngIf="carregandoDados && primeiraVezCarregando">
+    <ion-title>
+      <ion-skeleton-text
+        animated
+        class="skeleton-line"
+        style="width: 180px; height: 20px"
+      ></ion-skeleton-text>
+      <ion-skeleton-text
+        animated
+        class="skeleton-circle"
+        style="width: 28px; height: 28px; position: absolute; right: 50px"
+      ></ion-skeleton-text>
+    </ion-title>
+  </ion-header>
+
+  <!-- ✅ Header real -->
+  <ion-header *ngIf="!carregandoDados || !primeiraVezCarregando">
     <ion-title>
       Gerenciar Dívidas
       <ion-icon
@@ -12,8 +30,94 @@
       ></ion-icon>
     </ion-title>
   </ion-header>
-  <!-- Lista de categorias -->
-  <div class="grid-categorias">
+
+  <!-- ✅ Skeleton das categorias -->
+  <div class="grid-categorias" *ngIf="carregandoDados && primeiraVezCarregando">
+    <!-- Skeleton do cartão de carteira -->
+    <div class="carteira-skeleton">
+      <ion-skeleton-text
+        animated
+        class="skeleton-line"
+        style="width: 60px; height: 14px; margin-bottom: 8px"
+      ></ion-skeleton-text>
+      <ion-skeleton-text
+        animated
+        class="skeleton-circle"
+        style="width: 24px; height: 24px; margin-bottom: 12px"
+      ></ion-skeleton-text>
+      <ion-skeleton-text
+        animated
+        class="skeleton-line"
+        style="width: 80px; height: 16px"
+      ></ion-skeleton-text>
+    </div>
+
+    <!-- Skeleton das categorias -->
+    <div class="categoria-skeleton" *ngFor="let i of [1,2,3,4,5]">
+      <div class="info-skeleton">
+        <ion-skeleton-text
+          animated
+          class="skeleton-circle"
+          style="width: 60px; height: 40px; border-radius: 10px"
+        ></ion-skeleton-text>
+        <ion-skeleton-text
+          animated
+          class="skeleton-line"
+          style="width: 120px; height: 16px; margin-left: 12px"
+        ></ion-skeleton-text>
+      </div>
+      <div class="valor-skeleton">
+        <ion-skeleton-text
+          animated
+          class="skeleton-line"
+          style="width: 80px; height: 12px; margin-bottom: 4px"
+        ></ion-skeleton-text>
+        <ion-skeleton-text
+          animated
+          class="skeleton-line"
+          style="width: 100px; height: 18px"
+        ></ion-skeleton-text>
+      </div>
+      <div class="quant-skeleton">
+        <ion-skeleton-text
+          animated
+          class="skeleton-line"
+          style="width: 50px; height: 12px; margin-bottom: 4px"
+        ></ion-skeleton-text>
+        <ion-skeleton-text
+          animated
+          class="skeleton-line"
+          style="width: 30px; height: 40px"
+        ></ion-skeleton-text>
+      </div>
+      <ion-skeleton-text
+        animated
+        class="skeleton-circle"
+        style="
+          width: 24px;
+          height: 24px;
+          position: absolute;
+          top: 12px;
+          right: 12px;
+        "
+      ></ion-skeleton-text>
+    </div>
+  </div>
+
+  <!-- ✅ Conteúdo real -->
+  <div
+    class="grid-categorias"
+    *ngIf="!carregandoDados || !primeiraVezCarregando"
+  >
+    <!-- ✅ Loading inline para atualizações -->
+    <div
+      class="loading-inline"
+      *ngIf="carregandoDados && !primeiraVezCarregando"
+    >
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <span>Atualizando categorias...</span>
+    </div>
+
     <div class="carteira-box" (click)="irParaCartoes()">
       <div class="capa-carteira">
         <ion-icon name="card-outline"></ion-icon>
@@ -100,7 +204,7 @@
       <div class="valor-categoria" [style.color]="categoria.cor">
         <p class="ttValorDividas">Valor Total</p>
         <p class="valorDividas">
-          R$ {{ financeiroFacade.getTotalDividasCategoria(categoria.id) |
+          {{ financeiroFacade.getTotalDividasCategoria(categoria.id) |
           currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
         </p>
       </div>

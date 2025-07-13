@@ -1,11 +1,24 @@
-<ion-app>
-  <div class="custom-splash" *ngIf="showSplash">
-    <img
-      src="assets/imagens/controle-financeiro-logo.png"
-      alt="Logo"
-      class="splash-logo"
-    />
-    <ion-spinner name="crescent" class="splash-spinner"></ion-spinner>
+<!-- ✅ Splash Screen COMPLETO - SOMENTE na primeira vez -->
+<div class="splash-screen-inicial" *ngIf="showSplash && primeiraVezAbrindo">
+  <div class="splash-content">
+    <div class="splash-logo">
+      <img src="../assets/imagens/controle-financeiro-logo.png" alt="Logo" />
+    </div>
+    <h1 class="splash-title">Controle Financeiro</h1>
+    <p class="splash-subtitle">Gerencie suas finanças com facilidade</p>
+    <div class="splash-spinner"></div>
   </div>
-  <ion-router-outlet *ngIf="!showSplash"></ion-router-outlet>
+</div>
+
+<!-- ✅ Splash Screen SIMPLES - para carregamentos normais -->
+<div class="splash-screen-simples" *ngIf="showSplash && !primeiraVezAbrindo">
+  <div class="splash-logo">
+    <img src="../assets/imagens/controle-financeiro-logo.png" alt="Logo" />
+  </div>
+  <div class="splash-spinner"></div>
+</div>
+
+<!-- ✅ App Principal -->
+<ion-app [class.app-loading]="showSplash">
+  <ion-router-outlet></ion-router-outlet>
 </ion-app>

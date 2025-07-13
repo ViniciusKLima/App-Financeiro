@@ -13,13 +13,243 @@
   transition: opacity 0.5s;
 }
 
-.splash-logo {
-  width: 120px;
-  height: 120px;
-  margin-bottom: 32px;
+// ✅ Splash Screen INICIAL - com texto e tudo
+.splash-screen-inicial {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1b57be 0%, #2563eb 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+
+  &.hide {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .splash-content {
+    text-align: center;
+    animation: fadeInUp 1s ease-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .splash-logo {
+    width: 100px; // ✅ Tamanho mais controlado
+    height: 100px;
+    margin-bottom: 20px; // ✅ Espaçamento reduzido
+    animation: pulse 2s ease-in-out infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .splash-title {
+    font-size: 1.6rem; // ✅ Tamanho reduzido
+    font-weight: 700;
+    color: white;
+    margin: 0 0 6px 0; // ✅ Margem reduzida
+    animation: fadeInUp 1s ease-out 0.2s both;
+    text-align: center;
+  }
+
+  .splash-subtitle {
+    font-size: 0.95rem; // ✅ Tamanho reduzido
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+    animation: fadeInUp 1s ease-out 0.4s both;
+    text-align: center;
+  }
+
+  .splash-spinner {
+    margin-top: 32px; // ✅ Margem reduzida
+    width: 28px; // ✅ Tamanho reduzido
+    height: 28px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+  }
 }
 
-.splash-spinner {
-  margin-bottom: 18px;
-  color: #fff;
+// ✅ Splash Screen SIMPLES - só logo e spinner
+.splash-screen-simples {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1b57be 0%, #2563eb 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+
+  &.hide {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .splash-logo {
+    width: 90px; // ✅ Tamanho mais controlado
+    height: 90px;
+    margin-bottom: 28px; // ✅ Espaçamento reduzido
+    animation: pulse 2s ease-in-out infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .splash-spinner {
+    width: 26px; // ✅ Tamanho reduzido
+    height: 26px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+  }
+}
+
+// ✅ Animações
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ✅ Controle do app
+.app-loading {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease-in-out;
+}
+
+ion-app:not(.app-loading) {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+ion-router-outlet {
+  background: var(--ion-background-color, #fefefe);
+}
+
+// ✅ Responsividade para telas menores
+@media (max-width: 360px) {
+  .splash-screen-inicial {
+    .splash-logo {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 16px;
+    }
+
+    .splash-title {
+      font-size: 1.4rem;
+    }
+
+    .splash-subtitle {
+      font-size: 0.85rem;
+    }
+
+    .splash-spinner {
+      width: 24px;
+      height: 24px;
+      margin-top: 24px;
+    }
+  }
+
+  .splash-screen-simples {
+    .splash-logo {
+      width: 70px;
+      height: 70px;
+      margin-bottom: 20px;
+    }
+
+    .splash-spinner {
+      width: 22px;
+      height: 22px;
+    }
+  }
+}
+
+// ✅ Responsividade para telas maiores
+@media (min-width: 768px) {
+  .splash-screen-inicial {
+    .splash-logo {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 24px;
+    }
+
+    .splash-title {
+      font-size: 1.8rem;
+    }
+
+    .splash-subtitle {
+      font-size: 1.05rem;
+    }
+
+    .splash-spinner {
+      width: 32px;
+      height: 32px;
+      margin-top: 40px;
+    }
+  }
+
+  .splash-screen-simples {
+    .splash-logo {
+      width: 110px;
+      height: 110px;
+      margin-bottom: 32px;
+    }
+
+    .splash-spinner {
+      width: 30px;
+      height: 30px;
+    }
+  }
 }
