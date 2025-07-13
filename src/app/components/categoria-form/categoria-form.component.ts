@@ -1,7 +1,16 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { FinanceiroService } from 'src/app/services/financeiro.service';
-import { AuthService } from 'src/app/services/auth.service'; // Adicione este import
+import { FinanceiroFacadeService } from '../../services/financeiro-facade.service';
+import { AuthService } from '../../services/core/auth.service';
+
+interface NovoCartao {
+  id: string;
+  nome: string;
+  cor: string;
+  diaFechamento: number | null;
+  diaVencimento: number | null;
+  somarAoTotal: boolean;
+}
 
 @Component({
   selector: 'app-categoria-form',
@@ -9,7 +18,7 @@ import { AuthService } from 'src/app/services/auth.service'; // Adicione este im
   styleUrls: ['./categoria-form.component.scss'],
   standalone: false,
 })
-export class CategoriaFormComponent {
+export class CategoriaFormComponent implements OnInit {
   @Input() categoria: any = null;
   @Input() cartao: any = null;
   @Input() modo: 'categoria' | 'cartao' = 'categoria';
@@ -22,34 +31,34 @@ export class CategoriaFormComponent {
     somarAoTotal: true, // novo campo
   };
 
-  novoCartao = {
+  novoCartao: NovoCartao = {
     id: '',
     nome: '',
     cor: '#2196f3',
     diaFechamento: null,
     diaVencimento: null,
-    somarAoTotal: true, // novo campo
+    somarAoTotal: true,
   };
 
   formTouched = false;
 
   coresDisponiveis = [
-    '#2196f3',
-    '#1565c0',
-    '#4caf50',
-    '#087f23',
-    '#f44336',
-    '#b71c1c',
-    '#ff9800',
-    '#e65100',
-    '#9c27b0',
-    '#4a148c',
-    '#ffd600',
-    '#ffb300',
-    '#bdbdbd',
-    '#424242',
-    '#a1887f',
-    '#4e342e',
+    '#2196f3', // 1. Azul padrão - versátil
+    '#1565c0', // 2. Azul escuro - profissional
+    '#4caf50', // 3. Verde - positivo/dinheiro
+    '#2e7d32', // 4. Verde escuro - natureza/saúde
+    '#f44336', // 5. Vermelho - urgente/importante
+    '#d32f2f', // 6. Vermelho escuro - alertas
+    '#ff9800', // 7. Laranja - energia/criatividade
+    '#ef6c00', // 8. Laranja escuro - trabalho/produtividade
+    '#9c27b0', // 9. Roxo - luxo/premium
+    '#7b1fa2', // 10. Roxo escuro - místico/especial
+    '#e91e63', // 11. Rosa - amor/relacionamentos
+    '#00acc1', // 12. Ciano - tecnologia/digital
+    '#607d8b', // 13. Azul acinzentado - elegante/sóbrio
+    '#8d6e63', // 14. Marrom - casa/estabilidade
+    '#5d4037', // 15. Marrom escuro - tradição/confiança
+    '#424242', // 16. Cinza escuro - neutro/minimalista
   ];
 
   iconesDisponiveis = [
@@ -94,8 +103,8 @@ export class CategoriaFormComponent {
 
   constructor(
     private modalCtrl: ModalController,
-    private financeiroService: FinanceiroService,
-    private authService: AuthService // Adicione aqui
+    private financeiroFacade: FinanceiroFacadeService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -115,40 +124,85 @@ export class CategoriaFormComponent {
     this.novaCategoria.icone = icon;
   }
 
+  validarDiaFechamento(event: any) {
+    const valor = parseInt(event.target.value);
+    if (isNaN(valor) || valor < 1) {
+      event.target.value = '1';
+      this.novoCartao.diaFechamento = 1;
+    } else if (valor > 31) {
+      event.target.value = '31';
+      this.novoCartao.diaFechamento = 31;
+    } else {
+      this.novoCartao.diaFechamento = valor;
+    }
+  }
+
+  validarDiaVencimento(event: any) {
+    const valor = parseInt(event.target.value);
+    if (isNaN(valor) || valor < 1) {
+      event.target.value = '1';
+      this.novoCartao.diaVencimento = 1;
+    } else if (valor > 31) {
+      event.target.value = '31';
+      this.novoCartao.diaVencimento = 31;
+    } else {
+      this.novoCartao.diaVencimento = valor;
+    }
+  }
+
   async salvar() {
-    if (this.salvando) return; // Evita duplo disparo
+    if (this.salvando) return;
     this.salvando = true;
     this.formTouched = true;
 
-    const uid = this.authService.usuarioAtual?.uid;
+    const uid = localStorage.getItem('uid') || undefined;
+
     if (this.modo === 'categoria') {
       if (!this.novaCategoria.nome.trim()) {
         this.salvando = false;
         return;
       }
+
       if (this.novaCategoria.id) {
-        this.financeiroService.updateCategoria(this.novaCategoria);
+        await this.financeiroFacade.updateCategoria(this.novaCategoria, uid);
       } else {
-        this.financeiroService.addCategoria(this.novaCategoria);
+        await this.financeiroFacade.addCategoria(this.novaCategoria, uid);
       }
-      if (uid) await this.financeiroService.salvarFirebase(uid);
-      this.modalCtrl.dismiss(this.novaCategoria);
+
+      this.modalCtrl.dismiss({
+        salvo: true,
+        categoria: this.novaCategoria,
+        acao: this.novaCategoria.id ? 'editou' : 'criou',
+      });
     } else {
+      // ✅ Validação com verificação de tipo
+      const fechamento = this.novoCartao.diaFechamento;
+      const vencimento = this.novoCartao.diaVencimento;
+
       if (
         !this.novoCartao.nome.trim() ||
-        !this.novoCartao.diaFechamento ||
-        !this.novoCartao.diaVencimento
+        fechamento === null ||
+        vencimento === null ||
+        fechamento < 1 ||
+        fechamento > 31 ||
+        vencimento < 1 ||
+        vencimento > 31
       ) {
         this.salvando = false;
         return;
       }
+
       if (this.novoCartao.id) {
-        this.financeiroService.updateCartao(this.novoCartao);
+        await this.financeiroFacade.updateCartao(this.novoCartao, uid);
       } else {
-        this.financeiroService.addCartao(this.novoCartao);
+        await this.financeiroFacade.addCartao(this.novoCartao, uid);
       }
-      if (uid) await this.financeiroService.salvarFirebase(uid);
-      this.modalCtrl.dismiss(this.novoCartao);
+
+      this.modalCtrl.dismiss({
+        salvo: true,
+        cartao: this.novoCartao,
+        acao: this.novoCartao.id ? 'editou' : 'criou',
+      });
     }
     this.salvando = false;
   }

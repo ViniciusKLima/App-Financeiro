@@ -1,56 +1,60 @@
 import { Injectable } from '@angular/core';
 import {
   Auth,
-  signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   signOut,
   User,
-  UserCredential,
 } from '@angular/fire/auth';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root',
+})
 export class AuthService {
   constructor(private auth: Auth) {}
 
-  // Login
-  async login(email: string, senha: string): Promise<User | null> {
-    try {
-      const cred: UserCredential = await signInWithEmailAndPassword(
-        this.auth,
-        email,
-        senha
-      );
-      return cred.user;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  // Cadastro
   async cadastrar(email: string, senha: string): Promise<User | null> {
     try {
-      const cred: UserCredential = await createUserWithEmailAndPassword(
+      const userCredential = await createUserWithEmailAndPassword(
         this.auth,
         email,
         senha
       );
-      return cred.user;
+      return userCredential.user;
     } catch (error) {
+      console.error('Erro ao cadastrar:', error);
       throw error;
     }
   }
 
-  // Logout
+  async login(email: string, senha: string): Promise<User | null> {
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        this.auth,
+        email,
+        senha
+      );
+      return userCredential.user;
+    } catch (error) {
+      console.error('Erro ao fazer login:', error);
+      throw error;
+    }
+  }
+
   async logout(): Promise<void> {
     try {
       await signOut(this.auth);
     } catch (error) {
+      console.error('Erro ao fazer logout:', error);
       throw error;
     }
   }
 
-  // Usuário atual
   get usuarioAtual(): User | null {
+    return this.auth.currentUser;
+  }
+
+  getCurrentUser(): User | null {
     return this.auth.currentUser;
   }
 }

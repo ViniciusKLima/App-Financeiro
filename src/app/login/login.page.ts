@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastController, LoadingController } from '@ionic/angular';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../services/core/auth.service';
+import { FinanceiroFacadeService } from '../services/financeiro-facade.service';
 
 @Component({
   selector: 'app-login',
@@ -12,6 +13,7 @@ import { AuthService } from '../services/auth.service';
 export class LoginPage {
   email: string = '';
   senha: string = '';
+  mostrarSenha: boolean = false; // Adicione esta variável
   erroCampos = false;
   mensagemErro: string = '';
   inputEmFoco = false;
@@ -20,8 +22,13 @@ export class LoginPage {
     private router: Router,
     private authService: AuthService,
     private toastCtrl: ToastController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private financeiroFacade: FinanceiroFacadeService // ✅ Novo
   ) {}
+
+  ngOnInit() {
+    this.limparCampos();
+  }
 
   // Rota para cadastro
   irParaCadastro() {
@@ -45,6 +52,15 @@ export class LoginPage {
     await toast.present();
   }
 
+  // Método para limpar os inputs
+  limparCampos() {
+    this.email = '';
+    this.senha = '';
+    this.mostrarSenha = false;
+    this.mensagemErro = '';
+    this.erroCampos = false;
+  }
+
   // Requisitos para login
   async logar() {
     const emailLimpo = this.email.trim();
@@ -63,7 +79,7 @@ export class LoginPage {
       return;
     }
 
-    // Chama loading para verificação
+    // Loading para verificação
     const loading = await this.loadingCtrl.create({
       message: 'Entrando...',
       spinner: 'crescent',
@@ -71,24 +87,38 @@ export class LoginPage {
     await loading.present();
 
     try {
-      // Tenta logar
       const user = await this.authService.login(emailLimpo, senhaDigitada);
       if (user && user.uid) {
-        localStorage.setItem('uid', user.uid); // Salva o UID
-        localStorage.setItem('isLoggedIn', 'true'); // Flag de login
+        localStorage.setItem('uid', user.uid);
+        localStorage.setItem('isLoggedIn', 'true');
+
+        // ✅ Corrigir método
+        await this.financeiroFacade.inicializar(user.uid);
+
+        this.limparCampos();
         this.router.navigate(['/nav/home']);
       }
       await loading.dismiss();
     } catch (error: any) {
       await loading.dismiss();
       // Trata erros específicos do Firebase
-      if (error.code === 'auth/user-not-found') {
-        this.mostrarToast('Email não encontrado.'); // Email não existe
-      } else if (error.code === 'auth/wrong-password') {
-        this.mostrarToast('Senha incorreta.'); // Senha inválida
+      if (
+        error.code === 'auth/user-not-found' ||
+        error.code === 'auth/wrong-password' ||
+        error.code === 'auth/invalid-credential' ||
+        error.code === 'auth/invalid-email'
+      ) {
+        this.mostrarToast('Email ou senha incorretos.');
+      } else if (error.code === 'auth/network-request-failed') {
+        this.mostrarToast('Erro de conexão. Verifique sua internet.');
       } else {
-        this.mostrarToast('Erro ao conectar ao servidor.'); // Outros erros
+        this.mostrarToast('Email ou senha incorretos.');
       }
     }
+  }
+
+  // Adicione este método
+  alternarVisibilidadeSenha() {
+    this.mostrarSenha = !this.mostrarSenha;
   }
 }

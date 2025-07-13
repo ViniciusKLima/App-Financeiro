@@ -436,6 +436,60 @@ ion-checkbox {
     width: 100%;
     max-width: 450px;
 
+    transition: all 0.3s ease;
+    overflow: hidden;
+
+    &.animando {
+      pointer-events: none;
+
+      .top-divida,
+      .bottom-divida {
+        transition: all 0.6s ease;
+      }
+
+      .linha-divida {
+        transition: all 0.6s ease;
+      }
+    }
+
+    // Animação para pago (verde, direita)
+    &.pago-animacao {
+      background-color: #4caf50 !important;
+      color: #fff !important;
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+
+      ion-label,
+      ion-icon {
+        color: #fff !important;
+      }
+
+      &.saindo {
+        transform: translateX(120%) scale(0.8);
+        opacity: 0;
+        filter: blur(2px);
+      }
+    }
+
+    // Animação para despago (azul, esquerda)
+    &.despago-animacao {
+      background-color: #2196f3 !important;
+      color: #fff !important;
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+
+      ion-label,
+      ion-icon {
+        color: #fff !important;
+      }
+
+      &.saindo {
+        transform: translateX(-120%) scale(0.8);
+        opacity: 0;
+        filter: blur(2px);
+      }
+    }
+
     .top-divida {
       display: flex;
       justify-content: space-between;
@@ -477,4 +531,44 @@ ion-checkbox {
   z-index: 10;
   cursor: pointer;
   pointer-events: auto;
+}
+
+.item-compromisso {
+  transition: all 0.3s ease;
+
+  &.pagando {
+    background-color: #4caf50 !important;
+    transform: scale(1.05);
+
+    &.sumindo {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+  }
+}
+
+// Feedback visual
+.feedback-pagamento {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-weight: bold;
+  font-size: 14px;
+  z-index: 20;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+// Suavizar transições dos containers
+.cards-dividas {
+  .itens-dividas {
+    margin-bottom: 12px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
 }

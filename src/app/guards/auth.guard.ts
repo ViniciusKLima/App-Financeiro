@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../services/core/auth.service';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root',
+})
 export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
   canActivate(): boolean {
     // Verifica se está logado no Firebase OU tem flag no localStorage
-    const usuario = this.authService.usuarioAtual;
+    const usuario = this.authService.usuarioAtual; // ✅ Agora funciona
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     const uid = localStorage.getItem('uid');
 

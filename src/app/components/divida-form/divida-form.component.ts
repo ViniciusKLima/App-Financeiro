@@ -1,8 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ModalController } from '@ionic/angular';
-import { FinanceiroService } from '../../services/financeiro.service';
-import { AuthService } from '../../services/auth.service'; // Adicione este import
+import { FinanceiroFacadeService } from '../../services/financeiro-facade.service';
 
 @Component({
   selector: 'app-divida-form',
@@ -31,69 +30,97 @@ export class DividaFormComponent implements OnInit {
   public salvando = false;
 
   constructor(
-    private financeiroService: FinanceiroService,
+    private financeiroFacade: FinanceiroFacadeService,
     private fb: FormBuilder,
-    private modalCtrl: ModalController,
-    private authService: AuthService // Adicione aqui
+    private modalCtrl: ModalController
   ) {}
 
   ngOnInit() {
-    this.cartoes = this.financeiroService.getCartoes();
-    this.categorias = this.financeiroService.getCategorias();
+    console.log('🔄 DividaForm - Inicializando...');
+    console.log('Modo:', this.modo);
+    console.log('CartaoId:', this.cartaoId);
+    console.log('CategoriaId:', this.categoriaId);
+    console.log('Compra:', this.compra);
+    console.log('CompraIndex:', this.compraIndex);
 
+    // ✅ Definir modo baseado nos inputs
+    if (this.categoriaId) {
+      this.modo = 'categoria';
+    } else if (this.cartaoId) {
+      this.modo = 'cartao';
+    }
+
+    // ✅ Carregar dados
+    this.cartoes = this.financeiroFacade.getCartoes();
+    this.categorias = this.financeiroFacade.getCategorias();
+
+    console.log('Cartões carregados:', this.cartoes);
+    console.log('Categorias carregadas:', this.categorias);
+
+    // ✅ Inicializar formulário
+    this.inicializarFormulario();
+
+    // ✅ Preencher dados se for edição
+    if (this.compra) {
+      this.preencherDadosEdicao();
+    }
+  }
+
+  private inicializarFormulario() {
     this.formCompra = this.fb.group({
-      cartaoId: ['', this.modo === 'cartao' ? Validators.required : []],
+      // Campos para cartão
+      cartaoId: [
+        this.cartaoId || '',
+        this.modo === 'cartao' ? Validators.required : [],
+      ],
       nomeCompra: ['', this.modo === 'cartao' ? Validators.required : []],
       valor: [null, this.modo === 'cartao' ? Validators.required : []],
       compraFixa: [false],
-      parcelaAtual: [1, this.modo === 'cartao' ? Validators.required : []],
-      totalParcelas: [1, this.modo === 'cartao' ? Validators.required : []],
+      parcelaAtual: [1],
+      totalParcelas: [1],
       descricao: [''],
-      categoriaId: ['', this.modo === 'categoria' ? Validators.required : []],
+
+      // Campos para categoria
+      categoriaId: [
+        this.categoriaId || '',
+        this.modo === 'categoria' ? Validators.required : [],
+      ],
       nomeDivida: ['', this.modo === 'categoria' ? Validators.required : []],
       valorDivida: [null, this.modo === 'categoria' ? Validators.required : []],
       descricaoDivida: [''],
       diaPagamento: [
         null,
-        this.modo === 'categoria' ? Validators.required : [],
+        this.modo === 'categoria'
+          ? [Validators.required, Validators.min(1), Validators.max(31)]
+          : [],
       ],
     });
 
-    if (this.cartaoId) {
-      this.formCompra.get('cartaoId')?.setValue(this.cartaoId);
-    }
-    if (this.categoriaId) {
-      this.formCompra.get('categoriaId')?.setValue(this.categoriaId);
-    }
+    console.log('📝 Formulário inicializado:', this.formCompra.value);
+  }
 
-    if (this.compra) {
+  private preencherDadosEdicao() {
+    if (this.modo === 'cartao') {
       this.formCompra.patchValue({
         nomeCompra: this.compra.nome,
         valor: this.compra.valor,
-        parcelaAtual: this.compra.parcelaAtual,
-        totalParcelas: this.compra.totalParcelas,
-        descricao: this.compra.descricao,
+        parcelaAtual: this.compra.parcelaAtual || 1,
+        totalParcelas: this.compra.totalParcelas || 1,
+        descricao: this.compra.descricao || '',
+        compraFixa: this.compra.compraFixa || false,
       });
       this.valorFormatado = this.formatarValor(this.compra.valor);
-    }
-
-    // Inicializa os valores formatados
-    this.valorFormatado = this.formatarValor(
-      this.formCompra.get('valor')?.value
-    );
-    this.valorDividaFormatado = this.formatarValor(
-      this.formCompra.get('valorDivida')?.value
-    );
-
-    if (this.modo === 'categoria' && this.compra) {
+    } else {
       this.formCompra.patchValue({
         nomeDivida: this.compra.nome,
         valorDivida: this.compra.valor,
         diaPagamento: this.compra.diaPagamento,
-        descricaoDivida: this.compra.descricao,
+        descricaoDivida: this.compra.descricao || '',
       });
       this.valorDividaFormatado = this.formatarValor(this.compra.valor);
     }
+
+    console.log('📝 Dados de edição preenchidos:', this.formCompra.value);
   }
 
   get cartaoSelecionado() {
@@ -119,7 +146,6 @@ export class DividaFormComponent implements OnInit {
 
     this.formCompra.get(campo)?.setValue(valorReal);
 
-    // Atualiza o valor formatado para exibir no input
     const valorFormatado = this.formatarValor(valorReal);
     if (campo === 'valor') {
       this.valorFormatado = valorFormatado;
@@ -127,7 +153,6 @@ export class DividaFormComponent implements OnInit {
       this.valorDividaFormatado = valorFormatado;
     }
 
-    // Atualiza o input visualmente sem travar o cursor
     setTimeout(() => {
       input.value = valorFormatado;
     });
@@ -161,12 +186,14 @@ export class DividaFormComponent implements OnInit {
     if (event) event.stopPropagation();
     this.formCompra.get('cartaoId')?.setValue(cartao.id);
     this.mostrandoCartoes = false;
+    console.log('🎯 Cartão selecionado:', cartao);
   }
 
   selecionarCategoria(categoria: any, event?: Event) {
     if (event) event.stopPropagation();
     this.formCompra.get('categoriaId')?.setValue(categoria.id);
     this.mostrandoCategorias = false;
+    console.log('🎯 Categoria selecionada:', categoria);
   }
 
   onToggleFixa() {
@@ -175,6 +202,8 @@ export class DividaFormComponent implements OnInit {
     const isFixa = this.formCompra.value.compraFixa;
 
     if (isFixa) {
+      parcelaAtual?.setValue(1);
+      totalParcelas?.setValue(1);
       parcelaAtual?.disable({ emitEvent: false });
       totalParcelas?.disable({ emitEvent: false });
     } else {
@@ -184,105 +213,169 @@ export class DividaFormComponent implements OnInit {
   }
 
   async salvar() {
-    if (this.salvando) return; // Evita duplo disparo
+    if (this.salvando) return;
     this.salvando = true;
     this.formTouched = true;
+
+    console.log('💾 Iniciando salvamento...');
+    console.log('Modo:', this.modo);
+    console.log('Formulário:', this.formCompra.value);
+    console.log('Formulário válido:', this.formCompra.valid);
+
     if (this.formCompra.invalid) {
+      console.log('❌ Formulário inválido');
       Object.values(this.formCompra.controls).forEach((control) => {
         control.markAsTouched();
       });
       this.salvando = false;
       return;
     }
-    const uid = this.authService.usuarioAtual?.uid;
-    if (this.modo === 'cartao') {
-      const novaCompra = this.formCompra.value;
-      const cartao = this.financeiroService.getCartaoById(novaCompra.cartaoId);
-      const compraEditada = {
-        nome: novaCompra.nomeCompra,
-        valor: novaCompra.valor,
-        parcelaAtual: novaCompra.parcelaAtual,
-        totalParcelas: novaCompra.totalParcelas,
-        descricao: novaCompra.descricao,
-        compraFixa: novaCompra.compraFixa, // <-- adicione esta linha
-      };
-      if (this.compraIndex !== undefined && cartao) {
-        // Edição
-        cartao.compras[this.compraIndex] = compraEditada;
-        if (uid) await this.financeiroService.salvarFirebase(uid);
-        await this.modalCtrl.dismiss({
-          tipo: 'cartao',
-          compraEditada,
-          cartaoId: cartao.id,
-        });
-      } else if (cartao) {
-        // Nova compra
-        cartao.compras.push(compraEditada);
-        if (uid) await this.financeiroService.salvarFirebase(uid);
-        await this.modalCtrl.dismiss({
-          tipo: 'cartao',
-          compra: compraEditada,
-          cartaoId: cartao.id,
-        });
-      }
-    } else {
-      const novaDivida = {
-        nome: this.formCompra.value.nomeDivida,
-        diaPagamento: this.formCompra.value.diaPagamento,
-        valor: this.formCompra.value.valorDivida,
-        descricao: this.formCompra.value.descricaoDivida,
-      };
 
-      const categoria = this.financeiroService.getCategoriaById(
-        this.formCompra.value.categoriaId
-      );
-      if (categoria) {
-        if (this.compraIndex !== undefined) {
-          // Edição
-          categoria.dividas[this.compraIndex] = novaDivida;
-        } else {
-          // Nova dívida
-          if (!categoria.dividas) categoria.dividas = [];
-          categoria.dividas.push(novaDivida);
-        }
+    const uid = localStorage.getItem('uid') || undefined;
+
+    try {
+      if (this.modo === 'cartao') {
+        await this.salvarCompra(uid);
+      } else {
+        await this.salvarDivida(uid);
       }
-      if (uid) await this.financeiroService.salvarFirebase(uid);
-      await this.modalCtrl.dismiss({
-        tipo: 'categoria',
-        divida: novaDivida,
-        categoriaId: categoria?.id,
-      });
+    } catch (error) {
+      console.error('❌ Erro ao salvar:', error);
     }
+
     this.salvando = false;
   }
 
-  async excluir() {
-    const uid = this.authService.usuarioAtual?.uid;
-    if (this.modo === 'cartao') {
-      const cartao = this.financeiroService.getCartaoById(
-        this.formCompra.value.cartaoId
+  private async salvarCompra(uid?: string) {
+    const dadosForm = this.formCompra.value;
+    const novaCompra = {
+      nome: dadosForm.nomeCompra,
+      valor: dadosForm.valor,
+      parcelaAtual: dadosForm.compraFixa ? 1 : dadosForm.parcelaAtual,
+      totalParcelas: dadosForm.compraFixa ? 1 : dadosForm.totalParcelas,
+      descricao: dadosForm.descricao || '',
+      compraFixa: dadosForm.compraFixa || false,
+    };
+
+    console.log('💳 Salvando compra:', novaCompra);
+    console.log('Cartão ID:', dadosForm.cartaoId);
+    console.log('Índice:', this.compraIndex);
+
+    if (this.compraIndex !== undefined) {
+      // ✅ Editando compra existente
+      await this.financeiroFacade.editarCompraCartao(
+        dadosForm.cartaoId,
+        this.compraIndex,
+        novaCompra,
+        uid
       );
-      if (cartao && this.compraIndex !== undefined) {
-        cartao.compras.splice(this.compraIndex, 1);
-        if (uid) await this.financeiroService.salvarFirebase(uid);
-        await this.modalCtrl.dismiss({ excluido: true, cartaoId: cartao.id });
-      }
+      console.log('✅ Compra editada com sucesso');
     } else {
-      const categoria = this.financeiroService.getCategoriaById(
-        this.formCompra.value.categoriaId
+      // ✅ Nova compra
+      await this.financeiroFacade.adicionarCompraCartao(
+        dadosForm.cartaoId,
+        novaCompra,
+        uid
       );
-      if (categoria && this.compraIndex !== undefined) {
-        categoria.dividas.splice(this.compraIndex, 1);
-        if (uid) await this.financeiroService.salvarFirebase(uid);
-        await this.modalCtrl.dismiss({
-          excluido: true,
-          categoriaId: categoria.id,
-        });
+      console.log('✅ Compra adicionada com sucesso');
+    }
+
+    await this.modalCtrl.dismiss({
+      salvo: true,
+      tipo: 'cartao',
+      compra: novaCompra,
+      cartaoId: dadosForm.cartaoId,
+      acao: this.compraIndex !== undefined ? 'editou' : 'criou',
+    });
+  }
+
+  private async salvarDivida(uid?: string) {
+    const dadosForm = this.formCompra.value;
+    const novaDivida = {
+      nome: dadosForm.nomeDivida,
+      valor: dadosForm.valorDivida,
+      diaPagamento: dadosForm.diaPagamento,
+      descricao: dadosForm.descricaoDivida || '',
+    };
+
+    console.log('📝 Salvando dívida:', novaDivida);
+    console.log('Categoria ID:', dadosForm.categoriaId);
+    console.log('Índice:', this.compraIndex);
+
+    if (this.compraIndex !== undefined) {
+      // ✅ Editando dívida existente
+      await this.financeiroFacade.editarDividaCategoria(
+        dadosForm.categoriaId,
+        this.compraIndex,
+        novaDivida,
+        uid
+      );
+      console.log('✅ Dívida editada com sucesso');
+    } else {
+      // ✅ Nova dívida
+      await this.financeiroFacade.adicionarDividaCategoria(
+        dadosForm.categoriaId,
+        novaDivida,
+        uid
+      );
+      console.log('✅ Dívida adicionada com sucesso');
+    }
+
+    await this.modalCtrl.dismiss({
+      salvo: true,
+      tipo: 'categoria',
+      divida: novaDivida,
+      categoriaId: dadosForm.categoriaId,
+      acao: this.compraIndex !== undefined ? 'editou' : 'criou',
+    });
+  }
+
+  async excluir() {
+    const uid = localStorage.getItem('uid') || undefined;
+
+    try {
+      if (this.modo === 'cartao') {
+        await this.financeiroFacade.removerCompraCartao(
+          this.formCompra.value.cartaoId,
+          this.compraIndex!,
+          uid
+        );
+        console.log('✅ Compra excluída com sucesso');
+      } else {
+        await this.financeiroFacade.removerDividaCategoria(
+          this.formCompra.value.categoriaId,
+          this.compraIndex!,
+          uid
+        );
+        console.log('✅ Dívida excluída com sucesso');
       }
+
+      await this.modalCtrl.dismiss({
+        excluido: true,
+        tipo: this.modo,
+        [this.modo === 'cartao' ? 'cartaoId' : 'categoriaId']:
+          this.formCompra.value[
+            this.modo === 'cartao' ? 'cartaoId' : 'categoriaId'
+          ],
+      });
+    } catch (error) {
+      console.error('❌ Erro ao excluir:', error);
     }
   }
 
   cancelar() {
     this.modalCtrl.dismiss();
+  }
+
+  // ✅ Adicione método para validar dia
+  validarDiaPagamento(event: any) {
+    const valor = parseInt(event.target.value);
+    if (valor < 1) {
+      event.target.value = 1;
+      this.formCompra.get('diaPagamento')?.setValue(1);
+    } else if (valor > 31) {
+      event.target.value = 31;
+      this.formCompra.get('diaPagamento')?.setValue(31);
+    }
   }
 }

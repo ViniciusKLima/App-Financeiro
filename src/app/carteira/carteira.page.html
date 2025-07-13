@@ -100,15 +100,15 @@
       <div class="valor-categoria" [style.color]="categoria.cor">
         <p class="ttValorDividas">Valor Total</p>
         <p class="valorDividas">
-          R$ {{ financeiroService.getTotalDividasCategoria(categoria.id) |
-          number:'1.2-2' }}
+          R$ {{ financeiroFacade.getTotalDividasCategoria(categoria.id) |
+          currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
         </p>
       </div>
 
       <div class="quant-dividas" [style.color]="categoria.cor">
         <p class="ttQuantDividas">Dívidas</p>
         <p class="numQuantDividas">
-          {{ financeiroService.getQuantidadeDividasCategoria(categoria.id) }}
+          {{ financeiroFacade.getQuantidadeDividasCategoria(categoria.id) }}
         </p>
       </div>
     </div>

@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import {
   ModalController,
   AlertController,
   NavController,
 } from '@ionic/angular';
 import { CategoriaFormComponent } from '../components/categoria-form/categoria-form.component';
-import { FinanceiroService } from '../services/financeiro.service';
+import { FinanceiroFacadeService } from '../services/financeiro-facade.service';
 
 @Component({
   selector: 'app-carteira',
@@ -13,23 +14,42 @@ import { FinanceiroService } from '../services/financeiro.service';
   styleUrls: ['./carteira.page.scss'],
   standalone: false,
 })
-export class CarteiraPage {
+export class CarteiraPage implements OnInit, OnDestroy {
   categorias: any[] = [];
-  categoriaMenuAberto: string | null = null; // Controle do menu customizado
+  categoriaMenuAberto: string | null = null;
+  private dadosSubscription?: Subscription;
 
   constructor(
     public modalCtrl: ModalController,
     public alertCtrl: AlertController,
-    public financeiroService: FinanceiroService,
-    private navCtrl: NavController // <--- adicione aqui
-  ) {
-    this.carregarCategorias();
+    public financeiroFacade: FinanceiroFacadeService,
+    private navCtrl: NavController
+  ) {}
+
+  async ngOnInit() {
+    // Carrega dados iniciais
+    await this.carregarCategorias();
+
+    // ✅ Se inscreve para receber atualizações em tempo real
+    this.dadosSubscription = this.financeiroFacade.dadosAtualizados$.subscribe(
+      (dados) => {
+        console.log('📱 Carteira atualizada automaticamente');
+        this.carregarCategorias();
+      }
+    );
+  }
+
+  ngOnDestroy() {
+    // Para a subscription quando sair da página
+    if (this.dadosSubscription) {
+      this.dadosSubscription.unsubscribe();
+    }
   }
 
   public get categoriasCartoes() {
-    return this.financeiroService.getCartoes().map((cartao: any) => ({
+    return this.financeiroFacade.getCartoes().map((cartao: any) => ({
       ...cartao,
-      gradient: this.financeiroService.generateGradient(cartao.cor),
+      gradient: this.financeiroFacade.generateGradient(cartao.cor),
     }));
   }
 
@@ -37,13 +57,19 @@ export class CarteiraPage {
     const uid = localStorage.getItem('uid');
     if (uid) {
       this.categorias =
-        await this.financeiroService.carregarCategoriasDoFirebase(uid);
+        await this.financeiroFacade.carregarCategoriasDoFirebase(uid);
       this.ordenarCategoriasPorValor();
     }
   }
 
   ordenarCategoriasPorValor() {
-    this.categorias.sort((a, b) => parseFloat(b.valor) - parseFloat(a.valor));
+    this.categorias.sort((a, b) => {
+      const valorA = this.financeiroFacade.getTotalDividasCategoria(a.id);
+      const valorB = this.financeiroFacade.getTotalDividasCategoria(b.id);
+
+      // Ordem decrescente: maior valor primeiro
+      return valorB - valorA;
+    });
   }
 
   // Ação do botão "Nova Categoria"
@@ -77,16 +103,13 @@ export class CarteiraPage {
       cssClass: 'custom-modal-bottom-sheet',
     });
 
-    modal.onDidDismiss().then((retorno) => {
-      if (retorno.data) {
-        if (modo === 'categoria') {
-          if (objetoParaEditar) {
-            this.atualizarCategoria(retorno.data);
-          } else {
-            this.adicionarNovaCategoria(retorno.data);
-          }
-        }
-        // Para cartões, você pode adicionar lógica semelhante aqui se desejar atualizar a lista de cartões na tela
+    modal.onDidDismiss().then(async (retorno) => {
+      if (retorno.data && retorno.data.salvo) {
+        // ✅ NÃO salvar novamente - já foi salvo no modal
+        console.log(`${retorno.data.acao} ${modo}:`, retorno.data);
+
+        // ✅ Apenas recarrega para atualizar a UI (opcional, o listener já faz isso)
+        // this.carregarCategorias(); // Comentado pois o listener já atualiza
       }
     });
 
@@ -94,10 +117,7 @@ export class CarteiraPage {
   }
 
   adicionarNovaCategoria(novaCat: any) {
-    // Remova a linha abaixo!
-    // novaCat.id = Date.now().toString();
-    // this.categorias.push(novaCat);
-    this.carregarCategorias(); // Só recarrega do service
+    this.carregarCategorias();
     this.ordenarCategoriasPorValor();
   }
 
@@ -157,8 +177,8 @@ export class CarteiraPage {
   async excluirCategoria(id: string) {
     const uid = localStorage.getItem('uid');
     if (uid) {
-      await this.financeiroService.excluirCategoria(uid, id);
-      this.carregarCategorias(); // Atualiza a lista local
+      await this.financeiroFacade.excluirCategoria(uid, id);
+      // A atualização será feita automaticamente pelo listener
     }
   }
 
@@ -166,7 +186,7 @@ export class CarteiraPage {
     this.carregarCategorias();
     setTimeout(() => {
       event.target.complete();
-    }, 600); // tempo para simular carregamento, ajuste se quiser
+    }, 600);
   }
 
   // Métodos de navegação:

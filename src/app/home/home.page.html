@@ -157,14 +157,12 @@
   <div class="slider">
     <div class="slide" [class.active]="abaAtual === 'pendentes'">
       <!-- Atrasados -->
-      <ng-container
-        *ngIf="compromissosAtrasados.length > 0"
-        class="container-dividas"
-      >
+      <ng-container *ngIf="compromissosAtrasados.length > 0">
         <section class="cards-dividas card-atrasado">
-          <h2>Atrasado</h2>
+          <h2 class="h2-atrasado">Atrasados</h2>
           <div
             class="itens-dividas item-atrasado"
+            [attr.data-id]="compromisso.id"
             *ngFor="let compromisso of compromissosAtrasados"
           >
             <div class="top-divida">
@@ -174,13 +172,15 @@
                   [style.color]="compromisso.cor"
                   style="margin-right: 8px"
                 ></ion-icon>
-                {{ compromisso.nome }}
+                <!-- Aqui está a mudança: mostra nome + dia -->
+                {{ compromisso.nome }} - Dia {{ compromisso.dia }}
               </ion-label>
+
               <ion-checkbox
                 class="check"
                 slot="end"
                 [checked]="compromisso.foiPago"
-                (ionChange)="alternarStatus(compromisso.id)"
+                (click)="alternarStatus(compromisso.id, $event)"
                 mode="ios"
               ></ion-checkbox>
             </div>
@@ -214,6 +214,8 @@
           <h2 class="h2-pendente">{{ formatarTituloDia(+dia) }}</h2>
           <div
             class="itens-dividas"
+            [attr.data-id]="compromisso.id"
+            [class.item-pagamento]="compromisso.foiPago"
             *ngFor="let compromisso of compromissosPorDia[+dia]"
           >
             <div class="top-divida">
@@ -225,11 +227,12 @@
                 ></ion-icon>
                 {{ compromisso.nome }}
               </ion-label>
+              <!-- Para compromissos pendentes -->
               <ion-checkbox
                 class="check"
                 slot="end"
                 [checked]="compromisso.foiPago"
-                (ionChange)="alternarStatus(compromisso.id)"
+                (click)="alternarStatus(compromisso.id, $event)"
                 mode="ios"
               ></ion-checkbox>
             </div>
@@ -289,6 +292,7 @@
           <h2 class="h2-pago">{{ formatarTituloDia(+dia) }}</h2>
           <div
             class="itens-dividas item-pago"
+            [attr.data-id]="compromisso.id"
             *ngFor="let compromisso of compromissosPagosPorDia[+dia]"
           >
             <div class="top-divida">
@@ -300,6 +304,14 @@
                 ></ion-icon>
                 {{ compromisso.nome }}
               </ion-label>
+
+              <ion-checkbox
+                class="check"
+                slot="end"
+                [checked]="compromisso.foiPago"
+                (click)="alternarStatus(compromisso.id, $event)"
+                mode="ios"
+              ></ion-checkbox>
             </div>
             <hr class="linha-divida" />
             <div class="bottom-divida">

@@ -113,7 +113,8 @@
           class="input-direita"
           min="1"
           max="31"
-          placeholder="Ex: 10"
+          placeholder="1-31"
+          (ionBlur)="validarDiaFechamento($event)"
         ></ion-input>
       </div>
 
@@ -131,7 +132,8 @@
           class="input-direita"
           min="1"
           max="31"
-          placeholder="Ex: 17"
+          placeholder="1-31"
+          (ionBlur)="validarDiaVencimento($event)"
         ></ion-input>
       </div>
       <div class="input-row">
@@ -167,12 +169,38 @@
           formTouched &&
           (!novoCartao.nome.trim() ||
             !novoCartao.diaFechamento ||
-            !novoCartao.diaVencimento)
+            !novoCartao.diaVencimento ||
+            novoCartao.diaFechamento < 1 ||
+            novoCartao.diaFechamento > 31 ||
+            novoCartao.diaVencimento < 1 ||
+            novoCartao.diaVencimento > 31)
         "
         class="erro-campo"
         style="text-align: center; margin-bottom: 12px"
       >
-        Preencha todos os campos
+        <div *ngIf="!novoCartao.nome.trim()">Nome é obrigatório</div>
+        <div *ngIf="!novoCartao.diaFechamento">
+          Dia de fechamento é obrigatório
+        </div>
+        <div *ngIf="!novoCartao.diaVencimento">
+          Dia de vencimento é obrigatório
+        </div>
+        <div
+          *ngIf="
+            novoCartao.diaFechamento &&
+            (novoCartao.diaFechamento < 1 || novoCartao.diaFechamento > 31)
+          "
+        >
+          Dia de fechamento deve estar entre 1 e 31
+        </div>
+        <div
+          *ngIf="
+            novoCartao.diaVencimento &&
+            (novoCartao.diaVencimento < 1 || novoCartao.diaVencimento > 31)
+          "
+        >
+          Dia de vencimento deve estar entre 1 e 31
+        </div>
       </div>
       <ion-button (click)="salvar()" class="btn-salvar ion-margin-top"
         >Salvar</ion-button

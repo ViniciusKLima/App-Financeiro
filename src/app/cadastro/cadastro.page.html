@@ -19,21 +19,6 @@
           ></ion-input>
         </ion-item>
 
-        <!--Data de Nascimento-->
-        <ion-item class="input-item">
-          <ion-icon name="calendar" slot="start"></ion-icon>
-
-          <ion-input
-            [(ngModel)]="dataNascimento"
-            name="dataNascimento"
-            type="date"
-            placeholder="Data de nascimento"
-            (ionFocus)="inputEmFoco = true"
-            (ionBlur)="inputEmFoco = false"
-            required
-          ></ion-input>
-        </ion-item>
-
         <!--Email-->
         <ion-item class="input-item">
           <ion-icon name="mail" slot="start"></ion-icon>
@@ -56,18 +41,45 @@
           <ion-input
             [(ngModel)]="senha"
             name="senha"
-            type="password"
+            [type]="mostrarSenha ? 'text' : 'password'"
             placeholder="Senha"
             (ionFocus)="inputEmFoco = true"
             (ionBlur)="inputEmFoco = false"
             required
           ></ion-input>
+
+          <ion-icon
+            [name]="mostrarSenha ? 'eye-off' : 'eye'"
+            slot="end"
+            class="toggle-password"
+            (click)="alternarVisibilidadeSenha()"
+          ></ion-icon>
+        </ion-item>
+
+        <!--Confirmar Senha-->
+        <ion-item class="input-item">
+          <ion-icon name="key" slot="start"></ion-icon>
+
+          <ion-input
+            [(ngModel)]="confirmarSenha"
+            name="confirmarSenha"
+            [type]="mostrarConfirmarSenha ? 'text' : 'password'"
+            placeholder="Confirmar senha"
+            (ionFocus)="inputEmFoco = true"
+            (ionBlur)="inputEmFoco = false"
+            required
+          ></ion-input>
+
+          <ion-icon
+            [name]="mostrarConfirmarSenha ? 'eye-off' : 'eye'"
+            slot="end"
+            class="toggle-password"
+            (click)="alternarVisibilidadeConfirmarSenha()"
+          ></ion-icon>
         </ion-item>
 
         <!--Botão-->
-        <ion-button expand="block" type="submit" 
-          >Cadastrar</ion-button
-        >
+        <ion-button expand="block" type="submit">Cadastrar</ion-button>
       </form>
 
       <!-- Rota para Login-->

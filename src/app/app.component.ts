@@ -1,9 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Platform, ModalController, NavController } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { App } from '@capacitor/app';
-import { Keyboard } from '@capacitor/keyboard';
-import { FinanceiroService } from './services/financeiro.service';
+import { FinanceiroFacadeService } from './services/financeiro-facade.service'; // ✅ Novo
 
 @Component({
   selector: 'app-root',
@@ -11,7 +9,7 @@ import { FinanceiroService } from './services/financeiro.service';
   styleUrls: ['app.component.scss'],
   standalone: false,
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   private lastBack = 0;
   carregando = true;
   showSplash = true; // controla a exibição do splash
@@ -21,28 +19,41 @@ export class AppComponent implements OnInit {
     private modalCtrl: ModalController,
     private navCtrl: NavController,
     private router: Router,
-    private financeiroService: FinanceiroService // Adicione aqui
+    private financeiroFacade: FinanceiroFacadeService // ✅ Novo
   ) {
     this.initializeApp();
   }
 
   async ngOnInit() {
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
-    const uid = localStorage.getItem('uid');
-    if (isLoggedIn === 'true' && uid) {
-      await this.financeiroService.carregarFirebase(uid); // Aguarda carregar os dados
-      this.showSplash = false; // Só some o splash quando terminar!
-      this.router.navigate(['/nav/home']);
-    } else {
+    this.initializeApp();
+
+    setTimeout(() => {
       this.showSplash = false;
+    }, 3000);
+
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const uid = localStorage.getItem('uid');
+
+    if (isLoggedIn && uid) {
+      try {
+        await this.financeiroFacade.recuperarDadosFirebase(uid);
+        await this.financeiroFacade.inicializar(uid);
+        this.router.navigate(['/nav/home']);
+      } catch (error) {
+        console.error('❌ Erro ao inicializar dados:', error);
+        this.router.navigate(['/login']);
+      }
+    } else {
       this.router.navigate(['/login']);
     }
   }
 
+  ngOnDestroy() {
+    this.financeiroFacade.finalizar();
+  }
+
   initializeApp() {
     this.platform.ready().then(() => {
-      Keyboard.setScroll({ isDisabled: false });
-
       this.platform.backButton.subscribeWithPriority(10, async () => {
         // Fecha modal se houver algum aberto
         const topModal = await this.modalCtrl.getTop();
@@ -53,6 +64,19 @@ export class AppComponent implements OnInit {
 
         const url = this.router.url;
 
+        // Se estiver em cartões, volta para carteira
+        if (url.startsWith('/cartoes')) {
+          this.router.navigateByUrl('/nav/carteira');
+          return;
+        }
+
+        // Se estiver em dívidas, volta para carteira
+        if (url.startsWith('/dividas')) {
+          this.router.navigateByUrl('/nav/carteira');
+          return;
+        }
+
+        // Se estiver em outras páginas do nav
         if (url.startsWith('/nav/cartoes') || url.startsWith('/nav/dividas')) {
           this.router.navigateByUrl('/nav/carteira');
           return;
@@ -68,7 +92,7 @@ export class AppComponent implements OnInit {
           return;
         }
 
-        // Se estiver no home, não faz nada
+        // Se estiver no home, não faz nada (ou pode sair do app)
       });
     });
   }

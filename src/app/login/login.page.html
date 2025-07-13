@@ -4,13 +4,12 @@
     <span>{{ mensagemErro }}</span>
   </div>
   <img
-        src="../../assets/imagens/controle-financeiro-logo.png"
-        alt="Logo"
-        class="logo"
-      />
+    src="../../assets/imagens/controle-financeiro-logo.png"
+    alt="Logo"
+    class="logo"
+  />
   <div class="login-wrapper">
     <div class="card-login">
-
       <!-- Form Login -->
       <form class="form" (ngSubmit)="logar()">
         <div class="titulo-login">Entrar</div>
@@ -43,12 +42,18 @@
           <ion-input
             [(ngModel)]="senha"
             name="senha"
-            type="password"
+            [type]="mostrarSenha ? 'text' : 'password'"
             placeholder="Senha"
             required
             (ionFocus)="inputEmFoco = true"
             (ionBlur)="inputEmFoco = false"
           ></ion-input>
+          <ion-icon
+            [name]="mostrarSenha ? 'eye-off' : 'eye'"
+            slot="end"
+            class="toggle-password"
+            (click)="alternarVisibilidadeSenha()"
+          ></ion-icon>
         </ion-item>
 
         <!-- Rota para recuperação de senha -->

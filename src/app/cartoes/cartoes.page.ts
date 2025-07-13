@@ -1,5 +1,13 @@
-import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { FinanceiroService } from '../services/financeiro.service';
+import {
+  Component,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
+import { Subscription } from 'rxjs';
+import { FinanceiroFacadeService } from '../services/financeiro-facade.service'; // ✅ Novo
 import { ModalController, AlertController } from '@ionic/angular';
 import { DividaFormComponent } from '../components/divida-form/divida-form.component';
 import { CategoriaFormComponent } from '../components/categoria-form/categoria-form.component';
@@ -11,7 +19,7 @@ import { NavController } from '@ionic/angular';
   styleUrls: ['./cartoes.page.scss'],
   standalone: false,
 })
-export class CartoesPage implements AfterViewInit {
+export class CartoesPage implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('scrollDiv', { static: false })
   scrollDiv!: ElementRef<HTMLDivElement>;
 
@@ -19,17 +27,18 @@ export class CartoesPage implements AfterViewInit {
   cartaoAtivoIndex = 0;
   scrollTimeout: any;
   cartaoMenuAberto: string | null = null;
+  private dadosSubscription?: Subscription;
 
   constructor(
-    public financeiroService: FinanceiroService,
+    public financeiroFacade: FinanceiroFacadeService, // ✅ Troca aqui
     private modalCtrl: ModalController,
     private navCtrl: NavController,
     private alertCtrl: AlertController
   ) {
     this.cartoes = this.ordenarCartoesPorVencimento(
-      this.financeiroService.getCartoes().map((cartao: any) => ({
+      this.financeiroFacade.getCartoes().map((cartao: any) => ({
         ...cartao,
-        gradient: this.financeiroService.generateGradient(cartao.cor),
+        gradient: this.financeiroFacade.generateGradient(cartao.cor),
       }))
     );
   }
@@ -37,11 +46,23 @@ export class CartoesPage implements AfterViewInit {
   async ngOnInit() {
     const uid = localStorage.getItem('uid');
     if (uid) {
-      await this.financeiroService.carregarFirebase(uid);
-      this.cartoes = this.financeiroService.getCartoes().map((cartao: any) => ({
-        ...cartao,
-        gradient: this.financeiroService.generateGradient(cartao.cor),
-      }));
+      await this.financeiroFacade.carregarFirebase(uid);
+      this.atualizarCartoes();
+    }
+
+    // ✅ Se inscreve para receber atualizações em tempo real
+    this.dadosSubscription = this.financeiroFacade.dadosAtualizados$.subscribe(
+      (dados) => {
+        console.log('📱 Cartões atualizados automaticamente');
+        this.atualizarCartoes();
+      }
+    );
+  }
+
+  ngOnDestroy() {
+    // Para a subscription quando sair da página
+    if (this.dadosSubscription) {
+      this.dadosSubscription.unsubscribe();
     }
   }
 
@@ -53,6 +74,7 @@ export class CartoesPage implements AfterViewInit {
     this.navCtrl.navigateBack('/nav/carteira');
   }
 
+  // Corrigir o método openAdicionarCompra
   async openAdicionarCompra() {
     const modal = await this.modalCtrl.create({
       component: DividaFormComponent,
@@ -64,6 +86,28 @@ export class CartoesPage implements AfterViewInit {
       initialBreakpoint: 0.9,
       showBackdrop: true,
       backdropDismiss: true,
+    });
+
+    modal.onDidDismiss().then(async (retorno) => {
+      if (retorno.data) {
+        // ✅ Pega o uid e salva no Firebase
+        const uid = localStorage.getItem('uid');
+        if (uid) {
+          await this.financeiroFacade.adicionarCompraCartao(
+            this.cartaoAtivo?.id,
+            retorno.data,
+            uid
+          );
+        }
+
+        // Atualiza a lista local
+        this.cartoes = this.financeiroFacade
+          .getCartoes()
+          .map((cartao: any) => ({
+            ...cartao,
+            gradient: this.financeiroFacade.generateGradient(cartao.cor),
+          }));
+      }
     });
 
     await modal.present();
@@ -81,18 +125,24 @@ export class CartoesPage implements AfterViewInit {
       cssClass: 'custom-modal-bottom-sheet',
     });
 
-    modal.onDidDismiss().then((retorno) => {
+    modal.onDidDismiss().then(async (retorno) => {
       if (retorno.data) {
-        // Atualize e ordene a lista
-        const novosCartoes = this.financeiroService
+        // ✅ Pega o uid e salva no Firebase
+        const uid = localStorage.getItem('uid');
+        if (uid) {
+          await this.financeiroFacade.addCartao(retorno.data, uid);
+        }
+
+        // Atualiza a lista local
+        const novosCartoes = this.financeiroFacade
           .getCartoes()
           .map((cartao: any) => ({
             ...cartao,
-            gradient: this.financeiroService.generateGradient(cartao.cor),
+            gradient: this.financeiroFacade.generateGradient(cartao.cor),
           }));
         this.cartoes = this.ordenarCartoesPorVencimento(novosCartoes);
 
-        // Se um novo cartão foi adicionado, defina ele como ativo
+        // Define o novo cartão como ativo
         if (retorno.data.id) {
           const novoIndex = this.cartoes.findIndex(
             (c) => c.id === retorno.data.id
@@ -128,11 +178,11 @@ export class CartoesPage implements AfterViewInit {
     modal.onDidDismiss().then((retorno) => {
       if (retorno.data) {
         // Atualize sua lista de cartões aqui, se necessário
-        this.cartoes = this.financeiroService
+        this.cartoes = this.financeiroFacade
           .getCartoes()
           .map((cartao: any) => ({
             ...cartao,
-            gradient: this.financeiroService.generateGradient(cartao.cor),
+            gradient: this.financeiroFacade.generateGradient(cartao.cor),
           }));
       }
     });
@@ -200,7 +250,36 @@ export class CartoesPage implements AfterViewInit {
   async editarCartao(cartao: any, event: Event) {
     event.stopPropagation();
     this.fecharMenus();
-    await this.abrirModalCartao('cartao', cartao);
+
+    const modal = await this.modalCtrl.create({
+      component: CategoriaFormComponent,
+      componentProps: { modo: 'cartao', cartao },
+      initialBreakpoint: 0.9,
+      breakpoints: [0, 0.8, 0.9],
+      backdropDismiss: true,
+      mode: 'ios',
+      cssClass: 'custom-modal-bottom-sheet',
+    });
+
+    modal.onDidDismiss().then(async (retorno) => {
+      if (retorno.data) {
+        // ✅ Pega o uid e salva no Firebase
+        const uid = localStorage.getItem('uid');
+        if (uid) {
+          await this.financeiroFacade.updateCartao(retorno.data, uid);
+        }
+
+        // Atualiza a lista local
+        this.cartoes = this.financeiroFacade
+          .getCartoes()
+          .map((cartao: any) => ({
+            ...cartao,
+            gradient: this.financeiroFacade.generateGradient(cartao.cor),
+          }));
+      }
+    });
+
+    await modal.present();
   }
 
   // Excluir cartão (confirmação)
@@ -227,7 +306,7 @@ export class CartoesPage implements AfterViewInit {
   // Excluir cartão da lista
   excluirCartao(id: string) {
     const uid = localStorage.getItem('uid') ?? undefined;
-    this.financeiroService.removerCartao(id, uid);
+    this.financeiroFacade.removerCartao(id, uid);
     this.cartoes = this.cartoes.filter((cartao) => cartao.id !== id);
 
     // Ajusta o cartão ativo se necessário
@@ -238,9 +317,9 @@ export class CartoesPage implements AfterViewInit {
 
   doRefresh(event: any) {
     // Atualize a lista de cartões
-    this.cartoes = this.financeiroService.getCartoes().map((cartao: any) => ({
+    this.cartoes = this.financeiroFacade.getCartoes().map((cartao: any) => ({
       ...cartao,
-      gradient: this.financeiroService.generateGradient(cartao.cor),
+      gradient: this.financeiroFacade.generateGradient(cartao.cor),
     }));
     setTimeout(() => {
       event.target.complete();
@@ -267,11 +346,11 @@ export class CartoesPage implements AfterViewInit {
         // Atualiza a compra editada no array do cartão ativo
         this.cartaoAtivo.compras[index] = retorno.data.compraEditada;
         // Atualize a lista de cartões se necessário
-        this.cartoes = this.financeiroService
+        this.cartoes = this.financeiroFacade
           .getCartoes()
           .map((cartao: any) => ({
             ...cartao,
-            gradient: this.financeiroService.generateGradient(cartao.cor),
+            gradient: this.financeiroFacade.generateGradient(cartao.cor),
           }));
       }
     });
@@ -296,7 +375,8 @@ export class CartoesPage implements AfterViewInit {
     await alert.present();
   }
 
-  atualizarFaturaCartao() {
+  // Corrigir o método atualizarFaturaCartao
+  async atualizarFaturaCartao() {
     const cartao = this.cartaoAtivo;
     if (!cartao || !cartao.compras) return;
 
@@ -317,17 +397,31 @@ export class CartoesPage implements AfterViewInit {
       agora.getMonth() + 1
     ).padStart(2, '0')}`;
 
-    cartao.faturaAtualizada = true; // Marca como atualizada
-    this.financeiroService.updateCartao(cartao);
+    cartao.faturaAtualizada = true;
 
-    const novosCartoes = this.financeiroService.getCartoes().map((c: any) => ({
+    // ✅ Salva no Firebase
+    const uid = localStorage.getItem('uid');
+    if (uid) {
+      await this.financeiroFacade.updateCartao(cartao, uid);
+    }
+
+    const novosCartoes = this.financeiroFacade.getCartoes().map((c: any) => ({
       ...c,
-      gradient: this.financeiroService.generateGradient(c.cor),
+      gradient: this.financeiroFacade.generateGradient(c.cor),
     }));
     this.cartoes = this.ordenarCartoesPorVencimento(novosCartoes);
 
     const novoIndex = this.cartoes.findIndex((c) => c.id === cartao.id);
     this.cartaoAtivoIndex = novoIndex !== -1 ? novoIndex : 0;
+  }
+
+  private atualizarCartoes() {
+    this.cartoes = this.ordenarCartoesPorVencimento(
+      this.financeiroFacade.getCartoes().map((cartao: any) => ({
+        ...cartao,
+        gradient: this.financeiroFacade.generateGradient(cartao.cor),
+      }))
+    );
   }
 
   private ordenarCartoesPorVencimento(cartoes: any[]): any[] {
@@ -368,7 +462,7 @@ export class CartoesPage implements AfterViewInit {
       cartao.faturaAtualizada !== false
     ) {
       cartao.faturaAtualizada = false;
-      this.financeiroService.updateCartao(cartao);
+      this.financeiroFacade.updateCartao(cartao);
     }
 
     // Só mostra se faturaAtualizada for false e houver compras

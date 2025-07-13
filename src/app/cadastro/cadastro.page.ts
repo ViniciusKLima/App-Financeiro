@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
-import { LoadingController, ToastController } from '@ionic/angular';
-import { FinanceiroService } from '../services/financeiro.service';
+import { ToastController, LoadingController } from '@ionic/angular';
+import { AuthService } from '../services/core/auth.service';
+import { FinanceiroFacadeService } from '../services/financeiro-facade.service'; // ✅ Novo
 
 @Component({
   selector: 'app-cadastro',
@@ -14,7 +14,9 @@ export class CadastroPage {
   nome: string = '';
   email: string = '';
   senha: string = '';
-  dataNascimento: string = '';
+  confirmarSenha: string = '';
+  mostrarSenha: boolean = false;
+  mostrarConfirmarSenha: boolean = false;
   inputEmFoco = false;
 
   corPopup: string = 'erro';
@@ -23,7 +25,7 @@ export class CadastroPage {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private financeiroService: FinanceiroService,
+    private financeiroFacade: FinanceiroFacadeService, // ✅ Novo
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController
   ) {}
@@ -35,14 +37,14 @@ export class CadastroPage {
 
   // Requisitos para cadastrar
   async cadastrar() {
-    const emailLimpo = this.email.trim(); //limpa o email
+    const emailLimpo = this.email.trim();
 
     // Validação dos campos obrigatórios
     if (
       !this.nome.trim() ||
       !emailLimpo ||
       !this.senha.trim() ||
-      !this.dataNascimento.trim()
+      !this.confirmarSenha.trim()
     ) {
       this.mensagemErro = 'Preencha todos os campos obrigatórios.';
       this.corPopup = 'erro';
@@ -67,6 +69,14 @@ export class CadastroPage {
       return;
     }
 
+    // Validação se as senhas coincidem
+    if (this.senha !== this.confirmarSenha) {
+      this.mensagemErro = 'As senhas não coincidem.';
+      this.corPopup = 'erro';
+      this.mostrarToast(this.mensagemErro, 'danger');
+      return;
+    }
+
     // Loading enquanto busca na API
     const loading = await this.loadingCtrl.create({
       message: 'Cadastrando...',
@@ -80,11 +90,10 @@ export class CadastroPage {
         this.senha.trim()
       );
       if (user && user.uid) {
-        await this.financeiroService.salvarDadosUsuario(user.uid, {
+        await this.financeiroFacade.salvarDadosUsuario(user.uid, {
           nome: this.nome,
           email: emailLimpo,
-          dataNascimento: this.dataNascimento,
-        });
+        }); // ✅ Novo
       }
       await loading.dismiss();
 
@@ -117,5 +126,15 @@ export class CadastroPage {
       buttons: [{ text: 'X', role: 'cancel' }],
     });
     await toast.present();
+  }
+
+  // Método para alternar visibilidade da senha
+  alternarVisibilidadeSenha() {
+    this.mostrarSenha = !this.mostrarSenha;
+  }
+
+  // Método para alternar visibilidade da confirmação de senha
+  alternarVisibilidadeConfirmarSenha() {
+    this.mostrarConfirmarSenha = !this.mostrarConfirmarSenha;
   }
 }

@@ -4,11 +4,13 @@ import {
   ViewChild,
   ElementRef,
   AfterViewInit,
+  OnDestroy,
 } from '@angular/core';
-import { FinanceiroService } from '../services/financeiro.service';
+import { FinanceiroFacadeService } from '../services/financeiro-facade.service';
 import { NavController, ModalController } from '@ionic/angular';
 import { DividaFormComponent } from '../components/divida-form/divida-form.component';
 import { CategoriaFormComponent } from '../components/categoria-form/categoria-form.component';
+import { Subscription } from 'rxjs';
 
 interface Compromisso {
   id: string;
@@ -28,7 +30,7 @@ interface Compromisso {
   styleUrls: ['home.page.scss'],
   standalone: false,
 })
-export class HomePage implements OnInit, AfterViewInit {
+export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('scrollDiv', { static: false })
   scrollDiv!: ElementRef<HTMLDivElement>;
   @ViewChild('content', { static: false }) content!: ElementRef;
@@ -46,8 +48,11 @@ export class HomePage implements OnInit, AfterViewInit {
   mostrarValor = true;
   painelComSombra = false;
 
+  private dadosSubscription?: Subscription;
+
   constructor(
-    public financeiroService: FinanceiroService,
+    // public financeiroService: FinanceiroService, // ❌ Remover depois
+    public financeiroFacade: FinanceiroFacadeService, // ✅ Novo
     private navCtrl: NavController,
     private modalCtrl: ModalController
   ) {}
@@ -55,10 +60,19 @@ export class HomePage implements OnInit, AfterViewInit {
   async ngOnInit() {
     const uid = localStorage.getItem('uid');
     if (uid) {
-      await this.financeiroService.carregarFirebase(uid); // Garante que os dados estão carregados
+      // await this.financeiroService.carregarFirebase(uid); // ❌ Antigo
+      await this.financeiroFacade.inicializar(uid); // ✅ Novo
+      this.carregarCompromissos();
     }
-    this.carregarMostrarValor();
-    this.carregarCompromissos();
+
+    // this.dadosSubscription = this.financeiroService.dadosAtualizados$.subscribe( // ❌ Antigo
+    this.dadosSubscription = this.financeiroFacade.dadosAtualizados$.subscribe(
+      // ✅ Novo
+      (dados) => {
+        console.log('📱 Home atualizada automaticamente');
+        this.carregarCompromissos();
+      }
+    );
   }
 
   ngAfterViewInit() {
@@ -69,6 +83,12 @@ export class HomePage implements OnInit, AfterViewInit {
       ionContent.addEventListener('scroll', () => {
         this.painelComSombra = ionContent.scrollTop > 10;
       });
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.dadosSubscription) {
+      this.dadosSubscription.unsubscribe();
     }
   }
 
@@ -129,19 +149,24 @@ export class HomePage implements OnInit, AfterViewInit {
     return `Dia ${dia}`;
   }
 
-  carregarCompromissos() {
+  async carregarCompromissos() {
     const hoje = new Date().getDate();
-    const hojeISO = new Date().toISOString().slice(0, 10);
     const compromissos: Compromisso[] = [];
 
-    // Adiciona cartões (cada cartão é um compromisso)
-    this.financeiroService.getCartoes().forEach((cartao) => {
+    // ✅ Corrigir método
+    const uid = localStorage.getItem('uid');
+    if (uid) {
+      await this.financeiroFacade.carregarStatusPagamentos(uid);
+    }
+
+    // Adiciona cartões
+    this.financeiroFacade.getCartoes().forEach((cartao) => {
       const id = 'cartao-' + cartao.id;
       compromissos.push({
         id,
         nome: cartao.nome,
         tipo: 'cartao',
-        valor: this.financeiroService.getValorTotalCartao(cartao.id), // <-- aqui!
+        valor: this.financeiroFacade.getValorTotalCartao(cartao.id),
         dia: cartao.diaVencimento,
         cor: cartao.cor,
         icone: 'card-outline',
@@ -150,8 +175,8 @@ export class HomePage implements OnInit, AfterViewInit {
       });
     });
 
-    // Adiciona cada dívida de cada categoria
-    this.financeiroService.getCategorias().forEach((cat) => {
+    // Adiciona dívidas
+    this.financeiroFacade.getCategorias().forEach((cat) => {
       if (cat.dividas && cat.dividas.length > 0) {
         cat.dividas.forEach((divida: any, idx: number) => {
           const id = `divida-${cat.id}-${idx}`;
@@ -170,43 +195,34 @@ export class HomePage implements OnInit, AfterViewInit {
       }
     });
 
-    // Separar por status e dia
+    // Separar por status
     this.compromissosPorDia = {};
     this.compromissosPagosPorDia = {};
     this.compromissosAtrasados = [];
 
     compromissos.forEach((comp) => {
-      // Se está pago e foi pago em dia anterior ao hoje, vai para pagos
-      if (comp.foiPago && comp.dataPagamento && comp.dataPagamento < hojeISO) {
+      if (comp.foiPago) {
+        // Se está pago, vai para aba pagos
         if (!this.compromissosPagosPorDia[comp.dia])
           this.compromissosPagosPorDia[comp.dia] = [];
         this.compromissosPagosPorDia[comp.dia].push(comp);
-      }
-      // Se não está pago e está atrasado
-      else if (!comp.foiPago && comp.dia < hoje) {
+      } else if (comp.dia < hoje) {
+        // Se não está pago e está atrasado
         this.compromissosAtrasados.push(comp);
-      }
-      // Se não está pago e não está atrasado
-      else if (!comp.foiPago) {
+      } else {
+        // Se não está pago e não está atrasado
         if (!this.compromissosPorDia[comp.dia])
           this.compromissosPorDia[comp.dia] = [];
         this.compromissosPorDia[comp.dia].push(comp);
       }
-      // Se está pago mas foi pago hoje, permanece na aba pendentes/atrasados até o dia seguinte
-      else if (comp.foiPago && comp.dataPagamento === hojeISO) {
-        if (comp.dia < hoje) {
-          this.compromissosAtrasados.push(comp);
-        } else {
-          if (!this.compromissosPorDia[comp.dia])
-            this.compromissosPorDia[comp.dia] = [];
-          this.compromissosPorDia[comp.dia].push(comp);
-        }
-      }
     });
 
-    // Ordenar arrays por dia
+    // Ordenar arrays
     this.compromissosAtrasados.sort((a, b) => a.dia - b.dia);
+    this.ordenarCompromissos();
+  }
 
+  ordenarCompromissos() {
     const ordenadoPendentes: { [dia: number]: Compromisso[] } = {};
     Object.keys(this.compromissosPorDia)
       .map((k) => parseInt(k, 10))
@@ -227,7 +243,7 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   getValorTotalCartao(cartaoId: string): number {
-    return this.financeiroService.getValorTotalCartao(cartaoId);
+    return this.financeiroFacade.getValorTotalCartao(cartaoId);
   }
 
   getStatusPago(id: string): boolean {
@@ -238,19 +254,104 @@ export class HomePage implements OnInit, AfterViewInit {
     return localStorage.getItem('dataPagamento-' + id) || null;
   }
 
-  alternarStatus(id: string) {
+  async alternarStatus(id: string, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+
     const atual = this.getStatusPago(id);
+    const uid = localStorage.getItem('uid');
+
     if (!atual) {
+      // Marca como pago
       localStorage.setItem('pago-' + id, 'true');
       localStorage.setItem(
         'dataPagamento-' + id,
         new Date().toISOString().slice(0, 10)
       );
+
+      // ✅ Corrigir método
+      if (uid) {
+        await this.financeiroFacade.salvarStatusPagamento(uid, id, true);
+      }
+
+      this.animarPagamento(id, 'pago');
     } else {
+      // Desmarca como pago
       localStorage.setItem('pago-' + id, 'false');
       localStorage.removeItem('dataPagamento-' + id);
+
+      // ✅ Corrigir método
+      if (uid) {
+        await this.financeiroFacade.salvarStatusPagamento(uid, id, false);
+      }
+
+      this.animarPagamento(id, 'despago');
     }
-    this.carregarCompromissos();
+
+    // Recarrega os compromissos após a animação
+    setTimeout(() => {
+      this.carregarCompromissos();
+    }, 800);
+  }
+
+  animarPagamento(id: string, tipo: 'pago' | 'despago') {
+    const elemento = document.querySelector(`[data-id="${id}"]`) as HTMLElement;
+    if (elemento) {
+      elemento.style.transition = 'all 0.6s ease-out';
+      elemento.style.position = 'relative';
+      elemento.style.zIndex = '10';
+
+      if (tipo === 'pago') {
+        // Animação para pago: verde e desliza para direita
+        elemento.style.backgroundColor = '#4CAF50';
+        elemento.style.color = '#fff';
+        elemento.style.transform = 'scale(1.05)';
+        elemento.style.boxShadow = '0 4px 12px rgba(76, 175, 80, 0.4)';
+
+        setTimeout(() => {
+          elemento.style.transform = 'translateX(120%) scale(0.8)';
+          elemento.style.opacity = '0';
+          elemento.style.filter = 'blur(2px)';
+        }, 200);
+      } else {
+        // Animação para despago: azul e desliza para esquerda
+        elemento.style.backgroundColor = '#2196F3';
+        elemento.style.color = '#fff';
+        elemento.style.transform = 'scale(1.05)';
+        elemento.style.boxShadow = '0 4px 12px rgba(33, 150, 243, 0.4)';
+
+        setTimeout(() => {
+          elemento.style.transform = 'translateX(-120%) scale(0.8)';
+          elemento.style.opacity = '0';
+          elemento.style.filter = 'blur(2px)';
+        }, 200);
+      }
+
+      // Opcional: adicionar texto de feedback
+      const feedback = document.createElement('div');
+      feedback.style.position = 'absolute';
+      feedback.style.top = '50%';
+      feedback.style.left = '50%';
+      feedback.style.transform = 'translate(-50%, -50%)';
+      feedback.style.color = '#fff';
+      feedback.style.fontWeight = 'bold';
+      feedback.style.fontSize = '14px';
+      feedback.style.zIndex = '20';
+      feedback.style.opacity = '0';
+      feedback.style.transition = 'opacity 0.3s ease';
+      feedback.textContent = tipo === 'pago' ? '✓ Pago' : '↺ Despago';
+
+      elemento.appendChild(feedback);
+
+      setTimeout(() => {
+        feedback.style.opacity = '1';
+      }, 100);
+
+      setTimeout(() => {
+        feedback.style.opacity = '0';
+      }, 500);
+    }
   }
 
   get temCompromissos(): boolean {
@@ -279,24 +380,24 @@ export class HomePage implements OnInit, AfterViewInit {
   get quantidadeDividas(): number {
     let totalDividas = 0;
     // Soma dívidas das categorias
-    const categorias = this.financeiroService.getCategorias();
+    const categorias = this.financeiroFacade.getCategorias();
     categorias.forEach((cat: any) => {
       if (cat.dividas && Array.isArray(cat.dividas)) {
         totalDividas += cat.dividas.length;
       }
     });
     // Soma cartões (cada cartão conta como 1 dívida)
-    const cartoes = this.financeiroService.getCartoes();
+    const cartoes = this.financeiroFacade.getCartoes();
     totalDividas += cartoes.length;
     return totalDividas;
   }
 
   get valorTotalCartoes(): number {
-    return this.financeiroService.getValorTotalCartoes();
+    return this.financeiroFacade.getValorTotalCartoes();
   }
 
   get quantidadeCartoes(): number {
-    return this.financeiroService.getQuantidadeCartoes();
+    return this.financeiroFacade.getQuantidadeCartoes();
   }
 
   irParaCartoes() {
@@ -394,11 +495,11 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   get valorTotalCategorias(): number {
-    return this.financeiroService.getValorTotalCategorias();
+    return this.financeiroFacade.getValorTotalCategorias();
   }
 
   get quantidadeCategorias(): number {
-    return this.financeiroService.getQuantidadeCategorias();
+    return this.financeiroFacade.getQuantidadeCategorias();
   }
 
   irParaCategorias() {
@@ -407,8 +508,8 @@ export class HomePage implements OnInit, AfterViewInit {
 
   get valorTotalGeral(): number {
     return (
-      this.financeiroService.getValorTotalCartoes() +
-      this.financeiroService.getValorTotalCategorias()
+      this.financeiroFacade.getValorTotalCartoes() +
+      this.financeiroFacade.getValorTotalCategorias()
     );
   }
 }

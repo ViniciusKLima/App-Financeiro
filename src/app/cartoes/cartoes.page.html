@@ -60,8 +60,8 @@
           </div>
           <div class="valor-cartao">
             <p class="valorFaturas">
-              {{ financeiroService.getValorTotalCartao(cartao.id) |
-              currency:'BRL':'symbol':'1.2-2' }}
+              {{ financeiroFacade.getValorTotalCartao(cartao.id) |
+              currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
             </p>
           </div>
           <div class="fechamento-cartao">

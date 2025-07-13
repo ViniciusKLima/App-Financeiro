@@ -11,8 +11,8 @@
       <ion-card class="fatura-card">
         <ion-card-header>
           <ion-card-title [style.color]="categoria?.cor">
-            R$ {{ financeiroService.getTotalDividasCategoria(categoria?.id) |
-            number:'1.2-2' }}
+            R$ {{ financeiroFacade.getTotalDividasCategoria(categoria?.id) |
+            currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
           </ion-card-title>
         </ion-card-header>
 
