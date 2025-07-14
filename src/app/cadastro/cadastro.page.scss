@@ -4,11 +4,13 @@
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
+  padding-top: env(safe-area-inset-top) !important; /* ← ADICIONADO */
+  padding-bottom: env(safe-area-inset-bottom) !important; /* ← ADICIONADO */
 }
 
 .alerta-popup {
   position: fixed;
-  top: 32px;
+  top: calc(32px + env(safe-area-inset-top)); /* ← AJUSTADO */
   left: 50%;
   transform: translateX(-50%);
   border-radius: 10px;

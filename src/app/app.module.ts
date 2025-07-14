@@ -1,4 +1,4 @@
-import { NgModule, LOCALE_ID, importProvidersFrom } from '@angular/core';
+import { NgModule, LOCALE_ID } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
@@ -11,7 +11,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import localePt from '@angular/common/locales/pt';
 import { HttpClientModule } from '@angular/common/http';
-import { RouterOutlet } from '@angular/router';
 
 // Firebase imports
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
@@ -22,11 +21,7 @@ import { environment } from '../environments/environment';
 registerLocaleData(localePt);
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    CategoriaFormComponent,
-    DividaFormComponent,
-  ],
+  declarations: [AppComponent, CategoriaFormComponent, DividaFormComponent],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
@@ -35,7 +30,6 @@ registerLocaleData(localePt);
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    RouterOutlet,
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },

@@ -93,7 +93,11 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    setTimeout(() => this.scrollToCenter(this.painelAtivoIndex), 100);
+    setTimeout(() => {
+      if (this.scrollDiv && this.scrollDiv.nativeElement) {
+        this.scrollToCenter(this.painelAtivoIndex);
+      }
+    }, 100);
 
     const ionContent = this.content?.nativeElement;
     if (ionContent) {
@@ -116,7 +120,37 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
     }, 120);
   }
 
+  scrollToCenter(index: number, event?: Event) {
+    if (event && (event.target as HTMLElement).closest('ion-icon')) {
+      return;
+    }
+
+    // ✅ Adicione verificação de segurança
+    if (!this.scrollDiv || !this.scrollDiv.nativeElement) {
+      console.warn('scrollDiv não encontrado');
+      return;
+    }
+
+    const scrollDiv = this.scrollDiv.nativeElement;
+    const boxes = Array.from(
+      scrollDiv.querySelectorAll('.painel-box')
+    ) as HTMLElement[];
+
+    if (!boxes[index]) return;
+
+    const box = boxes[index];
+    const scrollLeft =
+      box.offsetLeft - scrollDiv.offsetWidth / 2 + box.offsetWidth / 2;
+    scrollDiv.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+    this.painelAtivoIndex = index;
+  }
+
   snapToClosest() {
+    // ✅ Adicione verificação de segurança
+    if (!this.scrollDiv || !this.scrollDiv.nativeElement) {
+      return;
+    }
+
     const scrollDiv = this.scrollDiv.nativeElement;
     const boxes = Array.from(
       scrollDiv.querySelectorAll('.painel-box')
@@ -137,22 +171,6 @@ export class HomePage implements OnInit, AfterViewInit, OnDestroy {
 
     this.painelAtivoIndex = closest;
     this.scrollToCenter(closest);
-  }
-
-  scrollToCenter(index: number, event?: Event) {
-    if (event && (event.target as HTMLElement).closest('ion-icon')) {
-      return; // Não faz nada se clicou no olho
-    }
-    const scrollDiv = this.scrollDiv.nativeElement;
-    const boxes = Array.from(
-      scrollDiv.querySelectorAll('.painel-box')
-    ) as HTMLElement[];
-    if (!boxes[index]) return;
-    const box = boxes[index];
-    const scrollLeft =
-      box.offsetLeft - scrollDiv.offsetWidth / 2 + box.offsetWidth / 2;
-    scrollDiv.scrollTo({ left: scrollLeft, behavior: 'smooth' });
-    this.painelAtivoIndex = index;
   }
 
   trocarAba(aba: 'pendentes' | 'pagos') {

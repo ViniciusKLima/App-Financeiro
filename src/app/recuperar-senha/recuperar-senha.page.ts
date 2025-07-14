@@ -13,43 +13,38 @@ export class RecuperarSenhaPage {
   email: string = '';
 
   constructor(
-    private toastController: ToastController,
-    public navCtrl: NavController,
+    private toastCtrl: ToastController,
+    public navCtrl: NavController, // ← MUDOU DE private PARA public
     private auth: Auth
   ) {}
 
-  async presentToast(message: string, color: 'success' | 'danger' = 'danger') {
-    const toast = await this.toastController.create({
-      message,
-      duration: 2500,
-      color,
-      position: 'top',
-    });
-    await toast.present();
-  }
-
   async recuperarSenha() {
     if (!this.email) {
-      this.presentToast('Preencha o campo de email.');
-      return;
-    }
-
-    const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email);
-    if (!emailValido) {
-      this.presentToast('Digite um e-mail válido.');
+      this.mostrarToast('Por favor, digite seu email.');
       return;
     }
 
     try {
       await sendPasswordResetEmail(this.auth, this.email);
-      this.presentToast('Email de recuperação enviado!', 'success');
+      this.mostrarToast(
+        'Email de recuperação enviado! Verifique sua caixa de entrada.',
+        'success'
+      );
       this.navCtrl.navigateBack('/login');
-    } catch (error: any) {
-      if (error.code === 'auth/user-not-found') {
-        this.presentToast('Email não encontrado.');
-      } else {
-        this.presentToast('Erro ao enviar email. Tente novamente.');
-      }
+    } catch (error) {
+      this.mostrarToast(
+        'Erro ao enviar email de recuperação. Verifique o email digitado.'
+      );
     }
+  }
+
+  async mostrarToast(mensagem: string, cor: string = 'danger') {
+    const toast = await this.toastCtrl.create({
+      message: mensagem,
+      duration: 3000,
+      color: cor,
+      position: 'top',
+    });
+    toast.present();
   }
 }

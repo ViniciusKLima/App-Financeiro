@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ToastController, LoadingController } from '@ionic/angular';
+import { LoadingController, ToastController } from '@ionic/angular';
 import { AuthService } from '../services/core/auth.service';
-import { FinanceiroFacadeService } from '../services/financeiro-facade.service'; // ✅ Novo
+import { FinanceiroFacadeService } from '../services/financeiro-facade.service';
+import { AppComponent } from '../app.component';
 
 @Component({
   selector: 'app-cadastro',
@@ -24,10 +25,11 @@ export class CadastroPage {
 
   constructor(
     private router: Router,
-    private authService: AuthService,
-    private financeiroFacade: FinanceiroFacadeService, // ✅ Novo
     private loadingCtrl: LoadingController,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController, // ✅ ADICIONE ESTE IMPORT
+    private authService: AuthService,
+    private financeiroFacade: FinanceiroFacadeService,
+    private appComponent: AppComponent
   ) {}
 
   // Rota login
@@ -79,39 +81,51 @@ export class CadastroPage {
 
     // Loading enquanto busca na API
     const loading = await this.loadingCtrl.create({
-      message: 'Cadastrando...',
+      message: 'Criando conta...',
       spinner: 'crescent',
     });
     await loading.present();
 
     try {
-      const user = await this.authService.cadastrar(
-        emailLimpo,
-        this.senha.trim()
+      // ✅ CORREÇÃO: Use createUserWithEmailAndPassword
+      const user = await this.authService.createUserWithEmailAndPassword(
+        this.email,
+        this.senha
       );
-      if (user && user.uid) {
-        await this.financeiroFacade.salvarDadosUsuario(user.uid, {
-          nome: this.nome,
-          email: emailLimpo,
-        }); // ✅ Novo
-      }
-      await loading.dismiss();
 
-      this.corPopup = 'sucesso';
-      this.mensagemErro = 'Cadastro realizado com sucesso!';
-      this.mostrarToast(this.mensagemErro, 'success');
-      setTimeout(() => {
-        this.mensagemErro = '';
-        this.router.navigate(['/login']);
-      }, 1500);
+      if (user && user.uid) {
+        localStorage.setItem('uid', user.uid);
+        localStorage.setItem('isLoggedIn', 'true');
+
+        await this.financeiroFacade.inicializar(user.uid);
+
+        this.limparCampos();
+
+        await loading.dismiss();
+
+        // ✅ MOSTRA SPLASH SIMPLES APÓS CADASTRO
+        this.appComponent.mostrarSplashSimples();
+
+        // ✅ Navega após um delay para mostrar o splash
+        setTimeout(() => {
+          this.router.navigate(['/nav/home'], { replaceUrl: true });
+        }, 200);
+      }
     } catch (error: any) {
       await loading.dismiss();
       this.corPopup = 'erro';
+
+      let mensagemErro = 'Erro ao cadastrar. Verifique sua conexão.';
+
       if (error.code === 'auth/email-already-in-use') {
-        this.mensagemErro = 'Já existe um usuário com esse email.';
-      } else {
-        this.mensagemErro = 'Erro ao cadastrar. Verifique sua conexão.';
+        mensagemErro = 'Já existe um usuário com esse email.';
+      } else if (error.code === 'auth/weak-password') {
+        mensagemErro = 'A senha é muito fraca.';
+      } else if (error.code === 'auth/invalid-email') {
+        mensagemErro = 'Email inválido.';
       }
+
+      this.mensagemErro = mensagemErro;
       this.mostrarToast(this.mensagemErro, 'danger');
     }
   }
@@ -136,5 +150,15 @@ export class CadastroPage {
   // Método para alternar visibilidade da confirmação de senha
   alternarVisibilidadeConfirmarSenha() {
     this.mostrarConfirmarSenha = !this.mostrarConfirmarSenha;
+  }
+
+  // Método para limpar os campos do formulário
+  limparCampos() {
+    this.nome = '';
+    this.email = '';
+    this.senha = '';
+    this.confirmarSenha = '';
+    this.mostrarSenha = false;
+    this.mostrarConfirmarSenha = false;
   }
 }

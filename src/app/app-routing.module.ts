@@ -5,6 +5,21 @@ import { AuthGuard } from './guards/auth.guard';
 const routes: Routes = [
   {
     path: '',
+    redirectTo: '/login',
+    pathMatch: 'full',
+  },
+  {
+    path: 'login',
+    loadChildren: () =>
+      import('./login/login.module').then((m) => m.LoginPageModule),
+  },
+  {
+    path: 'cadastro',
+    loadChildren: () =>
+      import('./cadastro/cadastro.module').then((m) => m.CadastroPageModule),
+  },
+  {
+    path: 'nav',
     loadChildren: () => import('./nav/nav.module').then((m) => m.NavPageModule),
     canActivate: [AuthGuard],
   },
@@ -21,16 +36,6 @@ const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
-    path: 'login',
-    loadChildren: () =>
-      import('./login/login.module').then((m) => m.LoginPageModule),
-  },
-  {
-    path: 'cadastro',
-    loadChildren: () =>
-      import('./cadastro/cadastro.module').then((m) => m.CadastroPageModule),
-  },
-  {
     path: 'recuperar-senha',
     loadChildren: () =>
       import('./recuperar-senha/recuperar-senha.module').then(
@@ -41,8 +46,14 @@ const routes: Routes = [
     path: 'perfil',
     loadChildren: () =>
       import('./perfil/perfil.module').then((m) => m.PerfilPageModule),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: '**',
+    redirectTo: '/login',
   },
 ];
+
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules }),

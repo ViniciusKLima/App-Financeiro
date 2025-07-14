@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { ToastController, LoadingController } from '@ionic/angular';
 import { AuthService } from '../services/core/auth.service';
 import { FinanceiroFacadeService } from '../services/financeiro-facade.service';
+import { AppComponent } from '../app.component'; // ✅ ADICIONE ESTE IMPORT
 
 @Component({
   selector: 'app-login',
@@ -17,17 +18,23 @@ export class LoginPage {
   erroCampos = false;
   mensagemErro: string = '';
   inputEmFoco = false;
+  private returnUrl: string = '/nav/home'; // ✅ Nova variável
 
   constructor(
     private router: Router,
     private authService: AuthService,
     private toastCtrl: ToastController,
     private loadingCtrl: LoadingController,
-    private financeiroFacade: FinanceiroFacadeService // ✅ Novo
+    private financeiroFacade: FinanceiroFacadeService, // ✅ Novo
+    private route: ActivatedRoute, // ✅ Novo
+    private appComponent: AppComponent // ✅ ADICIONE ESTE INJECT
   ) {}
 
-  ngOnInit() {
-    this.limparCampos();
+  async ngOnInit() {
+    // ✅ Pega a URL de retorno se houver
+    this.route.queryParams.subscribe((params) => {
+      this.returnUrl = params['returnUrl'] || '/nav/home';
+    });
   }
 
   // Rota para cadastro
@@ -92,28 +99,38 @@ export class LoginPage {
         localStorage.setItem('uid', user.uid);
         localStorage.setItem('isLoggedIn', 'true');
 
-        // ✅ Corrigir método
+        // ✅ Inicializa os dados
         await this.financeiroFacade.inicializar(user.uid);
 
         this.limparCampos();
-        this.router.navigate(['/nav/home']);
+
+        await loading.dismiss();
+
+        // ✅ MOSTRA SPLASH SIMPLES APÓS LOGIN
+        this.appComponent.mostrarSplashSimples();
+
+        // ✅ Navega após um delay para mostrar o splash
+        setTimeout(() => {
+          this.router.navigate([this.returnUrl], { replaceUrl: true });
+        }, 200);
       }
-      await loading.dismiss();
     } catch (error: any) {
       await loading.dismiss();
-      // Trata erros específicos do Firebase
-      if (
-        error.code === 'auth/user-not-found' ||
-        error.code === 'auth/wrong-password' ||
-        error.code === 'auth/invalid-credential' ||
-        error.code === 'auth/invalid-email'
-      ) {
-        this.mostrarToast('Email ou senha incorretos.');
-      } else if (error.code === 'auth/network-request-failed') {
-        this.mostrarToast('Erro de conexão. Verifique sua internet.');
-      } else {
-        this.mostrarToast('Email ou senha incorretos.');
+      console.error('Erro ao fazer login:', error);
+
+      let mensagemErro = 'Erro ao fazer login. Tente novamente.';
+
+      if (error.code === 'auth/user-not-found') {
+        mensagemErro = 'Usuário não encontrado.';
+      } else if (error.code === 'auth/wrong-password') {
+        mensagemErro = 'Senha incorreta.';
+      } else if (error.code === 'auth/invalid-email') {
+        mensagemErro = 'Email inválido.';
+      } else if (error.code === 'auth/invalid-credential') {
+        mensagemErro = 'Email ou senha incorretos.';
       }
+
+      this.mostrarToast(mensagemErro);
     }
   }
 

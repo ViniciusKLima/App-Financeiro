@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular'; // ← ADICIONE ToastController
 import { FinanceiroFacadeService } from '../../services/financeiro-facade.service';
 import { AuthService } from '../../services/core/auth.service';
 
@@ -103,6 +103,7 @@ export class CategoriaFormComponent implements OnInit {
 
   constructor(
     private modalCtrl: ModalController,
+    private toastCtrl: ToastController, // ← ADICIONE AQUI
     private financeiroFacade: FinanceiroFacadeService,
     private authService: AuthService
   ) {}
@@ -135,6 +136,9 @@ export class CategoriaFormComponent implements OnInit {
     } else {
       this.novoCartao.diaFechamento = valor;
     }
+
+    // ✅ Força a atualização do form
+    this.formTouched = true;
   }
 
   validarDiaVencimento(event: any) {
@@ -148,6 +152,9 @@ export class CategoriaFormComponent implements OnInit {
     } else {
       this.novoCartao.diaVencimento = valor;
     }
+
+    // ✅ Força a atualização do form
+    this.formTouched = true;
   }
 
   async salvar() {
@@ -155,55 +162,83 @@ export class CategoriaFormComponent implements OnInit {
     this.salvando = true;
     this.formTouched = true;
 
-    const uid = localStorage.getItem('uid') || undefined;
+    try {
+      const uid = localStorage.getItem('uid') || undefined;
 
-    if (this.modo === 'categoria') {
-      if (!this.novaCategoria.nome.trim()) {
-        this.salvando = false;
-        return;
-      }
+      if (this.modo === 'categoria') {
+        if (!this.novaCategoria.nome.trim()) {
+          this.salvando = false;
+          return;
+        }
 
-      if (this.novaCategoria.id) {
-        await this.financeiroFacade.updateCategoria(this.novaCategoria, uid);
+        if (this.novaCategoria.id) {
+          await this.financeiroFacade.updateCategoria(this.novaCategoria, uid);
+        } else {
+          await this.financeiroFacade.addCategoria(this.novaCategoria, uid);
+        }
+
+        this.modalCtrl.dismiss({
+          salvo: true,
+          categoria: this.novaCategoria,
+          acao: this.novaCategoria.id ? 'editou' : 'criou',
+        });
       } else {
-        await this.financeiroFacade.addCategoria(this.novaCategoria, uid);
+        // ✅ Validação com verificação de tipo
+        const fechamento = this.novoCartao.diaFechamento;
+        const vencimento = this.novoCartao.diaVencimento;
+
+        if (
+          !this.novoCartao.nome.trim() ||
+          fechamento === null ||
+          vencimento === null ||
+          fechamento < 1 ||
+          fechamento > 31 ||
+          vencimento < 1 ||
+          vencimento > 31
+        ) {
+          console.warn('Dados do cartão inválidos');
+          this.mostrarErro('Preencha todos os campos corretamente');
+          this.salvando = false;
+          return;
+        }
+
+        console.log('💳 Salvando cartão:', this.novoCartao);
+
+        if (this.novoCartao.id) {
+          // ✅ CORREÇÃO: Passar o cartão completo, não só os dados
+          await this.financeiroFacade.updateCartao(this.novoCartao, uid);
+          console.log('✅ Cartão atualizado com sucesso');
+        } else {
+          await this.financeiroFacade.addCartao(this.novoCartao, uid);
+          console.log('✅ Cartão criado com sucesso');
+        }
+
+        this.modalCtrl.dismiss({
+          salvo: true,
+          cartao: this.novoCartao,
+          acao: this.novoCartao.id ? 'editou' : 'criou',
+        });
       }
+    } catch (error) {
+      console.error('❌ Erro ao salvar:', error);
 
-      this.modalCtrl.dismiss({
-        salvo: true,
-        categoria: this.novaCategoria,
-        acao: this.novaCategoria.id ? 'editou' : 'criou',
-      });
-    } else {
-      // ✅ Validação com verificação de tipo
-      const fechamento = this.novoCartao.diaFechamento;
-      const vencimento = this.novoCartao.diaVencimento;
-
-      if (
-        !this.novoCartao.nome.trim() ||
-        fechamento === null ||
-        vencimento === null ||
-        fechamento < 1 ||
-        fechamento > 31 ||
-        vencimento < 1 ||
-        vencimento > 31
-      ) {
-        this.salvando = false;
-        return;
-      }
-
-      if (this.novoCartao.id) {
-        await this.financeiroFacade.updateCartao(this.novoCartao, uid);
-      } else {
-        await this.financeiroFacade.addCartao(this.novoCartao, uid);
-      }
-
-      this.modalCtrl.dismiss({
-        salvo: true,
-        cartao: this.novoCartao,
-        acao: this.novoCartao.id ? 'editou' : 'criou',
-      });
+      // ✅ TOAST ao invés de alert
+      this.mostrarErro('Erro ao salvar. Verifique os dados e tente novamente.');
+    } finally {
+      // ✅ GARANTIA que sempre volta ao estado normal
+      this.salvando = false;
     }
-    this.salvando = false;
+  }
+
+  // ✅ ADICIONE ESTE MÉTODO PARA MOSTRAR TOAST DE ERRO
+  private async mostrarErro(mensagem: string) {
+    const toast = await this.toastCtrl.create({
+      message: mensagem,
+      duration: 3000,
+      color: 'danger',
+      position: 'top',
+      icon: 'alert-circle-outline',
+    });
+    toast.present();
   }
 }

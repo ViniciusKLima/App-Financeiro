@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- ✅ Suas cores do app -->
+    <!-- ✅ Cor principal azul -->
     <color name="colorPrimary">#1b57be</color>
     <color name="colorPrimaryDark">#1b57be</color>
     <color name="colorAccent">#1b57be</color>
     
-    <!-- ✅ Cores adicionais -->
-    <color name="statusBarColor">#1b57be</color>
-    <color name="toolbarColor">#1b57be</color>
-    <color name="navigationBarColor">#1b57be</color>
-    <color name="splashBackground">#1b57be</color>
+    <!-- ✅ Cores das barras com fundo padrão -->
+    <color name="statusBarColor">#e4eef0</color>
+    <color name="toolbarColor">#e4eef0</color>
+    <color name="navigationBarColor">#e4eef0</color>
+    
+    <!-- ✅ Cores de fundo -->
+    <color name="backgroundColor">#e4eef0</color>  <!-- ✅ PADRÃO DO APP -->
+    <color name="splashBackground">#1b57be</color>  <!-- ✅ SÓ SPLASH É AZUL -->
 </resources>

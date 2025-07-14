@@ -4,7 +4,7 @@ import { NavPage } from './nav.page';
 
 const routes: Routes = [
   {
-    path: 'nav',
+    path: '',
     component: NavPage,
     children: [
       {
@@ -15,7 +15,9 @@ const routes: Routes = [
       {
         path: 'carteira',
         loadChildren: () =>
-          import('../carteira/carteira.module').then((m) => m.CarteiraPageModule),
+          import('../carteira/carteira.module').then(
+            (m) => m.CarteiraPageModule
+          ),
       },
       {
         path: 'config',
@@ -29,14 +31,10 @@ const routes: Routes = [
       },
     ],
   },
-  {
-    path: '',
-    redirectTo: '/nav/home',
-    pathMatch: 'full',
-  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
 export class NavPageRoutingModule {}

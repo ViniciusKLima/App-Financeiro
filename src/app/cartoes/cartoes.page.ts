@@ -8,7 +8,11 @@ import {
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { FinanceiroFacadeService } from '../services/financeiro-facade.service';
-import { ModalController, AlertController } from '@ionic/angular';
+import {
+  ModalController,
+  AlertController,
+  ActionSheetController,
+} from '@ionic/angular';
 import { DividaFormComponent } from '../components/divida-form/divida-form.component';
 import { CategoriaFormComponent } from '../components/categoria-form/categoria-form.component';
 import { NavController } from '@ionic/angular';
@@ -37,32 +41,34 @@ export class CartoesPage implements AfterViewInit, OnInit, OnDestroy {
     public financeiroFacade: FinanceiroFacadeService,
     private modalCtrl: ModalController,
     private navCtrl: NavController,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private actionSheetCtrl: ActionSheetController
   ) {}
 
   async ngOnInit() {
     this.carregandoDados = true;
     this.primeiraVezCarregando = true;
 
-    // Carrega dados iniciais
-    const uid = localStorage.getItem('uid');
-    if (uid) {
-      await this.financeiroFacade.carregarFirebase(uid);
-      this.atualizarCartoes();
+    try {
+      // ✅ Carrega dados iniciais
+      const uid = localStorage.getItem('uid');
+      if (uid) {
+        await this.financeiroFacade.carregarFirebase(uid);
+        this.atualizarCartoes();
+      }
+    } catch (error) {
+      console.error('Erro ao carregar dados iniciais:', error);
+    } finally {
+      // ✅ Finaliza o loading
+      this.carregandoDados = false;
+      this.primeiraVezCarregando = false;
     }
-
-    // ✅ Finaliza o loading
-    this.carregandoDados = false;
-    this.primeiraVezCarregando = false;
 
     // ✅ Se inscreve para receber atualizações em tempo real
     this.dadosSubscription = this.financeiroFacade.dadosAtualizados$.subscribe(
       (dados) => {
         console.log('📱 Cartões atualizados automaticamente');
-        // ✅ Loading mais rápido para atualizações
-        this.carregandoDados = true;
         this.atualizarCartoes();
-        this.carregandoDados = false;
       }
     );
   }
@@ -101,24 +107,12 @@ export class CartoesPage implements AfterViewInit, OnInit, OnDestroy {
     });
 
     modal.onDidDismiss().then(async (retorno) => {
-      if (retorno.data) {
-        // ✅ Pega o uid e salva no Firebase
-        const uid = localStorage.getItem('uid');
-        if (uid) {
-          await this.financeiroFacade.adicionarCompraCartao(
-            this.cartaoAtivo?.id,
-            retorno.data,
-            uid
-          );
-        }
+      if (retorno.data?.salvo) {
+        // ✅ SÓ processa se realmente salvou
+        console.log('✅ Compra salva com sucesso:', retorno.data);
 
-        // Atualiza a lista local
-        this.cartoes = this.financeiroFacade
-          .getCartoes()
-          .map((cartao: any) => ({
-            ...cartao,
-            gradient: this.financeiroFacade.generateGradient(cartao.cor),
-          }));
+        // ✅ Atualiza a lista local sem duplicar
+        this.atualizarCartoes();
       }
     });
 
@@ -299,20 +293,24 @@ export class CartoesPage implements AfterViewInit, OnInit, OnDestroy {
     event.stopPropagation();
     this.fecharMenus();
 
-    const alert = await this.alertCtrl.create({
+    const actionSheet = await this.actionSheetCtrl.create({
       header: 'Excluir cartão?',
-      message: 'Você perderá todos os dados e compras salvos neste cartão.',
-      cssClass: 'custom-alert',
+      subHeader: 'Você perderá todos os dados e compras salvos neste cartão.',
       buttons: [
-        { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Excluir',
           role: 'destructive',
+          icon: 'trash-outline',
           handler: () => this.excluirCartao(id),
+        },
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          icon: 'close-outline',
         },
       ],
     });
-    await alert.present();
+    await actionSheet.present();
   }
 
   // Excluir cartão da lista
@@ -329,11 +327,26 @@ export class CartoesPage implements AfterViewInit, OnInit, OnDestroy {
 
   async doRefresh(event: any) {
     this.carregandoDados = true;
-    this.atualizarCartoes();
-    this.carregandoDados = false;
-    setTimeout(() => {
-      event.target.complete();
-    }, 300);
+
+    try {
+      // ✅ Aguarda o carregamento dos dados do Firebase
+      const uid = localStorage.getItem('uid');
+      if (uid) {
+        await this.financeiroFacade.carregarFirebase(uid);
+      }
+
+      // ✅ Atualiza a lista local
+      this.atualizarCartoes();
+    } catch (error) {
+      console.error('Erro ao recarregar cartões:', error);
+    } finally {
+      this.carregandoDados = false;
+
+      // ✅ Completa o refresh
+      setTimeout(() => {
+        event.target.complete();
+      }, 100);
+    }
   }
 
   async editarCompra(compra: any, index: number) {
@@ -366,21 +379,27 @@ export class CartoesPage implements AfterViewInit, OnInit, OnDestroy {
     await modal.present();
   }
 
+  // ✅ Substitua o alert de atualizar fatura
   async confirmarAtualizarFatura() {
-    const alert = await this.alertCtrl.create({
+    const actionSheet = await this.actionSheetCtrl.create({
       header: 'Atualizar fatura?',
-      message: `Ao atualizar, as compras parceladas avançam para a próxima parcela. Compras já quitadas serão removidas. Compras fixas permanecem.<br><br>Deseja continuar?`,
-      cssClass: 'custom-alert',
+      subHeader:
+        'As compras parceladas avançam para a próxima parcela. Compras quitadas serão removidas.',
       buttons: [
-        { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Atualizar',
-          handler: () => this.atualizarFaturaCartao(),
           role: 'destructive',
+          icon: 'refresh-outline',
+          handler: () => this.atualizarFaturaCartao(),
+        },
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          icon: 'close-outline',
         },
       ],
     });
-    await alert.present();
+    await actionSheet.present();
   }
 
   async atualizarFaturaCartao() {
@@ -423,12 +442,22 @@ export class CartoesPage implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private atualizarCartoes() {
-    this.cartoes = this.ordenarCartoesPorVencimento(
-      this.financeiroFacade.getCartoes().map((cartao: any) => ({
-        ...cartao,
-        gradient: this.financeiroFacade.generateGradient(cartao.cor),
-      }))
-    );
+    try {
+      const cartoesData = this.financeiroFacade.getCartoes();
+      if (cartoesData && Array.isArray(cartoesData)) {
+        this.cartoes = this.ordenarCartoesPorVencimento(
+          cartoesData.map((cartao: any) => ({
+            ...cartao,
+            gradient: this.financeiroFacade.generateGradient(cartao.cor),
+          }))
+        );
+      } else {
+        this.cartoes = [];
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar cartões:', error);
+      this.cartoes = [];
+    }
   }
 
   private ordenarCartoesPorVencimento(cartoes: any[]): any[] {

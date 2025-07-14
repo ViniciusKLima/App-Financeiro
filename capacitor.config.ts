@@ -1,24 +1,25 @@
-const config = {
-  appId: 'io.ionic.starter',
-  appName: 'controle-financeiro',
+import { CapacitorConfig } from '@capacitor/cli';
+
+const config: CapacitorConfig = {
+  appId: 'com.viniciuskaua.financeiro',
+  appName: 'Controle Financeiro',
   webDir: 'www',
   server: {
     androidScheme: 'https',
   },
   plugins: {
     SplashScreen: {
-      launchShowDuration: 0, // ✅ Remove splash nativo imediatamente
+      launchShowDuration: 0,
       launchAutoHide: true,
-      launchFadeOutDuration: 0,
-      backgroundColor: '#1b57be', // ✅ Só para o splash
+      backgroundColor: '#1b57be',
       showSpinner: false,
       splashFullScreen: true,
       splashImmersive: true,
     },
     StatusBar: {
-      style: 'DARK',
-      backgroundColor: '#1b57be', // ✅ Só para o splash
-      overlay: false,
+      style: 'LIGHT', // ✅ FORÇA ícones pretos
+      backgroundColor: '#e4eef0',
+      overlaysWebView: false, // ✅ FORÇA não sobrepor
     },
   },
 };

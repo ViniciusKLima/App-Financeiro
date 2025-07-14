@@ -9,11 +9,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBarLaunch">
 
-        <!-- ✅ APENAS UMA activity - removida duplicação -->
+        <!-- ✅ CORRIGIDO - MainActivity com package correto -->
         <activity
             android:exported="true"
             android:launchMode="singleTask"
-            android:name="io.ionic.starter.MainActivity"
+            android:name="com.viniciuskaua.financeiro.MainActivity"
             android:theme="@style/AppTheme.NoActionBarLaunch">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

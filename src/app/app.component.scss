@@ -13,14 +13,18 @@
   transition: opacity 0.5s;
 }
 
-// ✅ Splash Screen INICIAL - com texto e tudo
+// ✅ Splash Screen INICIAL - COM AZUL (correto)
 .splash-screen-inicial {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #1b57be 0%, #2563eb 100%);
+  background: linear-gradient(
+    135deg,
+    #1b57be 0%,
+    #2563eb 100%
+  ); /* ✅ AZUL NO SPLASH */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -87,14 +91,18 @@
   }
 }
 
-// ✅ Splash Screen SIMPLES - só logo e spinner
+// ✅ Splash Screen SIMPLES - COM AZUL (correto)
 .splash-screen-simples {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #1b57be 0%, #2563eb 100%);
+  background: linear-gradient(
+    135deg,
+    #1b57be 0%,
+    #2563eb 100%
+  ); /* ✅ AZUL NO SPLASH */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -162,7 +170,7 @@
   }
 }
 
-// ✅ Controle do app
+// ✅ Controle do app - FUNDO PADRÃO quando não está carregando
 .app-loading {
   opacity: 0;
   pointer-events: none;
@@ -175,7 +183,7 @@ ion-app:not(.app-loading) {
 }
 
 ion-router-outlet {
-  background: var(--ion-background-color, #fefefe);
+  background: #e4eef0 !important; /* ✅ FUNDO PADRÃO DO APP */
 }
 
 // ✅ Responsividade para telas menores

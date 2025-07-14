@@ -12,10 +12,9 @@ import { StatusBar, Style } from '@capacitor/status-bar';
   standalone: false,
 })
 export class AppComponent implements OnInit, OnDestroy {
-  private lastBack = 0;
-  carregando = true;
   showSplash = true;
-  primeiraVezAbrindo = true; // ✅ Controla se é a primeira vez
+  primeiraVezAbrindo = true;
+  private lastBack = 0;
 
   constructor(
     private platform: Platform,
@@ -28,56 +27,96 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    // ✅ Verifica se é a primeira vez que abre o app
-    const jaAbriuAntes = localStorage.getItem('appJaAbriu');
-    this.primeiraVezAbrindo = !jaAbriuAntes;
+    // ✅ SEMPRE inicia com splash completo
+    this.showSplash = true;
+    this.primeiraVezAbrindo = true;
+
+    console.log('🚀 App iniciando com splash completo');
 
     // ✅ Configurações do dispositivo
     if (this.platform.is('capacitor')) {
       try {
         await SplashScreen.hide();
-        await StatusBar.setBackgroundColor({ color: '#1b57be' });
-        await StatusBar.setStyle({ style: Style.Dark });
-        await StatusBar.setOverlaysWebView({ overlay: false });
+        await StatusBar.setBackgroundColor({ color: '#1b57be' }); // ✅ AZUL INICIAL
+        await StatusBar.setStyle({ style: Style.Dark }); // ✅ ÍCONES BRANCOS INICIAL
+
+        if (this.platform.is('android')) {
+          await StatusBar.setOverlaysWebView({ overlay: false });
+        }
       } catch (error) {
         console.error('Erro ao configurar dispositivo:', error);
       }
     }
 
-    // ✅ Tempo de splash diferente para primeira vez vs carregamentos normais
-    const tempoSplash = this.primeiraVezAbrindo ? 1200 : 600;
-
-    await this.loadAppData();
+    // ✅ Tempo para mostrar splash completo
+    const tempoSplash = 2000;
 
     setTimeout(() => {
       this.hideSplash();
-      // ✅ Marca que o app já foi aberto
-      if (this.primeiraVezAbrindo) {
-        localStorage.setItem('appJaAbriu', 'true');
-      }
     }, tempoSplash);
 
     // ✅ Lógica de login
+    await this.verificarLogin();
+  }
+
+  // ✅ Método para mostrar splash SIMPLES em carregamentos internos
+  mostrarSplashSimples() {
+    this.showSplash = true;
+    this.primeiraVezAbrindo = false;
+
+    setTimeout(() => {
+      this.hideSplash();
+    }, 1000); // 1 segundo para carregamentos internos
+  }
+
+  private async verificarLogin() {
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     const uid = localStorage.getItem('uid');
+    const currentUrl = this.router.url;
 
     if (isLoggedIn && uid) {
       try {
-        await this.financeiroFacade.recuperarDadosFirebase(uid);
         await this.financeiroFacade.inicializar(uid);
-        this.router.navigate(['/nav/home']);
+
+        if (currentUrl === '/' || currentUrl === '/login') {
+          this.router.navigate(['/nav/home']);
+        }
       } catch (error) {
-        console.error('❌ Erro ao inicializar dados:', error);
+        console.error('Erro ao carregar dados:', error);
         this.router.navigate(['/login']);
       }
     } else {
-      this.router.navigate(['/login']);
+      if (
+        currentUrl !== '/login' &&
+        currentUrl !== '/cadastro' &&
+        currentUrl !== '/recuperar-senha'
+      ) {
+        this.router.navigate(['/login']);
+      }
     }
+  }
 
-    // ✅ Escuta evento para mostrar splash simples
-    document.addEventListener('mostrar-splash-simples', () => {
-      this.mostrarSplashSimples();
-    });
+  hideSplash() {
+    console.log('🔥 Escondendo splash');
+    this.showSplash = false;
+
+    // ✅ MUDA FUNDO PARA COR PADRÃO após splash
+    setTimeout(() => {
+      document.body.classList.add('app-loaded');
+      document.querySelector('app-root')?.classList.add('app-loaded');
+      document.querySelector('ion-app')?.classList.add('app-loaded');
+
+      // ✅ Muda barras para cor padrão
+      if (this.platform.is('capacitor')) {
+        StatusBar.setBackgroundColor({ color: '#e4eef0' });
+        StatusBar.setStyle({ style: Style.Light }); // ✅ ÍCONES PRETOS
+      }
+    }, 100);
+  }
+
+  // ✅ Método para usar em carregamentos internos se necessário
+  recarregarApp() {
+    this.mostrarSplashSimples();
   }
 
   ngOnDestroy() {
@@ -128,40 +167,5 @@ export class AppComponent implements OnInit, OnDestroy {
         // Se estiver no home, não faz nada (ou pode sair do app)
       });
     });
-  }
-
-  private async loadAppData(): Promise<void> {
-    return new Promise((resolve) => {
-      const tempoCarregamento = this.primeiraVezAbrindo ? 800 : 400;
-      setTimeout(() => {
-        // ✅ Aqui você pode carregar dados iniciais
-        // - Verificar autenticação
-        // - Carregar configurações
-        // - Inicializar serviços
-        resolve();
-      }, tempoCarregamento);
-    });
-  }
-
-  private hideSplash() {
-    const splashElement = document.querySelector(
-      '.splash-screen-inicial, .splash-screen-simples'
-    );
-    if (splashElement) {
-      splashElement.classList.add('hide');
-      setTimeout(() => {
-        this.showSplash = false;
-      }, 500);
-    }
-  }
-
-  // ✅ Método para mostrar splash simples em carregamentos futuros
-  public mostrarSplashSimples() {
-    this.primeiraVezAbrindo = false;
-    this.showSplash = true;
-
-    setTimeout(() => {
-      this.hideSplash();
-    }, 600);
   }
 }

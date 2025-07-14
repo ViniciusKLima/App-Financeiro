@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {
   Auth,
   createUserWithEmailAndPassword,
+  getAuth,
   signInWithEmailAndPassword,
   signOut,
   User,
@@ -11,50 +12,64 @@ import {
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private auth: Auth) {}
+  constructor() {}
 
-  async cadastrar(email: string, senha: string): Promise<User | null> {
+  // ✅ Login
+  async login(email: string, password: string): Promise<User | null> {
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        this.auth,
-        email,
-        senha
-      );
-      return userCredential.user;
-    } catch (error) {
-      console.error('Erro ao cadastrar:', error);
-      throw error;
-    }
-  }
-
-  async login(email: string, senha: string): Promise<User | null> {
-    try {
+      const auth = getAuth();
       const userCredential = await signInWithEmailAndPassword(
-        this.auth,
+        auth,
         email,
-        senha
+        password
       );
       return userCredential.user;
     } catch (error) {
-      console.error('Erro ao fazer login:', error);
+      console.error('Erro no login:', error);
       throw error;
     }
   }
 
+  // ✅ Cadastro
+  async createUserWithEmailAndPassword(
+    email: string,
+    password: string
+  ): Promise<User | null> {
+    try {
+      const auth = getAuth();
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      return userCredential.user;
+    } catch (error) {
+      console.error('Erro no cadastro:', error);
+      throw error;
+    }
+  }
+
+  // ✅ Logout
   async logout(): Promise<void> {
     try {
-      await signOut(this.auth);
+      const auth = getAuth();
+      await signOut(auth);
+      localStorage.removeItem('uid');
+      localStorage.removeItem('isLoggedIn');
     } catch (error) {
-      console.error('Erro ao fazer logout:', error);
+      console.error('Erro no logout:', error);
       throw error;
     }
   }
 
-  get usuarioAtual(): User | null {
-    return this.auth.currentUser;
-  }
-
+  // ✅ Usuário atual
   getCurrentUser(): User | null {
-    return this.auth.currentUser;
+    try {
+      const auth = getAuth();
+      return auth.currentUser;
+    } catch (error) {
+      console.error('Erro ao obter usuário atual:', error);
+      return null;
+    }
   }
 }

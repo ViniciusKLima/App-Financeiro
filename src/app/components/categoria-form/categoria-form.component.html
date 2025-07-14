@@ -202,9 +202,25 @@
           Dia de vencimento deve estar entre 1 e 31
         </div>
       </div>
-      <ion-button (click)="salvar()" class="btn-salvar ion-margin-top"
-        >Salvar</ion-button
+      <ion-button
+        (click)="salvar()"
+        class="btn-salvar ion-margin-top"
+        [disabled]="
+          salvando ||
+          (formTouched &&
+            (!novoCartao.nome.trim() ||
+              !novoCartao.diaFechamento ||
+              !novoCartao.diaVencimento))
+        "
       >
+        <ion-spinner
+          *ngIf="salvando"
+          name="crescent"
+          color="light"
+        ></ion-spinner>
+        <span *ngIf="!salvando">Salvar</span>
+        <span *ngIf="salvando">Salvando...</span>
+      </ion-button>
     </ng-container>
 
     <ion-button expand="block" fill="clear" color="medium" (click)="fechar()"

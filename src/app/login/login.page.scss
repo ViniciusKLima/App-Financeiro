@@ -1,13 +1,13 @@
 .login-content {
   position: relative; // garante contexto para a logo absoluta
   --background: var(--cor-principal) !important;
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-top: env(safe-area-inset-top) !important; /* ← JÁ ESTAVA */
+  padding-bottom: env(safe-area-inset-bottom) !important; /* ← JÁ ESTAVA */
 }
 
 .logo {
   position: absolute;
-  top: 12vh;
+  top: calc(12vh + env(safe-area-inset-top)); /* ← AJUSTADO */
   left: 50%;
   transform: translateX(-50%);
   width: 23vw;
@@ -21,7 +21,9 @@ ion-content.input-focus {
 }
 
 .login-wrapper {
-  min-height: 100vh;
+  min-height: calc(
+    100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)
+  ); /* ← AJUSTADO */
   display: flex;
   justify-content: center;
   align-items: end;
@@ -121,7 +123,7 @@ ion-button {
 .alerta-popup {
   position: fixed;
   max-width: 75%;
-  top: 32px;
+  top: calc(32px + env(safe-area-inset-top)); /* ← AJUSTADO */
   left: 50%;
   transform: translateX(-50%);
   background: #e53935;

@@ -223,6 +223,20 @@ export class DividaFormComponent implements OnInit {
     console.log('Formulário:', this.formCompra.value);
     console.log('Formulário válido:', this.formCompra.valid);
 
+    // ✅ Validação específica por modo
+    if (this.modo === 'cartao') {
+      const dadosForm = this.formCompra.value;
+      if (
+        !dadosForm.nomeCompra?.trim() ||
+        !dadosForm.valor ||
+        dadosForm.valor <= 0
+      ) {
+        console.log('❌ Dados do cartão inválidos');
+        this.salvando = false;
+        return;
+      }
+    }
+
     if (this.formCompra.invalid) {
       console.log('❌ Formulário inválido');
       Object.values(this.formCompra.controls).forEach((control) => {
@@ -249,12 +263,24 @@ export class DividaFormComponent implements OnInit {
 
   private async salvarCompra(uid?: string) {
     const dadosForm = this.formCompra.value;
+
+    // ✅ Validação rigorosa dos dados
+    if (!dadosForm.nomeCompra || !dadosForm.nomeCompra.trim()) {
+      console.error('Nome da compra é obrigatório');
+      return;
+    }
+
+    if (!dadosForm.valor || dadosForm.valor <= 0) {
+      console.error('Valor da compra é obrigatório e deve ser maior que zero');
+      return;
+    }
+
     const novaCompra = {
-      nome: dadosForm.nomeCompra,
+      nome: dadosForm.nomeCompra.trim(),
       valor: dadosForm.valor,
-      parcelaAtual: dadosForm.compraFixa ? 1 : dadosForm.parcelaAtual,
-      totalParcelas: dadosForm.compraFixa ? 1 : dadosForm.totalParcelas,
-      descricao: dadosForm.descricao || '',
+      parcelaAtual: dadosForm.compraFixa ? 1 : dadosForm.parcelaAtual || 1,
+      totalParcelas: dadosForm.compraFixa ? 1 : dadosForm.totalParcelas || 1,
+      descricao: dadosForm.descricao?.trim() || '',
       compraFixa: dadosForm.compraFixa || false,
     };
 
@@ -378,53 +404,5 @@ export class DividaFormComponent implements OnInit {
       event.target.value = 31;
       this.formCompra.get('diaPagamento')?.setValue(31);
     }
-  }
-
-  // No método openAdicionarCompra ou onde criar compras
-  async openAdicionarCompra() {
-    const modal = await this.modalCtrl.create({
-      component: DividaFormComponent,
-      componentProps: {
-        modo: 'cartao',
-        cartaoId: this.cartaoAtivo?.id,
-      },
-      breakpoints: [0, 0.8, 0.9],
-      initialBreakpoint: 0.9,
-      showBackdrop: true,
-      backdropDismiss: true,
-    });
-
-    modal.onDidDismiss().then(async (retorno) => {
-      if (retorno.data) {
-        // ✅ Validar dados antes de salvar
-        const compraValidada = {
-          ...retorno.data,
-          nome: retorno.data.nome || 'Compra sem nome',
-          valor: retorno.data.valor || 0,
-          parcelaAtual: retorno.data.parcelaAtual || 1,
-          totalParcelas: retorno.data.totalParcelas || 1,
-          compraFixa: retorno.data.compraFixa || false,
-        };
-
-        const uid = localStorage.getItem('uid');
-        if (uid) {
-          await this.financeiroFacade.adicionarCompraCartao(
-            this.cartaoAtivo?.id,
-            compraValidada,
-            uid
-          );
-        }
-
-        // Atualiza a lista local
-        this.cartoes = this.financeiroFacade
-          .getCartoes()
-          .map((cartao: any) => ({
-            ...cartao,
-            gradient: this.financeiroFacade.generateGradient(cartao.cor),
-          }));
-      }
-    });
-
-    await modal.present();
   }
 }

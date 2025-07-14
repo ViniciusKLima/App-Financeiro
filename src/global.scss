@@ -33,117 +33,55 @@
 @import "@fontsource/mulish/700.css";
 @import "@fontsource/mulish/800.css";
 @import "@fontsource/mulish/900.css";
-// Importe outros pesos se quiser
 
 @import "swiper/swiper-bundle.min.css";
 
-/* Splash Screen Customizado */
-body {
-  --ion-text-color: #ffffff;
-}
-
-// ✅ Remove flash branco inicial
-html,
-body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-}
-
-// ✅ Estilo do splash customizado
-.splash-screen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #1b57be 0%, #2563eb 100%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 99999;
-  opacity: 1;
-  transition: opacity 0.5s ease-out;
-
-  &.hide {
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .splash-logo {
-    width: 120px;
-    height: 120px;
-    margin-bottom: 24px;
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  .splash-title {
-    font-size: 2rem;
-    font-weight: 700;
-    color: white;
-    margin-bottom: 8px;
-    text-align: center;
-    animation: fadeInUp 1s ease-out;
-  }
-
-  .splash-subtitle {
-    font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.8);
-    text-align: center;
-    animation: fadeInUp 1s ease-out 0.3s both;
-  }
-
-  .splash-spinner {
-    margin-top: 40px;
-    width: 32px;
-    height: 32px;
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    border-top-color: white;
-    animation: spin 1s ease-in-out infinite;
-  }
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
+// ✅ CONFIGURAÇÃO PRINCIPAL
 :root {
-  --ion-background-color: #e4eef0 !important;
-  --cor-principal: #0b3bb7;
+  --ion-background-color: #e4eef0 !important; /* ✅ COR PADRÃO DO APP */
+  --cor-principal: #1b57be;
   --cor-atraso: #dd2a2a;
   --cor-pago: #1eb884;
 }
 
+// ✅ FUNDO AZUL INICIAL - Muda para padrão após splash
+html,
+body {
+  background-color: #1b57be !important; /* ✅ AZUL INICIAL */
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  transition: background-color 0.5s ease; /* ✅ TRANSIÇÃO SUAVE */
+}
+
+// ✅ App root também azul inicialmente
+app-root {
+  background-color: #1b57be !important;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transition: background-color 0.5s ease; /* ✅ TRANSIÇÃO SUAVE */
+}
+
+// ✅ Ion-app também azul inicialmente
+ion-app {
+  background-color: #1b57be !important;
+  transition: background-color 0.5s ease; /* ✅ TRANSIÇÃO SUAVE */
+}
+
+// ✅ Classe para mudar para cor padrão após splash
+body.app-loaded,
+app-root.app-loaded,
+ion-app.app-loaded {
+  background-color: #e4eef0 !important; /* ✅ COR PADRÃO APÓS SPLASH */
+}
+
+// ✅ Reset global
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-
   --overflow: hidden auto;
 
   &::part(scroll) {
@@ -155,6 +93,7 @@ body {
   }
 }
 
+// ✅ Fontes
 html,
 body,
 ion-app,
@@ -167,27 +106,29 @@ ion-content,
 }
 
 body {
-  font-size: 16px !important; // ajuste para o padrão do seu app
+  font-size: 16px !important;
 }
 
+// ✅ Ion-content com fundo padrão (só após carregar)
 ion-content {
   --background: #e4eef0 !important;
 }
 
+// ✅ Modais
 .custom-modal-bottom-sheet .modal-wrapper {
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   background-color: white;
 }
 
-// Fundo escuro/transparente
 ion-modal.custom-modal-bottom-sheet .modal-shadow {
-  background: rgba(0, 0, 0, 0.4); // Escurece o fundo
-  backdrop-filter: blur(4px); // Desfoca o fundo
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
 }
 
+// ✅ Refresher
 ion-refresher-content {
-  margin-top: 16px; /* ajuste o valor conforme desejar */
+  margin-top: 16px;
 }
 
 ion-refresher-content .refresher-refreshing-text,
@@ -207,10 +148,11 @@ ion-refresher-content svg {
 }
 
 ion-refresher-content {
-  --ion-color-primary: #ccc; /* Cor do seu app, troque se quiser */
-  --color: #ccc; /* Cor do texto "Atualizando..." */
+  --ion-color-primary: #ccc;
+  --color: #ccc;
 }
 
+// ✅ Alerts customizados
 ion-alert.custom-alert {
   --background: #fff;
   --border-radius: 18px;
@@ -244,18 +186,3 @@ ion-alert.custom-alert .alert-button-role-cancel {
 ion-alert.custom-alert .alert-button:last-child {
   color: #e53935;
 }
-
-// ✅ Previne flash branco/preto
-html,
-body {
-  background-color: #1b57be !important;
-  margin: 0;
-  padding: 0;
-  height: 100%;
-}
-
-body {
-  --ion-text-color: #ffffff;
-}
-
-// ✅ Resto do seu CSS global...

@@ -19,6 +19,6 @@
 </div>
 
 <!-- ✅ App Principal -->
-<ion-app [class.app-loading]="showSplash">
+<ion-app [class.app-loading]="showSplash" [class.app-loaded]="!showSplash">
   <ion-router-outlet></ion-router-outlet>
 </ion-app>

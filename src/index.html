@@ -23,60 +23,22 @@
 
     <link rel="icon" type="image/png" href="assets/icon/favicon.png" />
     <link rel="apple-touch-icon" href="assets/icon/favicon.png" />
-    <link rel="manifest" href="manifest.json" />
+    <link rel="manifest" href="manifest.webmanifest" />
 
-    <!-- ✅ Prevent flash apenas durante o carregamento inicial -->
+    <!-- ✅ FUNDO AZUL INICIAL - Sem flash branco -->
     <style>
-      /* Loading inicial - só azul enquanto Angular carrega */
-      .initial-loader {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
+      html,
+      body {
+        margin: 0;
+        padding: 0;
         height: 100%;
-        background: #1b57be;
-        z-index: 99999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .initial-loader-spinner {
-        width: 32px;
-        height: 32px;
-        border: 3px solid rgba(255, 255, 255, 0.3);
-        border-radius: 50%;
-        border-top-color: white;
-        animation: spin 1s ease-in-out infinite;
-      }
-
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
+        background: #1b57be !important; /* ✅ AZUL INICIAL */
+        overflow: hidden;
       }
     </style>
   </head>
 
   <body>
-    <!-- ✅ Loader inicial apenas para Angular -->
-    <div class="initial-loader">
-      <div class="initial-loader-spinner"></div>
-    </div>
-
     <app-root></app-root>
-
-    <!-- ✅ Remove loader quando Angular carrega -->
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        setTimeout(() => {
-          const loader = document.querySelector(".initial-loader");
-          if (loader) {
-            loader.style.opacity = "0";
-            setTimeout(() => loader.remove(), 300);
-          }
-        }, 100);
-      });
-    </script>
   </body>
 </html>
